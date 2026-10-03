@@ -30,6 +30,13 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export const studioApi = {
   radio: () => request<import('./studio-types').RadioSnapshot>('radio'),
+  track: (body: { sessionId: string; event: "page_view" | "product_view" | "portfolio_view" | "checkout_start"; itemKind?: "product" | "portfolio" | "page"; itemId?: string; path?: string; meta?: Record<string, string | number | boolean | null> }) =>
+    fetch("/api/studio/analytics/event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true
+    }).catch(() => undefined),
   publicState: () => request<StudioPublicState>("public-state"),
   controlState: () => request<StudioControlState>("control/state"),
   saveSite: (body: unknown) =>
