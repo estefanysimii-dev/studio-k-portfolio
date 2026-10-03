@@ -49,7 +49,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
   const [spectrum, setSpectrum] = useState(false);
 
   useEffect(() => {
-    if (!radio?.enabled || currentRadio.source === "spotify") {
+    if (!radio?.enabled || radio.source === "spotify") {
       setPlaying(false);
       setReady(false);
       setMessage("Rádio indisponível");
