@@ -16,10 +16,22 @@ export default function ModelStage({ modelUrl = "", posterUrl = "", title = "Mod
 
   useEffect(() => {
     let active = true;
-    if (!modelUrl) return;
-    import("@google/model-viewer")
-      .then(() => { if (active) setReady(true); })
-      .catch(() => { if (active) setReady(false); });
+    if (!modelUrl) {
+      setReady(false);
+      return;
+    }
+
+    const waitForViewer = async () => {
+      if (typeof window === "undefined" || !window.customElements) return;
+      try {
+        await window.customElements.whenDefined("model-viewer");
+        if (active) setReady(true);
+      } catch {
+        if (active) setReady(false);
+      }
+    };
+
+    void waitForViewer();
     return () => { active = false; };
   }, [modelUrl]);
 
