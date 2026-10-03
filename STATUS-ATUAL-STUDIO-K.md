@@ -141,15 +141,65 @@ Backend CI mais recente:
 - npm reporta 0 vulnerabilidades.
 - Railway deploy atual concluído com sucesso.
 
+## Studio K ID — progressão e ecossistema
+
+Implementado:
+- configuração persistente de XP e níveis pela Central;
+- ranks configuráveis com nome, ícone, raridade e nível mínimo;
+- badges, títulos equipáveis, conquistas persistentes e perks;
+- perks visuais no cartão (`Collector Frame`, `Neon Aura`, `Icon Aura`);
+- aba **Studio K ID** na Central;
+- mapeamento opcional de rank -> cargo do Discord;
+- comandos do bot `/perfil`, `/id` e `/rank` usando a mesma engine;
+- sincronização de rank após favoritos, compras entregues e feedbacks quando a automação de cargos está ativada;
+- endpoint versionado de identidade do ecossistema.
+
+## Viewer 3D — variantes administráveis
+
+Além das variantes internas do GLB, projetos e produtos agora podem cadastrar variantes externas:
+- nome;
+- cor hexadecimal;
+- URL de GLB/GLTF;
+- poster opcional.
+
+O viewer exibe swatches e troca o modelo em tempo real. Hotspots, iluminação, comparação, zoom, fullscreen e variantes internas continuam preservados.
+
+## Analytics 2.0
+
+Além do funil original, o sistema agora registra:
+- tempo de permanência;
+- profundidade de scroll;
+- origem/referrer;
+- visitante recorrente;
+- cliques;
+- buscas no catálogo;
+- filtros do portfólio;
+- páginas de saída;
+- erros de checkout;
+- tempo médio observado por produto.
+
+A Central mostra essas métricas junto ao funil, receita e produtos mais observados.
+
+## Kiki contextual 2.0
+
+A assistente agora pode reagir a:
+- produto revisitado várias vezes;
+- produto já favoritado;
+- level-up do Studio K ID;
+- nova conquista;
+- drop próximo do encerramento;
+- rank e título equipado;
+- produto relacionado a compras anteriores.
+
 ## Pontos que ainda precisam de atenção
 
-1. Spotify playlist não está implementado como rádio, apesar do requisito original.
+1. Spotify playlist permanece fora do escopo por decisão atual; não alterar até nova solicitação.
 2. Resolver as 2 vulnerabilidades reportadas pelo npm no frontend.
 3. Atualizar o README raiz: ele ainda descreve partes antigas como starter/placeholder e não representa o estado atual.
 4. Definir oficialmente um único domínio público/canônico; o código Next ainda possui fallbacks/metadados apontando para Netlify, enquanto a publicação atual foi adaptada para InfinityFree.
 5. Validar OpenGraph/preview do Discord no domínio InfinityFree; a própria hospedagem pode bloquear crawlers.
 6. Fazer QA visual completo em desktop/mobile para tema claro, rádio, viewer 3D, checkout, OAuth e Central.
-7. ClothToolStudioK continua propositalmente reservado para a última etapa.
+7. ClothToolStudioK continua propositalmente reservado e não deve ser alterado nesta fase.
 
 ## Regra de continuidade
 
