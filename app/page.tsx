@@ -1,29 +1,34 @@
+"use client";
+
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
 import Icon from "@/components/icons";
+import { useStudio } from "@/components/studio-provider";
 
 export default function HomePage() {
+  const { state } = useStudio();
+  const { site, items } = state;
+  const featured = items.find((item) => item.featured) || items[0];
+  const selected = items.slice(0, 4);
+
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
       <section className="hero-grid">
         <div className="hero-copy">
-          <span className="section-eyebrow">DESIGN 3D · FIVEM · MODA DIGITAL</span>
+          <span className="section-eyebrow">{site.heroEyebrow}</span>
           <h1>
-            DESIGN ALÉM
-            <span>DA TEXTURA.</span>
+            {site.heroTitle}
+            <span>{site.heroAccent}</span>
           </h1>
-          <p>
-            Roupas, materiais e experiências 3D criadas para destacar identidade,
-            acabamento e presença dentro do universo GTA V / FiveM.
-          </p>
+          <p>{site.heroSubtitle}</p>
 
           <div className="hero-actions">
             <a className="btn btn-primary" href="/portfolio">
-              Explorar Portfólio <Icon name="arrow" />
+              {site.primaryCtaLabel || "Explorar Portfólio"} <Icon name="arrow" />
             </a>
-            <a className="btn btn-outline" href="/discord">
-              Entrar no Discord
+            <a className="btn btn-outline" href={site.discordInviteUrl || "/discord"}>
+              {site.secondaryCtaLabel || "Entrar no Discord"}
             </a>
           </div>
 
@@ -34,7 +39,11 @@ export default function HomePage() {
           </div>
         </div>
 
-        <ModelStage />
+        <ModelStage
+          modelUrl={featured?.modelUrl}
+          posterUrl={featured?.coverUrl}
+          title={featured?.name || "Studio K"}
+        />
       </section>
 
       <section className="section-block">
@@ -47,18 +56,23 @@ export default function HomePage() {
         </div>
 
         <div className="showcase-grid">
-          <ShowcaseCard
-            eyebrow="FIVEM · FEMININO"
-            title="Polo + Manguito"
-            copy="Construção, textura e acabamento com foco em leitura limpa no jogo e apresentação 3D."
-            meta="3D · TEXTURA · CUSTOM CLOTHING"
-          />
-          <ShowcaseCard
-            eyebrow="EMISSIVE · NIGHTWEAR"
-            title="Neon Collection"
-            copy="Materiais emissivos e contraste controlado para peças que ganham presença à noite."
-            meta="EMISSIVE · MATERIALS · FIVEM"
-          />
+          {selected.length ? selected.map((item) => (
+            <ShowcaseCard
+              key={item.id}
+              eyebrow={item.category || "STUDIO K"}
+              title={item.name}
+              copy={item.description}
+              meta={(item.tags || []).join(" · ")}
+              coverUrl={item.coverUrl}
+              modelUrl={item.modelUrl}
+              href="/portfolio"
+            />
+          )) : (
+            <>
+              <ShowcaseCard eyebrow="FIVEM · FEMININO" title="Polo + Manguito" copy="Construção, textura e acabamento com foco em leitura limpa no jogo e apresentação 3D." meta="3D · TEXTURA · CUSTOM CLOTHING" />
+              <ShowcaseCard eyebrow="EMISSIVE · NIGHTWEAR" title="Neon Collection" copy="Materiais emissivos e contraste controlado para peças que ganham presença à noite." meta="EMISSIVE · MATERIALS · FIVEM" />
+            </>
+          )}
         </div>
       </section>
 
@@ -67,7 +81,7 @@ export default function HomePage() {
           <span className="section-eyebrow">COMUNIDADE STUDIO K</span>
           <h2>Entre no Discord e acompanhe drops, projetos e novidades.</h2>
         </div>
-        <a className="btn btn-primary" href="/discord">Conectar com Discord <Icon name="arrow" /></a>
+        <a className="btn btn-primary" href={site.discordInviteUrl || "/discord"}>Entrar no Discord <Icon name="arrow" /></a>
       </section>
     </StudioShell>
   );
