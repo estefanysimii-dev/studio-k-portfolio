@@ -1,0 +1,212 @@
+"use client";
+
+import type { AssistantCampaign, AssistantCampaignType, StudioAssistantConfig } from "@/lib/studio-types";
+import { buildAssistantMessage, normalizeAssistantConfig } from "@/lib/studio-assistant";
+
+type Props = {
+  value?: StudioAssistantConfig;
+  onChange: (next: StudioAssistantConfig) => void;
+  onSave: () => void;
+};
+
+const labels: Record<AssistantCampaignType, string> = {
+  promotion: "Promoção",
+  combo: "Combo",
+  news: "Novidade",
+  bestseller: "Mais vendido",
+  motivation: "Motivacional",
+  cute: "Fofa / Conversa"
+};
+
+function newCampaign(): AssistantCampaign {
+  return {
+    id: typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `campaign-${Date.now()}`,
+    type: "news",
+    title: "",
+    text: "",
+    ctaLabel: "Ver agora",
+    href: "/products",
+    priceCents: 0,
+    oldPriceCents: 0,
+    active: true
+  };
+}
+
+function cents(value: string) {
+  const normalized = value.replace(",", ".").trim();
+  const amount = Number(normalized);
+  return Number.isFinite(amount) ? Math.max(0, Math.round(amount * 100)) : 0;
+}
+
+function reais(value: number) {
+  return value ? (value / 100).toFixed(2).replace(".", ",") : "";
+}
+
+export default function AssistantSettings({ value, onChange, onSave }: Props) {
+  const config = normalizeAssistantConfig(value);
+
+  const patch = (next: Partial<StudioAssistantConfig>) => onChange({ ...config, ...next });
+  const patchCampaign = (id: string, next: Partial<AssistantCampaign>) => {
+    patch({
+      campaigns: config.campaigns.map((campaign) => campaign.id === id ? { ...campaign, ...next } : campaign)
+    });
+  };
+
+  const removeCampaign = (id: string) => {
+    patch({ campaigns: config.campaigns.filter((campaign) => campaign.id !== id) });
+  };
+
+  return (
+    <div className="assistant-settings">
+      <section className="control-form glass-panel assistant-settings-head">
+        <div className="form-heading">
+          <div>
+            <span className="section-eyebrow">ASSISTENTE DO SITE</span>
+            <h2>Kiki · Assistente Studio K</h2>
+            <p>
+              A Kiki conversa com quem estiver navegando e alterna as falas a cada 5 segundos.
+              Promoções, combos, novidades e destaques geram frases automaticamente.
+            </p>
+          </div>
+          <button className="btn btn-primary" type="button" onClick={onSave}>Salvar assistente</button>
+        </div>
+
+        <div className="assistant-settings-toggle">
+          <label>
+            <input
+              type="checkbox"
+              checked={config.enabled}
+              onChange={(event) => patch({ enabled: event.target.checked })}
+            />
+            <span>
+              <strong>Assistente ativa</strong>
+              <small>Exibe a Kiki no canto inferior direito do site público.</small>
+            </span>
+          </label>
+
+          <label className="assistant-image-field">
+            Imagem da assistente
+            <input
+              value={config.imageUrl}
+              onChange={(event) => patch({ imageUrl: event.target.value })}
+              placeholder="/studio-assets/studio-k-mascot.webp"
+            />
+          </label>
+        </div>
+      </section>
+
+      <section className="control-list glass-panel assistant-campaigns">
+        <div className="form-heading">
+          <div>
+            <span className="section-eyebrow">FALAS AUTOMÁTICAS</span>
+            <h2>Campanhas e dicas</h2>
+            <p>Cadastre o fato; a assistente monta uma frase mais natural conforme o tipo selecionado.</p>
+          </div>
+          <button className="btn btn-outline compact" type="button" onClick={() => patch({ campaigns: [...config.campaigns, newCampaign()] })}>
+            + Adicionar fala
+          </button>
+        </div>
+
+        <div className="assistant-campaign-list">
+          {config.campaigns.map((campaign, position) => {
+            const preview = buildAssistantMessage(campaign);
+            return (
+              <article className="assistant-campaign-card" key={campaign.id}>
+                <div className="assistant-campaign-top">
+                  <div>
+                    <span>Fala {position + 1}</span>
+                    <strong>{labels[campaign.type]}</strong>
+                  </div>
+                  <div className="assistant-campaign-actions">
+                    <label className="assistant-active-toggle">
+                      <input
+                        type="checkbox"
+                        checked={campaign.active}
+                        onChange={(event) => patchCampaign(campaign.id, { active: event.target.checked })}
+                      />
+                      Ativa
+                    </label>
+                    <button type="button" className="danger" onClick={() => removeCampaign(campaign.id)}>Excluir</button>
+                  </div>
+                </div>
+
+                <div className="form-grid two assistant-campaign-grid">
+                  <label>Tipo
+                    <select
+                      value={campaign.type}
+                      onChange={(event) => patchCampaign(campaign.id, { type: event.target.value as AssistantCampaignType })}
+                    >
+                      {Object.entries(labels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                    </select>
+                  </label>
+                  <label>Título / nome da oferta
+                    <input
+                      value={campaign.title}
+                      onChange={(event) => patchCampaign(campaign.id, { title: event.target.value })}
+                      placeholder="Ex.: Combo Neon + Polo"
+                    />
+                  </label>
+                  <label>Preço / valor da oferta
+                    <input
+                      inputMode="decimal"
+                      value={reais(campaign.priceCents)}
+                      onChange={(event) => patchCampaign(campaign.id, { priceCents: cents(event.target.value) })}
+                      placeholder="49,90"
+                    />
+                  </label>
+                  <label>Preço anterior
+                    <input
+                      inputMode="decimal"
+                      value={reais(campaign.oldPriceCents)}
+                      onChange={(event) => patchCampaign(campaign.id, { oldPriceCents: cents(event.target.value) })}
+                      placeholder="79,90"
+                    />
+                  </label>
+                  <label className="span-2">Detalhes que a Kiki deve mencionar
+                    <textarea
+                      rows={3}
+                      value={campaign.text}
+                      onChange={(event) => patchCampaign(campaign.id, { text: event.target.value })}
+                      placeholder="Ex.: Disponível só esta semana e inclui duas variações."
+                    />
+                  </label>
+                  <label>Texto do botão
+                    <input
+                      value={campaign.ctaLabel}
+                      onChange={(event) => patchCampaign(campaign.id, { ctaLabel: event.target.value })}
+                      placeholder="Quero ver"
+                    />
+                  </label>
+                  <label>Destino do botão
+                    <input
+                      value={campaign.href}
+                      onChange={(event) => patchCampaign(campaign.id, { href: event.target.value })}
+                      placeholder="/products ou link externo"
+                    />
+                  </label>
+                </div>
+
+                <div className="assistant-preview">
+                  <span>Prévia gerada automaticamente</span>
+                  <strong>{preview.title}</strong>
+                  <p>{preview.message}</p>
+                  {preview.ctaLabel && preview.href && <button type="button" tabIndex={-1}>{preview.ctaLabel} →</button>}
+                </div>
+              </article>
+            );
+          })}
+
+          {config.campaigns.length === 0 && (
+            <div className="assistant-empty">
+              Nenhuma campanha cadastrada. A Kiki ainda usará as mensagens fofas e motivacionais padrão.
+            </div>
+          )}
+        </div>
+
+        <div className="assistant-settings-note">
+          <strong>Importante:</strong> os valores desta aba aparecem nas falas da assistente. Para alterar o preço real de venda e checkout, mantenha o produto atualizado também na aba <b>Produtos</b>.
+        </div>
+      </section>
+    </div>
+  );
+}
