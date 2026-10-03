@@ -57,7 +57,14 @@ export default function PortfolioPage() {
               <button type="button" className="btn btn-outline compact" onClick={() => setSelected(null)}>Fechar prévia</button>
             </div>
           </div>
-          <ModelStage modelUrl={selected.modelUrl} posterUrl={selected.coverUrl || selected.gifUrl} title={selected.name} compact />
+          <ModelStage
+            modelUrl={selected.modelUrl}
+            compareModelUrl={selected.compareModelUrl}
+            hotspots={selected.viewerHotspots}
+            posterUrl={selected.coverUrl || selected.gifUrl}
+            title={selected.name}
+            compact
+          />
         </section>
       )}
 
