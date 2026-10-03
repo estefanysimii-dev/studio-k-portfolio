@@ -46,6 +46,12 @@ export const studioApi = {
     request<StudioProductMutation>(`control/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteProduct: (id: string) =>
     request(`control/products/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  createDrop: (body: unknown) =>
+    request<import("./studio-types").StudioDrop>("control/drops", { method: "POST", body: JSON.stringify(body) }),
+  updateDrop: (id: string, body: unknown) =>
+    request<import("./studio-types").StudioDrop>(`control/drops/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteDrop: (id: string) =>
+    request(`control/drops/${encodeURIComponent(id)}`, { method: "DELETE" }),
   syncBotProduct: (id: string) =>
     request<{ ok: boolean; botProductId: string }>(`control/products/${encodeURIComponent(id)}/sync-bot`, { method: "POST", body: "{}" }),
   announceProduct: (id: string, channelId: string) =>
