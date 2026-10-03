@@ -4,6 +4,7 @@ import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
 import { StudioProvider } from "@/components/studio-provider";
 import { ThemeProvider } from '@/components/theme-provider';
+import { RadioPlayerProvider } from "@/components/radio-player-provider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://studiokoficial.netlify.app"),
@@ -55,10 +56,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           strategy="afterInteractive"
         />
         <StudioProvider>
-          <ThemeProvider>
-          <AmbientLight />
-          {children}
-          </ThemeProvider>
+          <RadioPlayerProvider>
+            <ThemeProvider>
+              <AmbientLight />
+              {children}
+            </ThemeProvider>
+          </RadioPlayerProvider>
         </StudioProvider>
       </body>
     </html>
