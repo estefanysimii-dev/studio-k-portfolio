@@ -17,14 +17,18 @@ export default function HomePage() {
   const [dropNow, setDropNow] = useState(() => Date.now());
   const feedbacks = state.feedbacks || [];
   const liveDrop = useMemo(
-    () => (state.drops || []).find((drop) => drop.status === "active") || null,
-    [state.drops]
+    () => (state.drops || []).find((drop) =>
+      drop.published !== false &&
+      Date.parse(drop.startsAt) <= dropNow &&
+      Date.parse(drop.endsAt) > dropNow
+    ) || null,
+    [dropNow, state.drops]
   );
   const nextDrop = useMemo(
     () => (state.drops || [])
-      .filter((drop) => drop.status === "scheduled")
+      .filter((drop) => drop.published !== false && Date.parse(drop.startsAt) > dropNow)
       .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt))[0] || null,
-    [state.drops]
+    [dropNow, state.drops]
   );
   const featuredDrop = liveDrop || nextDrop;
   const featuredDropProduct = featuredDrop
