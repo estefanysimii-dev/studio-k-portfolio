@@ -3,6 +3,7 @@ import RadioSettings from '@/components/radio-settings';
 import AssistantSettings from '@/components/assistant-settings';
 import DropSettings from '@/components/drop-settings';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
+import StudioIdSettings from '@/components/studio-id-settings';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -11,9 +12,9 @@ import ObjConverter from "@/components/obj-converter";
 import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
-import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
+import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "assistant" | "drops" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 type ItemDraft = {
   name: string;
@@ -149,6 +150,7 @@ export default function ControlPage() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [siteDraft, setSiteDraft] = useState<StudioSite | null>(null);
+  const [studioIdDraft, setStudioIdDraft] = useState<StudioIdConfig | null>(null);
   const [project, setProject] = useState<ItemDraft>(emptyProject);
   const [product, setProduct] = useState<ProductDraft>(emptyProduct);
   const [editingProjectId, setEditingProjectId] = useState("");
@@ -165,6 +167,7 @@ export default function ControlPage() {
       const next = await studioApi.controlState();
       setState(next);
       setSiteDraft(next.site);
+      setStudioIdDraft(next.studioIdConfig || null);
       const channels = next.discord?.channels || [];
       setAnnounceChannelId((current) => {
         if (current && channels.some((channel) => channel.id === current)) return current;
@@ -203,6 +206,19 @@ export default function ControlPage() {
       await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao salvar.");
+    }
+  };
+
+  const saveStudioIdSettings = async () => {
+    if (!studioIdDraft) return;
+    try {
+      setError("");
+      const saved = await studioApi.saveStudioIdConfig(studioIdDraft);
+      setStudioIdDraft(saved);
+      flash("Configurações do Studio K ID salvas.");
+      await Promise.all([refresh(), refreshPublic()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível salvar o Studio K ID.");
     }
   };
 
@@ -461,6 +477,7 @@ export default function ControlPage() {
         {[
           ["overview", "Visão geral"],
           ["site", "Site"],
+          ["studioId", "Studio K ID"],
           ["assistant", "Assistente"],
           ["drops", "Drops"],
           ["portfolio", "Portfólio"],
@@ -558,6 +575,15 @@ export default function ControlPage() {
           </div>
           <RadioSettings value={siteDraft.radio} onChange={radio => setSiteDraft({ ...siteDraft, radio })} />
         </form>
+      )}
+
+      {tab === "studioId" && studioIdDraft && (
+        <StudioIdSettings
+          value={studioIdDraft}
+          roles={state.discord?.roles || []}
+          onChange={setStudioIdDraft}
+          onSave={() => void saveStudioIdSettings()}
+        />
       )}
 
       {tab === "assistant" && siteDraft && (
