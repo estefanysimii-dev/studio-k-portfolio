@@ -20,7 +20,25 @@ const fallback: StudioPublicState = {
     discordInviteUrl: "",
     defaultAnnouncementChannelId: "",
     autoAnnounceProducts: false,
-    adminRoleIds: []
+    adminRoleIds: [],
+    assistant: {
+      enabled: true,
+      intervalSeconds: 5,
+      imageUrl: "/studio-assets/studio-k-mascot.webp",
+      campaigns: [
+        {
+          id: "welcome",
+          type: "cute",
+          title: "Oi, eu sou a Kiki 💜",
+          text: "Vou ficar por aqui te mostrando coisinhas legais do Studio K.",
+          ctaLabel: "",
+          href: "",
+          priceCents: 0,
+          oldPriceCents: 0,
+          active: true
+        }
+      ]
+    }
   },
   status: {
     botOnline: false,
