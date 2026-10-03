@@ -17,7 +17,14 @@ export const metadata: Metadata = {
     url: "https://studiokoficial.netlify.app",
     siteName: "Studio K",
     locale: "pt_BR",
-    type: "website"
+    type: "website",
+    images: [{ url: "/studio-assets/studio-k-banner-hq.webp", width: 1600, height: 900, alt: "Studio K" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Studio K",
+    description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
+    images: ["/studio-assets/studio-k-banner-hq.webp"]
   }
 };
 

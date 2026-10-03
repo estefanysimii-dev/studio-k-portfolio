@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
@@ -13,18 +11,14 @@ export default function HomePage() {
   const { site, items } = state;
   const featured = items.find((item) => item.featured) || items[0];
   const selected = items.slice(0, 4);
+  const banner = site.homeBackgroundUrl && !site.homeBackgroundUrl.startsWith("/media/")
+    ? site.homeBackgroundUrl
+    : "/studio-assets/studio-k-banner-hq.webp";
 
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
       <section className="home-banner glass-panel" aria-label="Studio K">
-        <Image
-          src="/studio-assets/studio-k-banner-hq.webp"
-          alt="Studio K · Kiki em seu estúdio de criação 3D"
-          fill
-          priority
-          quality={100}
-          sizes="(max-width: 720px) 100vw, (max-width: 1100px) calc(100vw - 228px), 1400px"
-        />
+        <img className="home-banner-image" src={banner} alt="Studio K · estúdio de criação 3D" />
         <div className="home-banner-shade" />
         <div className="home-banner-copy">
           <span>STUDIO K · FIVEM DESIGN</span>
@@ -59,7 +53,7 @@ export default function HomePage() {
 
         <ModelStage
           modelUrl={featured?.modelUrl}
-          posterUrl={featured?.coverUrl}
+          posterUrl={featured?.coverUrl || featured?.gifUrl}
           title={featured?.name || "Studio K"}
         />
       </section>
@@ -81,9 +75,9 @@ export default function HomePage() {
               title={item.name}
               copy={item.description}
               meta={(item.tags || []).join(" · ")}
-              coverUrl={item.coverUrl}
+              coverUrl={item.coverUrl || item.gifUrl}
               modelUrl={item.modelUrl}
-              href="/portfolio"
+              href={`/portfolio/${item.id}`}
             />
           )) : (
             <>

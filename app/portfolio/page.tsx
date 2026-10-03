@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ShowcaseCard from "@/components/showcase-card";
 import ModelStage from "@/components/model-stage";
+import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioItem } from "@/lib/studio-types";
 
@@ -51,15 +52,18 @@ export default function PortfolioPage() {
             <h2>{selected.name}</h2>
             <p>{selected.description}</p>
             <div className="tag-row">{selected.tags?.map((tag) => <span key={tag}>{tag}</span>)}</div>
-            <button type="button" className="btn btn-outline compact" onClick={() => setSelected(null)}>Fechar prévia</button>
+            <div className="hero-actions">
+              <a className="btn btn-primary compact" href={`/portfolio/${selected.id}`}>Abrir projeto <Icon name="arrow" /></a>
+              <button type="button" className="btn btn-outline compact" onClick={() => setSelected(null)}>Fechar prévia</button>
+            </div>
           </div>
-          <ModelStage modelUrl={selected.modelUrl} posterUrl={selected.coverUrl} title={selected.name} compact />
+          <ModelStage modelUrl={selected.modelUrl} posterUrl={selected.coverUrl || selected.gifUrl} title={selected.name} compact />
         </section>
       )}
 
       <div className="showcase-grid">
         {visible.length ? visible.map((item) => (
-          <div key={item.id} onClick={() => setSelected(item)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setSelected(item); }}>
+          <div key={item.id} onClick={() => setSelected(item)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") setSelected(item); }}>
             <ShowcaseCard
               eyebrow={item.category || "STUDIO K"}
               title={item.name}
@@ -67,7 +71,7 @@ export default function PortfolioPage() {
               meta={(item.tags || []).join(" · ")}
               coverUrl={item.coverUrl || item.gifUrl}
               modelUrl={item.modelUrl}
-              href="#preview"
+              href={`/portfolio/${item.id}`}
             />
           </div>
         )) : (

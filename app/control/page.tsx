@@ -11,7 +11,26 @@ import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, Studio
 
 type Tab = "overview" | "site" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
-const emptyProject = {
+type ItemDraft = {
+  name: string;
+  description: string;
+  category: string;
+  tags: string;
+  coverUrl: string;
+  modelUrl: string;
+  videoUrl: string;
+  gifUrl: string;
+  galleryUrls: string;
+  featured: boolean;
+  published: boolean;
+};
+
+type ProductDraft = ItemDraft & {
+  price: string;
+  botProductId: string;
+};
+
+const emptyProject: ItemDraft = {
   name: "",
   description: "",
   category: "Studio K",
@@ -20,15 +39,34 @@ const emptyProject = {
   modelUrl: "",
   videoUrl: "",
   gifUrl: "",
+  galleryUrls: "",
   featured: false,
   published: true
 };
 
-const emptyProduct = {
+const emptyProduct: ProductDraft = {
   ...emptyProject,
   price: "",
   botProductId: ""
 };
+
+const list = (value: string) => value.split(/[\n,]/).map((entry) => entry.trim()).filter(Boolean);
+
+function itemDraft(item: StudioItem): ItemDraft {
+  return {
+    name: item.name,
+    description: item.description || "",
+    category: item.category || "Studio K",
+    tags: (item.tags || []).join(", "),
+    coverUrl: item.coverUrl || "",
+    modelUrl: item.modelUrl || "",
+    videoUrl: item.videoUrl || "",
+    gifUrl: item.gifUrl || "",
+    galleryUrls: (item.galleryUrls || []).join("\n"),
+    featured: !!item.featured,
+    published: !!item.published
+  };
+}
 
 function itemPayload(item: StudioItem) {
   return {
@@ -41,6 +79,22 @@ function itemPayload(item: StudioItem) {
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: item.galleryUrls || [],
+    featured: !!item.featured,
+    published: !!item.published
+  };
+}
+
+function draftPayload(item: ItemDraft) {
+  return {
+    name: item.name,
+    description: item.description || "",
+    category: item.category || "Studio K",
+    tags: list(item.tags),
+    coverUrl: item.coverUrl || "",
+    modelUrl: item.modelUrl || "",
+    videoUrl: item.videoUrl || "",
+    gifUrl: item.gifUrl || "",
+    galleryUrls: list(item.galleryUrls),
     featured: !!item.featured,
     published: !!item.published
   };
@@ -68,11 +122,14 @@ export default function ControlPage() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [siteDraft, setSiteDraft] = useState<StudioSite | null>(null);
-  const [project, setProject] = useState(emptyProject);
-  const [product, setProduct] = useState(emptyProduct);
+  const [project, setProject] = useState<ItemDraft>(emptyProject);
+  const [product, setProduct] = useState<ProductDraft>(emptyProduct);
+  const [editingProjectId, setEditingProjectId] = useState("");
+  const [editingProductId, setEditingProductId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
   const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
+  const [announceChannelId, setAnnounceChannelId] = useState("");
   const { state: publicState, refresh: refreshPublic } = useStudio();
 
   const refresh = async () => {
@@ -81,6 +138,7 @@ export default function ControlPage() {
       const next = await studioApi.controlState();
       setState(next);
       setSiteDraft(next.site);
+      if (!announceChannelId && next.discord?.channels?.[0]?.id) setAnnounceChannelId(next.discord.channels[0].id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível abrir a Central.");
       setState(null);
@@ -115,60 +173,111 @@ export default function ControlPage() {
     }
   };
 
-  const createProject = async (event: FormEvent) => {
+  const saveProject = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      await studioApi.createItem({
-        ...project,
-        tags: project.tags.split(",").map((x) => x.trim()).filter(Boolean),
-        galleryUrls: []
-      });
+      const body = draftPayload(project);
+      if (editingProjectId) {
+        await studioApi.updateItem(editingProjectId, body);
+        flash("Projeto atualizado.");
+      } else {
+        await studioApi.createItem(body);
+        flash("Projeto publicado no portfólio.");
+      }
       setProject(emptyProject);
-      flash("Projeto publicado no catálogo.");
-      await refresh();
+      setEditingProjectId("");
+      await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar projeto.");
+      setError(err instanceof Error ? err.message : "Erro ao salvar projeto.");
     }
   };
 
-  const createProduct = async (event: FormEvent) => {
+  const saveProduct = async (event: FormEvent) => {
     event.preventDefault();
     try {
       const normalized = product.price.replace(",", ".").trim();
-      await studioApi.createProduct({
-        ...product,
-        tags: product.tags.split(",").map((x) => x.trim()).filter(Boolean),
-        galleryUrls: [],
-        priceCents: normalized ? Math.round(Number(normalized) * 100) : 0
-      });
+      const body = {
+        ...draftPayload(product),
+        priceCents: normalized ? Math.round(Number(normalized) * 100) : 0,
+        botProductId: product.botProductId || ""
+      };
+      if (editingProductId) {
+        await studioApi.updateProduct(editingProductId, body);
+        flash("Produto atualizado.");
+      } else {
+        await studioApi.createProduct(body);
+        flash("Produto publicado na loja.");
+      }
       setProduct(emptyProduct);
-      flash("Produto publicado na loja.");
-      await refresh();
+      setEditingProductId("");
+      await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao criar produto.");
+      setError(err instanceof Error ? err.message : "Erro ao salvar produto.");
     }
+  };
+
+  const editProject = (item: StudioItem) => {
+    setProject(itemDraft(item));
+    setEditingProjectId(item.id);
+    setTab("portfolio");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const editProduct = (item: StudioProduct) => {
+    setProduct({
+      ...itemDraft(item),
+      price: (Number(item.priceCents || 0) / 100).toFixed(2).replace(".", ","),
+      botProductId: item.botProductId || ""
+    });
+    setEditingProductId(item.id);
+    setTab("products");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const toggleItem = async (item: StudioItem) => {
     await studioApi.updateItem(item.id, { ...itemPayload(item), published: !item.published });
-    await refresh();
+    await Promise.all([refresh(), refreshPublic()]);
   };
 
   const toggleProduct = async (item: StudioProduct) => {
     await studioApi.updateProduct(item.id, { ...productPayload(item), published: !item.published });
-    await refresh();
+    await Promise.all([refresh(), refreshPublic()]);
   };
 
   const removeItem = async (id: string) => {
     if (!window.confirm("Excluir este projeto?")) return;
     await studioApi.deleteItem(id);
-    await refresh();
+    await Promise.all([refresh(), refreshPublic()]);
   };
 
   const removeProduct = async (id: string) => {
     if (!window.confirm("Excluir este produto?")) return;
     await studioApi.deleteProduct(id);
-    await refresh();
+    await Promise.all([refresh(), refreshPublic()]);
+  };
+
+  const syncBot = async (id: string) => {
+    try {
+      await studioApi.syncBotProduct(id);
+      flash("Produto sincronizado com o bot.");
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao sincronizar.");
+    }
+  };
+
+  const announce = async (id: string) => {
+    if (!announceChannelId) {
+      setError("Selecione um canal do Discord para publicar.");
+      return;
+    }
+    try {
+      await studioApi.announceProduct(id, announceChannelId);
+      flash("Produto publicado no Discord.");
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao anunciar.");
+    }
   };
 
   const upload = async (file?: File | null) => {
@@ -184,7 +293,7 @@ export default function ControlPage() {
         headers: { "Content-Type": file.type || "application/octet-stream" },
         body: file
       });
-      const result = await response.json().catch(() => ({}));
+      const result = await response.json().catch(() => ({})) as { id?: string; visibility?: string; error?: string };
       if (!response.ok) throw new Error(result.error || "Falha no upload.");
       flash(result.visibility === "public" ? "Mídia publicada com sucesso." : "Arquivo-fonte salvo como privado.");
       await refresh();
@@ -192,6 +301,16 @@ export default function ControlPage() {
       setError(err instanceof Error ? err.message : "Falha no upload.");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const processAsset = async (asset: StudioAsset) => {
+    try {
+      const result = await studioApi.processAsset(asset.id);
+      flash(result.kind === "model" ? "GLB gerado e publicado." : "Preview do PSD gerado.");
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao processar arquivo.");
     }
   };
 
@@ -216,11 +335,9 @@ export default function ControlPage() {
               : "Conecte sua conta do Discord. O acesso será liberado somente se você possuir um dos cargos de Staff configurados no servidor."}
           </p>
           <div className="hero-actions">
-            {connected ? (
-              <a className="btn btn-primary" href="/account">Voltar para Minha Conta</a>
-            ) : (
-              <a className="btn btn-primary" href="/api/oauth/start?next=/control">Conectar com Discord</a>
-            )}
+            {connected
+              ? <a className="btn btn-primary" href="/account">Voltar para Minha Conta</a>
+              : <a className="btn btn-primary" href="/api/oauth/start?next=/control">Conectar com Discord</a>}
             <a className="btn btn-outline" href="/">Voltar ao site</a>
           </div>
           {error && <small className="staff-gate-error">{error}</small>}
@@ -229,13 +346,15 @@ export default function ControlPage() {
     );
   }
 
+  const sourceAsset = (asset: StudioAsset) => ["blend", "obj", "fbx", "psd"].includes(asset.ext.toLowerCase());
+
   return (
     <StudioShell eyebrow="CENTRAL" title="Controle Studio K" variant="control">
       <div className="control-hero">
         <div>
           <span className="section-eyebrow">ADMINISTRAÇÃO EM TEMPO REAL</span>
           <h1 className="page-title">Central de Controle</h1>
-          <p className="page-subtitle">Site público, catálogo, mídia, 3D e integrações administrados no mesmo lugar.</p>
+          <p className="page-subtitle">Site público, catálogo, mídia, 3D, Discord e bot administrados no mesmo lugar.</p>
         </div>
         <div className="control-user glass-panel">
           <span>Conectado como</span>
@@ -276,12 +395,12 @@ export default function ControlPage() {
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">PUBLICAÇÃO</span>
               <h2>Fluxo unificado</h2>
-              <p>Projetos e produtos cadastrados aqui passam a alimentar as páginas públicas. GLB/GLTF abrem no viewer 360° e arquivos OBJ podem ser convertidos automaticamente pelo Conversor 3D.</p>
+              <p>Projetos e produtos cadastrados aqui alimentam o site público. BLEND/FBX/OBJ podem virar GLB e PSD pode gerar preview sem expor o arquivo-fonte.</p>
             </section>
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">STATUS</span>
               <h2>{state.discord?.botConnected ? "Bot conectado" : "Bot desconectado"}</h2>
-              <p>OAuth: {state.discord?.oauthConfigured ? "configurado" : "pendente"} · Conteúdo: sincronizado pela API Studio K.</p>
+              <p>OAuth: {state.discord?.oauthConfigured ? "configurado" : "pendente"} · Conteúdo público sincronizado pela API Studio K.</p>
             </section>
           </div>
         </>
@@ -290,13 +409,9 @@ export default function ControlPage() {
       {tab === "site" && siteDraft && (
         <form className="control-form glass-panel" onSubmit={saveSite}>
           <div className="form-heading">
-            <div>
-              <span className="section-eyebrow">IDENTIDADE + HOME</span>
-              <h2>Configurações do site</h2>
-            </div>
+            <div><span className="section-eyebrow">IDENTIDADE + HOME</span><h2>Configurações do site</h2></div>
             <button className="btn btn-primary" type="submit">Salvar alterações</button>
           </div>
-
           <div className="form-grid two">
             <label>Nome da marca<input value={siteDraft.brandName} onChange={(e) => setSiteDraft({ ...siteDraft, brandName: e.target.value })} /></label>
             <label>Tagline<input value={siteDraft.brandTagline} onChange={(e) => setSiteDraft({ ...siteDraft, brandTagline: e.target.value })} /></label>
@@ -304,8 +419,9 @@ export default function ControlPage() {
             <label>Título principal<input value={siteDraft.heroTitle} onChange={(e) => setSiteDraft({ ...siteDraft, heroTitle: e.target.value })} /></label>
             <label>Destaque do título<input value={siteDraft.heroAccent} onChange={(e) => setSiteDraft({ ...siteDraft, heroAccent: e.target.value })} /></label>
             <label>Botão principal<input value={siteDraft.primaryCtaLabel} onChange={(e) => setSiteDraft({ ...siteDraft, primaryCtaLabel: e.target.value })} /></label>
+            <label>Botão Discord<input value={siteDraft.secondaryCtaLabel} onChange={(e) => setSiteDraft({ ...siteDraft, secondaryCtaLabel: e.target.value })} /></label>
             <label className="span-2">Descrição do Hero<textarea rows={4} value={siteDraft.heroSubtitle} onChange={(e) => setSiteDraft({ ...siteDraft, heroSubtitle: e.target.value })} /></label>
-            <label>Logo URL<input value={siteDraft.logoUrl} onChange={(e) => setSiteDraft({ ...siteDraft, logoUrl: e.target.value })} placeholder="/portfolio-assets/..." /></label>
+            <label>Logo URL<input value={siteDraft.logoUrl} onChange={(e) => setSiteDraft({ ...siteDraft, logoUrl: e.target.value })} /></label>
             <label>Background Home<input value={siteDraft.homeBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, homeBackgroundUrl: e.target.value })} /></label>
             <label>Background Central<input value={siteDraft.controlBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, controlBackgroundUrl: e.target.value })} /></label>
             <label>Convite Discord<input value={siteDraft.discordInviteUrl} onChange={(e) => setSiteDraft({ ...siteDraft, discordInviteUrl: e.target.value })} placeholder="https://discord.gg/..." /></label>
@@ -315,41 +431,27 @@ export default function ControlPage() {
 
       {tab === "portfolio" && (
         <div className="control-split">
-          <form className="control-form glass-panel" onSubmit={createProject}>
-            <div className="form-heading"><div><span className="section-eyebrow">NOVO PROJETO</span><h2>Publicar no portfólio</h2></div></div>
+          <form className="control-form glass-panel" onSubmit={saveProject}>
+            <div className="form-heading">
+              <div><span className="section-eyebrow">{editingProjectId ? "EDITAR PROJETO" : "NOVO PROJETO"}</span><h2>{editingProjectId ? "Atualizar portfólio" : "Publicar no portfólio"}</h2></div>
+              {editingProjectId && <button type="button" className="btn btn-outline compact" onClick={() => { setProject(emptyProject); setEditingProjectId(""); }}>Cancelar edição</button>}
+            </div>
             <div className="form-grid">
               <label>Nome<input required value={project.name} onChange={(e) => setProject({ ...project, name: e.target.value })} /></label>
               <label>Categoria<input value={project.category} onChange={(e) => setProject({ ...project, category: e.target.value })} /></label>
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
-              <MediaField
-                label="Capa / imagem"
-                kind="image"
-                value={project.coverUrl}
-                onChange={(value) => setProject({ ...project, coverUrl: value })}
-              />
-              <MediaField
-                label="Modelo 3D"
-                kind="model"
-                value={project.modelUrl}
-                onChange={(value) => setProject({ ...project, modelUrl: value })}
-                onConvertObj={() => {
-                  setConverterTarget("project");
-                  setTab("converter");
-                }}
-              />
-              <MediaField
-                label="Vídeo"
-                kind="video"
-                value={project.videoUrl}
-                onChange={(value) => setProject({ ...project, videoUrl: value })}
-              />
+              <MediaField label="Capa / imagem / PSD" kind="image" value={project.coverUrl} onChange={(value) => setProject({ ...project, coverUrl: value })} />
+              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertObj={() => { setConverterTarget("project"); setTab("converter"); }} />
+              <MediaField label="Vídeo" kind="video" value={project.videoUrl} onChange={(value) => setProject({ ...project, videoUrl: value })} />
+              <MediaField label="GIF" kind="image" value={project.gifUrl} onChange={(value) => setProject({ ...project, gifUrl: value })} />
+              <label className="span-2">Galeria adicional<textarea rows={3} value={project.galleryUrls} onChange={(e) => setProject({ ...project, galleryUrls: e.target.value })} placeholder="Uma URL por linha ou separada por vírgula" /></label>
               <label className="span-2">Descrição<textarea required rows={4} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} /></label>
               <div className="check-row span-2">
                 <label><input type="checkbox" checked={project.featured} onChange={(e) => setProject({ ...project, featured: e.target.checked })} /> Destaque da Home</label>
                 <label><input type="checkbox" checked={project.published} onChange={(e) => setProject({ ...project, published: e.target.checked })} /> Publicado</label>
               </div>
             </div>
-            <button className="btn btn-primary" type="submit">Publicar projeto</button>
+            <button className="btn btn-primary" type="submit">{editingProjectId ? "Salvar projeto" : "Publicar projeto"}</button>
           </form>
 
           <section className="control-list glass-panel">
@@ -358,8 +460,12 @@ export default function ControlPage() {
               <div className="control-row" key={item.id}>
                 <div>{item.coverUrl ? <img src={item.coverUrl} alt="" /> : <span className="row-placeholder">3D</span>}</div>
                 <div className="control-row-copy"><strong>{item.name}</strong><span>{item.category} · {item.published ? "Publicado" : "Oculto"}</span></div>
-                <button type="button" onClick={() => void toggleItem(item)}>{item.published ? "Ocultar" : "Publicar"}</button>
-                <button type="button" className="danger" onClick={() => void removeItem(item.id)}>Excluir</button>
+                <div className="control-row-actions">
+                  <button type="button" onClick={() => editProject(item)}>Editar</button>
+                  <button type="button" onClick={() => void toggleItem(item)}>{item.published ? "Ocultar" : "Publicar"}</button>
+                  <a href={`/portfolio/${item.id}`} target="_blank" rel="noreferrer">Abrir</a>
+                  <button type="button" className="danger" onClick={() => void removeItem(item.id)}>Excluir</button>
+                </div>
               </div>
             )) : <p className="muted">Nenhum projeto cadastrado.</p>}
           </section>
@@ -368,49 +474,56 @@ export default function ControlPage() {
 
       {tab === "products" && (
         <div className="control-split">
-          <form className="control-form glass-panel" onSubmit={createProduct}>
-            <div className="form-heading"><div><span className="section-eyebrow">NOVO PRODUTO</span><h2>Publicar na loja</h2></div></div>
+          <form className="control-form glass-panel" onSubmit={saveProduct}>
+            <div className="form-heading">
+              <div><span className="section-eyebrow">{editingProductId ? "EDITAR PRODUTO" : "NOVO PRODUTO"}</span><h2>{editingProductId ? "Atualizar loja" : "Publicar na loja"}</h2></div>
+              {editingProductId && <button type="button" className="btn btn-outline compact" onClick={() => { setProduct(emptyProduct); setEditingProductId(""); }}>Cancelar edição</button>}
+            </div>
             <div className="form-grid">
               <label>Nome<input required value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} /></label>
               <label>Preço em R$<input value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} placeholder="49,90" /></label>
               <label>Categoria<input value={product.category} onChange={(e) => setProduct({ ...product, category: e.target.value })} /></label>
               <label>Tags<input value={product.tags} onChange={(e) => setProduct({ ...product, tags: e.target.value })} /></label>
-              <MediaField
-                label="Capa / imagem"
-                kind="image"
-                value={product.coverUrl}
-                onChange={(value) => setProduct({ ...product, coverUrl: value })}
-              />
-              <MediaField
-                label="Modelo 3D"
-                kind="model"
-                value={product.modelUrl}
-                onChange={(value) => setProduct({ ...product, modelUrl: value })}
-                onConvertObj={() => {
-                  setConverterTarget("product");
-                  setTab("converter");
-                }}
-              />
-              <MediaField
-                label="Vídeo"
-                kind="video"
-                value={product.videoUrl}
-                onChange={(value) => setProduct({ ...product, videoUrl: value })}
-              />
-              <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} /></label>
+              <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
+              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertObj={() => { setConverterTarget("product"); setTab("converter"); }} />
+              <MediaField label="Vídeo" kind="video" value={product.videoUrl} onChange={(value) => setProduct({ ...product, videoUrl: value })} />
+              <MediaField label="GIF" kind="image" value={product.gifUrl} onChange={(value) => setProduct({ ...product, gifUrl: value })} />
+              <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} placeholder="Gerado ao sincronizar" /></label>
+              <label className="span-2">Galeria adicional<textarea rows={3} value={product.galleryUrls} onChange={(e) => setProduct({ ...product, galleryUrls: e.target.value })} /></label>
               <label className="span-2">Descrição<textarea required rows={4} value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} /></label>
+              <div className="check-row span-2">
+                <label><input type="checkbox" checked={product.featured} onChange={(e) => setProduct({ ...product, featured: e.target.checked })} /> Destaque</label>
+                <label><input type="checkbox" checked={product.published} onChange={(e) => setProduct({ ...product, published: e.target.checked })} /> Publicado</label>
+              </div>
             </div>
-            <button className="btn btn-primary" type="submit">Publicar produto</button>
+            <button className="btn btn-primary" type="submit">{editingProductId ? "Salvar produto" : "Publicar produto"}</button>
           </form>
 
           <section className="control-list glass-panel">
-            <div className="form-heading"><div><span className="section-eyebrow">CATÁLOGO</span><h2>Produtos cadastrados</h2></div></div>
+            <div className="form-heading">
+              <div><span className="section-eyebrow">CATÁLOGO + DISCORD</span><h2>Produtos cadastrados</h2></div>
+            </div>
+            <label className="channel-picker">Canal para anúncios
+              <select value={announceChannelId} onChange={(e) => setAnnounceChannelId(e.target.value)}>
+                <option value="">Selecione um canal</option>
+                {(state.discord?.channels || []).map((channel) => <option key={channel.id} value={channel.id}>#{channel.name}</option>)}
+              </select>
+            </label>
             {state.products.length ? state.products.map((item) => (
-              <div className="control-row" key={item.id}>
+              <div className="control-row product-control-row" key={item.id}>
                 <div>{item.coverUrl ? <img src={item.coverUrl} alt="" /> : <span className="row-placeholder">SK</span>}</div>
-                <div className="control-row-copy"><strong>{item.name}</strong><span>{item.published ? "Publicado" : "Oculto"} · R$ {(item.priceCents / 100).toFixed(2).replace(".", ",")}</span></div>
-                <button type="button" onClick={() => void toggleProduct(item)}>{item.published ? "Ocultar" : "Publicar"}</button>
-                <button type="button" className="danger" onClick={() => void removeProduct(item.id)}>Excluir</button>
+                <div className="control-row-copy">
+                  <strong>{item.name}</strong>
+                  <span>{item.published ? "Publicado" : "Oculto"} · R$ {(item.priceCents / 100).toFixed(2).replace(".", ",")} · {item.botProductId ? "Bot sincronizado" : "Bot pendente"}</span>
+                </div>
+                <div className="control-row-actions">
+                  <button type="button" onClick={() => editProduct(item)}>Editar</button>
+                  <button type="button" onClick={() => void syncBot(item.id)}>Sincronizar bot</button>
+                  <button type="button" onClick={() => void announce(item.id)} disabled={!announceChannelId}>Anunciar</button>
+                  <button type="button" onClick={() => void toggleProduct(item)}>{item.published ? "Ocultar" : "Publicar"}</button>
+                  <a href={`/products/${item.id}`} target="_blank" rel="noreferrer">Abrir</a>
+                  <button type="button" className="danger" onClick={() => void removeProduct(item.id)}>Excluir</button>
+                </div>
               </div>
             )) : <p className="muted">Nenhum produto cadastrado.</p>}
           </section>
@@ -422,7 +535,7 @@ export default function ControlPage() {
           <section className="upload-zone glass-panel">
             <span className="section-eyebrow">BIBLIOTECA</span>
             <h2>Mídia e arquivos-fonte</h2>
-            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. BLEND, OBJ, FBX e PSD são guardados como fonte privada. OBJ pode ser convertido para GLB na aba Conversor 3D.</p>
+            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. BLEND, OBJ, FBX e PSD ficam privados; a Central pode gerar GLB/preview público sem expor o original.</p>
             <div className="upload-actions">
               <label className="btn btn-primary file-button">
                 {uploading ? "Enviando..." : "Selecionar arquivo"}
@@ -433,12 +546,13 @@ export default function ControlPage() {
           </section>
 
           <div className="asset-grid">
-            {(state.assets || []).map((asset: StudioAsset) => (
+            {(state.assets || []).map((asset) => (
               <article className="asset-card glass-panel" key={asset.id}>
                 <div className="asset-icon">{asset.ext.toUpperCase()}</div>
                 <strong>{asset.originalName}</strong>
-                <span>{asset.visibility === "public" ? "Público" : "Privado"} · {bytes(asset.size)}</span>
+                <span>{asset.visibility === "public" ? "Público" : "Privado"} · {bytes(asset.size)}{asset.generated ? " · Gerado" : ""}</span>
                 {asset.publicUrl && <code>{asset.publicUrl}</code>}
+                {sourceAsset(asset) && <button className="btn btn-outline compact asset-process" type="button" onClick={() => void processAsset(asset)}>{asset.ext === "psd" ? "Gerar preview" : "Converter para GLB"}</button>}
               </article>
             ))}
           </div>
@@ -452,11 +566,11 @@ export default function ControlPage() {
             if (converterTarget === "product") {
               setProduct((current) => ({ ...current, modelUrl: url }));
               setTab("products");
-              flash("GLB inserido automaticamente no novo produto.");
+              flash("GLB inserido automaticamente no produto.");
             } else {
               setProject((current) => ({ ...current, modelUrl: url }));
               setTab("portfolio");
-              flash("GLB inserido automaticamente no novo projeto.");
+              flash("GLB inserido automaticamente no projeto.");
             }
           }}
         />
@@ -472,18 +586,23 @@ export default function ControlPage() {
           <section className="integration-card glass-panel">
             <span className="section-eyebrow">BOT STUDIO K</span>
             <h2>{state.discord?.botConnected ? "Online" : "Offline"}</h2>
-            <p>A Central só é liberada para membros que possuam cargos incluídos nos grupos Staff ou High Staff configurados no bot. Permissões de Administrator ou Manage Server, sozinhas, não liberam acesso.</p>
+            <p>Produtos podem ser sincronizados com a loja do bot e publicados em um canal do Discord diretamente pela Central.</p>
           </section>
           <section className="integration-card glass-panel">
-            <span className="section-eyebrow">VIEWER 3D</span>
-            <h2>GLB / GLTF</h2>
-            <p>O site já aceita rotação 360°, zoom, auto-rotação, reset e tela cheia para modelos publicados.</p>
+            <span className="section-eyebrow">PROCESSAMENTO 3D</span>
+            <h2>BLEND · FBX · OBJ → GLB</h2>
+            <p>Arquivos-fonte ficam privados no backend. O navegador recebe somente a versão GLB preparada para o viewer 360°.</p>
             <ModelStage compact />
+          </section>
+          <section className="integration-card glass-panel">
+            <span className="section-eyebrow">PSD</span>
+            <h2>Preview automático</h2>
+            <p>O PSD original permanece privado e uma imagem de preview é gerada para exibição pública.</p>
           </section>
           <section className="integration-card glass-panel disabled-integration">
             <span className="section-eyebrow">CLOTH TOOL STUDIO K</span>
             <h2>Reservado para a última etapa</h2>
-            <p>A integração com o aplicativo permanece isolada até site, Central, mídia, OAuth e bot estarem estabilizados.</p>
+            <p>A integração direta com o aplicativo continua isolada até o restante do ecossistema estar validado em produção.</p>
           </section>
         </div>
       )}
