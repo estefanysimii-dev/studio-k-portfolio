@@ -37,6 +37,9 @@ export type StudioSite = {
   defaultAnnouncementChannelId: string;
   autoAnnounceProducts: boolean;
   adminRoleIds: string[];
+  memberDiscountPercent: number;
+  memberBenefitTitle: string;
+  memberBenefitDescription: string;
 };
 
 export type RadioConfig = {
