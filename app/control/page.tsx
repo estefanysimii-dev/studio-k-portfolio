@@ -493,6 +493,41 @@ export default function ControlPage() {
             <label>Background Home<input value={siteDraft.homeBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, homeBackgroundUrl: e.target.value })} /></label>
             <label>Background Central<input value={siteDraft.controlBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, controlBackgroundUrl: e.target.value })} /></label>
             <label>Convite Discord<input value={siteDraft.discordInviteUrl} onChange={(e) => setSiteDraft({ ...siteDraft, discordInviteUrl: e.target.value })} placeholder="https://discord.gg/..." /></label>
+
+            <div className="span-2 member-access-settings">
+              <div className="member-access-settings-head">
+                <span className="section-eyebrow">ACESSO DE MEMBRO · DISCORD</span>
+                <strong>Benefícios exibidos no card do Discord</strong>
+                <small>Promoções e novidades são puxadas automaticamente das campanhas ativas da aba Assistente.</small>
+              </div>
+              <div className="member-access-settings-grid">
+                <label>Desconto de membro (%)
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={1}
+                    value={siteDraft.memberDiscountPercent}
+                    onChange={(e) => setSiteDraft({ ...siteDraft, memberDiscountPercent: Math.min(100, Math.max(0, Number(e.target.value) || 0)) })}
+                  />
+                </label>
+                <label>Benefício em destaque
+                  <input
+                    value={siteDraft.memberBenefitTitle}
+                    onChange={(e) => setSiteDraft({ ...siteDraft, memberBenefitTitle: e.target.value })}
+                    placeholder="Ex.: Drops e condições exclusivas"
+                  />
+                </label>
+                <label className="span-2">Descrição do benefício
+                  <textarea
+                    rows={3}
+                    value={siteDraft.memberBenefitDescription}
+                    onChange={(e) => setSiteDraft({ ...siteDraft, memberBenefitDescription: e.target.value })}
+                    placeholder="Explique de forma curta o que a pessoa libera ao conectar a conta."
+                  />
+                </label>
+              </div>
+            </div>
           </div>
           <RadioSettings value={siteDraft.radio} onChange={radio => setSiteDraft({ ...siteDraft, radio })} />
         </form>
