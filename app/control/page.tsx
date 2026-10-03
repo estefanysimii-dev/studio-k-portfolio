@@ -1,6 +1,7 @@
 "use client";
 import RadioSettings from '@/components/radio-settings';
 import AssistantSettings from '@/components/assistant-settings';
+import DropSettings from '@/components/drop-settings';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -11,7 +12,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "assistant" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "assistant" | "drops" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 type ItemDraft = {
   name: string;
@@ -460,6 +461,7 @@ export default function ControlPage() {
           ["overview", "Visão geral"],
           ["site", "Site"],
           ["assistant", "Assistente"],
+          ["drops", "Drops"],
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
@@ -561,6 +563,17 @@ export default function ControlPage() {
           value={siteDraft.assistant}
           onChange={(assistant) => setSiteDraft({ ...siteDraft, assistant })}
           onSave={() => void saveAssistantSettings()}
+        />
+      )}
+
+      {tab === "drops" && (
+        <DropSettings
+          drops={state.drops || []}
+          products={state.products || []}
+          channels={state.discord?.channels || []}
+          onChanged={async () => { await Promise.all([refresh(), refreshPublic()]); }}
+          onNotice={flash}
+          onError={setError}
         />
       )}
 
