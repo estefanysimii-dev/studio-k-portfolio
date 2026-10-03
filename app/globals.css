@@ -2208,3 +2208,91 @@ button { font: inherit; }
   .studio-shell::before { animation: none!important; }
   .home-banner-image { transition: none!important; }
 }
+
+
+/* ===== Studio K · Discord product announcement automation ===== */
+.announcement-automation {
+  display: grid;
+  gap: 13px;
+  margin: -2px 0 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(139,44,255,.13), transparent 38%),
+    rgba(8,5,14,.68);
+  border: 1px solid rgba(167,84,255,.20);
+}
+.announcement-automation-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.announcement-automation-head strong {
+  display: block;
+  margin-top: 4px;
+  font: 700 14px/1.25 "Sora", Arial, sans-serif;
+}
+.automation-status {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 800;
+  border: 1px solid rgba(255,255,255,.10);
+}
+.automation-status.online {
+  color: #83eaaa;
+  background: rgba(60,203,112,.08);
+  border-color: rgba(75,223,126,.18);
+}
+.automation-status.offline {
+  color: #ff9daf;
+  background: rgba(224,70,96,.08);
+  border-color: rgba(255,91,118,.17);
+}
+.automation-toggle {
+  display: flex!important;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(164,83,255,.11);
+  cursor: pointer;
+}
+.automation-toggle input {
+  width: 16px!important;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #8b2cff;
+}
+.automation-toggle span { display: grid; gap: 4px; }
+.automation-toggle strong {
+  color: #f4eff8;
+  font-size: 11px;
+}
+.automation-toggle small,
+.manual-announcement-channel small {
+  color: #8f879a;
+  font-size: 9px;
+  line-height: 1.5;
+}
+.automation-save { justify-self: start; }
+.channel-empty {
+  padding: 11px 12px;
+  border-radius: 10px;
+  color: #c8becf;
+  background: rgba(255,163,72,.055);
+  border: 1px solid rgba(255,175,82,.15);
+  font-size: 9px;
+  line-height: 1.55;
+}
+.channel-empty strong { color: #f0d8ff; }
+.manual-announcement-channel {
+  margin-bottom: 16px;
+}
+.manual-announcement-channel small {
+  display: block;
+  margin-top: 6px;
+}

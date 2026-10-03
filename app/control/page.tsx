@@ -138,7 +138,13 @@ export default function ControlPage() {
       const next = await studioApi.controlState();
       setState(next);
       setSiteDraft(next.site);
-      if (!announceChannelId && next.discord?.channels?.[0]?.id) setAnnounceChannelId(next.discord.channels[0].id);
+      const channels = next.discord?.channels || [];
+      setAnnounceChannelId((current) => {
+        if (current && channels.some((channel) => channel.id === current)) return current;
+        const preferred = next.site.defaultAnnouncementChannelId;
+        if (preferred && channels.some((channel) => channel.id === preferred)) return preferred;
+        return channels[0]?.id || "";
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível abrir a Central.");
       setState(null);
@@ -173,6 +179,25 @@ export default function ControlPage() {
     }
   };
 
+  const saveAnnouncementSettings = async () => {
+    if (!siteDraft) return;
+    if (siteDraft.autoAnnounceProducts && !siteDraft.defaultAnnouncementChannelId) {
+      setError("Selecione um canal padrão antes de ativar anúncios automáticos.");
+      return;
+    }
+    try {
+      setError("");
+      await studioApi.saveSite(siteDraft);
+      setAnnounceChannelId(siteDraft.defaultAnnouncementChannelId || announceChannelId);
+      flash(siteDraft.autoAnnounceProducts
+        ? "Automação salva. Novos produtos publicados serão anunciados automaticamente."
+        : "Canal padrão de anúncios salvo.");
+      await Promise.all([refresh(), refreshPublic()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível salvar a automação de anúncios.");
+    }
+  };
+
   const saveProject = async (event: FormEvent) => {
     event.preventDefault();
     try {
@@ -201,12 +226,16 @@ export default function ControlPage() {
         priceCents: normalized ? Math.round(Number(normalized) * 100) : 0,
         botProductId: product.botProductId || ""
       };
-      if (editingProductId) {
-        await studioApi.updateProduct(editingProductId, body);
-        flash("Produto atualizado.");
+      const result = editingProductId
+        ? await studioApi.updateProduct(editingProductId, body)
+        : await studioApi.createProduct(body);
+
+      if (result._announcement?.attempted) {
+        flash(result._announcement.ok
+          ? `${editingProductId ? "Produto atualizado" : "Produto publicado"} e anunciado automaticamente no Discord.`
+          : `Produto salvo, mas o anúncio automático falhou: ${result._announcement.error || "verifique o canal e as permissões do bot."}`);
       } else {
-        await studioApi.createProduct(body);
-        flash("Produto publicado na loja.");
+        flash(editingProductId ? "Produto atualizado." : "Produto publicado na loja.");
       }
       setProduct(emptyProduct);
       setEditingProductId("");
@@ -240,8 +269,20 @@ export default function ControlPage() {
   };
 
   const toggleProduct = async (item: StudioProduct) => {
-    await studioApi.updateProduct(item.id, { ...productPayload(item), published: !item.published });
-    await Promise.all([refresh(), refreshPublic()]);
+    try {
+      setError("");
+      const result = await studioApi.updateProduct(item.id, { ...productPayload(item), published: !item.published });
+      if (!item.published && result._announcement?.attempted) {
+        flash(result._announcement.ok
+          ? "Produto publicado e anunciado automaticamente no Discord."
+          : `Produto publicado, mas o anúncio automático falhou: ${result._announcement.error || "verifique as configurações."}`);
+      } else {
+        flash(item.published ? "Produto ocultado." : "Produto publicado.");
+      }
+      await Promise.all([refresh(), refreshPublic()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível alterar a publicação do produto.");
+    }
   };
 
   const removeItem = async (id: string) => {
@@ -503,11 +544,61 @@ export default function ControlPage() {
             <div className="form-heading">
               <div><span className="section-eyebrow">CATÁLOGO + DISCORD</span><h2>Produtos cadastrados</h2></div>
             </div>
-            <label className="channel-picker">Canal para anúncios
+            <div className="announcement-automation">
+              <div className="announcement-automation-head">
+                <div>
+                  <span className="section-eyebrow">AUTOMAÇÃO DE ANÚNCIOS</span>
+                  <strong>Canal padrão da loja</strong>
+                </div>
+                <span className={state.discord?.botConnected ? "automation-status online" : "automation-status offline"}>
+                  {state.discord?.botConnected ? "Bot online" : "Bot offline"}
+                </span>
+              </div>
+
+              <label className="channel-picker">Canal padrão
+                <select
+                  value={siteDraft?.defaultAnnouncementChannelId || ""}
+                  onChange={(e) => {
+                    const channelId = e.target.value;
+                    setSiteDraft((current) => current ? { ...current, defaultAnnouncementChannelId: channelId } : current);
+                    if (channelId) setAnnounceChannelId(channelId);
+                  }}
+                >
+                  <option value="">Selecione um canal</option>
+                  {(state.discord?.channels || []).map((channel) => <option key={channel.id} value={channel.id}>#{channel.name}</option>)}
+                </select>
+              </label>
+
+              <label className="automation-toggle">
+                <input
+                  type="checkbox"
+                  checked={!!siteDraft?.autoAnnounceProducts}
+                  disabled={!siteDraft?.defaultAnnouncementChannelId}
+                  onChange={(e) => setSiteDraft((current) => current ? { ...current, autoAnnounceProducts: e.target.checked } : current)}
+                />
+                <span>
+                  <strong>Anunciar automaticamente ao publicar</strong>
+                  <small>Ao criar um produto já publicado, ou transformar um produto oculto em publicado, o bot sincroniza o produto e envia o anúncio no canal padrão.</small>
+                </span>
+              </label>
+
+              <button className="btn btn-outline compact automation-save" type="button" onClick={() => void saveAnnouncementSettings()}>
+                Salvar automação
+              </button>
+
+              {(state.discord?.channels || []).length === 0 && (
+                <div className="channel-empty">
+                  Nenhum canal compatível encontrado. O bot precisa estar no servidor e ter <strong>Ver canal</strong>, <strong>Enviar mensagens</strong> e <strong>Inserir links</strong> em um canal de texto ou anúncios.
+                </div>
+              )}
+            </div>
+
+            <label className="channel-picker manual-announcement-channel">Canal para anúncio manual
               <select value={announceChannelId} onChange={(e) => setAnnounceChannelId(e.target.value)}>
                 <option value="">Selecione um canal</option>
                 {(state.discord?.channels || []).map((channel) => <option key={channel.id} value={channel.id}>#{channel.name}</option>)}
               </select>
+              <small>Usado apenas quando você clicar em “Anunciar”. O canal padrão acima continua salvo para automações.</small>
             </label>
             {state.products.length ? state.products.map((item) => (
               <div className="control-row product-control-row" key={item.id}>

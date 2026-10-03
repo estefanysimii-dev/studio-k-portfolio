@@ -1,4 +1,15 @@
-import type { StudioCheckout, StudioControlState, StudioOrder, StudioPublicState } from "./studio-types";
+import type { StudioCheckout, StudioControlState, StudioOrder, StudioProduct, StudioPublicState } from "./studio-types";
+
+export type StudioProductMutation = StudioProduct & {
+  _announcement?: {
+    attempted: boolean;
+    ok: boolean;
+    error?: string;
+    messageId?: string;
+    botProductId?: string;
+    channelId?: string;
+  };
+};
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/studio/${path.replace(/^\//, "")}`, {
@@ -29,9 +40,9 @@ export const studioApi = {
   deleteItem: (id: string) =>
     request(`control/items/${encodeURIComponent(id)}`, { method: "DELETE" }),
   createProduct: (body: unknown) =>
-    request("control/products", { method: "POST", body: JSON.stringify(body) }),
+    request<StudioProductMutation>("control/products", { method: "POST", body: JSON.stringify(body) }),
   updateProduct: (id: string, body: unknown) =>
-    request(`control/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
+    request<StudioProductMutation>(`control/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteProduct: (id: string) =>
     request(`control/products/${encodeURIComponent(id)}`, { method: "DELETE" }),
   syncBotProduct: (id: string) =>
