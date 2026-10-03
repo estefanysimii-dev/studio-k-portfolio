@@ -61,6 +61,7 @@ export default function PortfolioPage() {
             modelUrl={selected.modelUrl}
             compareModelUrl={selected.compareModelUrl}
             hotspots={selected.viewerHotspots}
+            viewerVariants={selected.viewerVariants}
             posterUrl={selected.coverUrl || selected.gifUrl}
             title={selected.name}
             compact
