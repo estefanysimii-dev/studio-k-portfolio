@@ -2441,9 +2441,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   }
 
   .sidebar > .studio-radio.has-spectrum {
+    border-color: rgba(177,96,255,calc(.28 + var(--treble) * .58));
     box-shadow:
-      0 0 calc(8px + var(--bass) * 34px) rgba(139,44,255,.33),
-      inset 0 1px 0 rgba(255,255,255,.025);
+      0 0 calc(9px + var(--bass) * 48px) rgba(139,44,255,calc(.22 + var(--bass) * .30)),
+      0 0 calc(4px + var(--treble) * 20px) rgba(210,162,255,calc(.08 + var(--treble) * .22)),
+      inset 0 1px 0 rgba(255,255,255,.035);
+  }
+
+  .sidebar > .studio-radio.has-spectrum .radio-bars i:nth-child(odd) {
+    height: calc(4px + var(--bass) * 15px);
+    box-shadow: 0 0 calc(2px + var(--bass) * 8px) rgba(139,44,255,.72);
+  }
+
+  .sidebar > .studio-radio.has-spectrum .radio-bars i:nth-child(even) {
+    height: calc(4px + var(--treble) * 15px);
+    box-shadow: 0 0 calc(2px + var(--treble) * 8px) rgba(210,162,255,.72);
   }
 
   .sidebar > .studio-radio.is-playing:not(.has-spectrum) {

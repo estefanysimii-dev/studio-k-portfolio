@@ -89,32 +89,65 @@ export default function StudioRadio() {
       }
     }
     function analyze() {
-      if (!audio || !radio!.analyze || context) return;
+      if (!audio || !radio!.analyze) return;
+      if (context && analyser) {
+        if (context.state === 'suspended') void context.resume().catch(() => {});
+        return;
+      }
       try {
         context = new AudioContext();
         const node = context.createMediaElementSource(audio);
-        analyser = context.createAnalyser(); analyser.fftSize = 1024; analyser.smoothingTimeConstant = 0.75;
-        node.connect(analyser); analyser.connect(context.destination);
+        analyser = context.createAnalyser();
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.68;
+        analyser.minDecibels = -92;
+        analyser.maxDecibels = -12;
+        node.connect(analyser);
+        analyser.connect(context.destination);
+
         const bins = new Uint8Array(analyser.frequencyBinCount);
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
         const draw = () => {
           if (!active || !analyser || !context) return;
           analyser.getByteFrequencyData(bins);
+
           const energy = (low: number, high: number) => {
-            const start = Math.floor(low / (context!.sampleRate / analyser!.fftSize));
-            const end = Math.min(bins.length, Math.ceil(high / (context!.sampleRate / analyser!.fftSize)));
-            let sum = 0; for (let i = start; i < end; i++) sum += bins[i];
+            const hzPerBin = context!.sampleRate / analyser!.fftSize;
+            const start = Math.max(0, Math.floor(low / hzPerBin));
+            const end = Math.min(bins.length, Math.ceil(high / hzPerBin));
+            let sum = 0;
+            for (let i = start; i < end; i++) sum += bins[i];
             return sum / Math.max(1, end - start) / 255;
           };
+
           if (!reduceMotion.matches) {
-            panel.current?.style.setProperty('--bass', String(audio!.paused ? 0 : energy(40, 250)));
-            panel.current?.style.setProperty('--treble', String(audio!.paused ? 0 : energy(2000, 10000)));
+            const paused = audio!.paused || context.state !== 'running';
+            const rawBass = paused ? 0 : energy(35, 240);
+            const rawTreble = paused ? 0 : energy(2200, 11000);
+            // Music masters usually sit well below 1.0 in averaged FFT energy.
+            // Expand the useful range so the glow visibly follows kick/bass and hats/vocals.
+            const bass = clamp01((rawBass - 0.035) * 3.6);
+            const treble = clamp01((rawTreble - 0.018) * 4.4);
+            panel.current?.style.setProperty('--bass', bass.toFixed(4));
+            panel.current?.style.setProperty('--treble', treble.toFixed(4));
           }
           frame = requestAnimationFrame(draw);
         };
-        setSpectrum(true); draw();
-      } catch { setSpectrum(false); }
+
+        setSpectrum(true);
+        void context.resume().catch(() => {});
+        draw();
+      } catch {
+        setSpectrum(false);
+      }
     }
+
+    const resumeSpectrum = () => {
+      if (!active || !radio!.analyze || !audio) return;
+      analyze();
+      if (context?.state === 'suspended') void context.resume().catch(() => {});
+    };
 
     actions.current = {
       play: () => {
@@ -131,13 +164,23 @@ export default function StudioRadio() {
     const visible = () => { if (document.visibilityState === 'visible') { void updateClock().then(() => { if (active && wanted) { align(true); void playAudio(); } }); } };
     document.addEventListener('visibilitychange', visible);
     window.addEventListener('pageshow', visible);
+    // Browsers can allow media autoplay while keeping Web Audio suspended.
+    // Resume the analyser on the visitor's first interaction so real FFT data starts immediately.
+    document.addEventListener('pointerdown', resumeSpectrum, { passive: true });
+    document.addEventListener('keydown', resumeSpectrum);
 
     {
       audio = new Audio();
       host.current?.replaceChildren(audio);
       if (radio.analyze) audio.crossOrigin = 'anonymous';
       audio.preload = 'metadata'; audio.volume = initialVolume;
-      audio.onplaying = () => { if (active) { setPlaying(true); setMessage('Ao vivo'); } };
+      audio.onplaying = () => {
+        if (!active) return;
+        setPlaying(true);
+        setMessage('Ao vivo');
+        // Also initialize the analyser for autoplay/resume paths, not only when Play is clicked.
+        resumeSpectrum();
+      };
       audio.onpause = () => { if (active) setPlaying(false); };
       audio.onwaiting = () => { if (active) { setPlaying(false); setMessage('Carregando transmissão…'); } };
       audio.onerror = () => { if (active) { setPlaying(false); setMessage('Fonte indisponível. Verifique o áudio e o CORS na Central.'); } };
@@ -169,7 +212,10 @@ export default function StudioRadio() {
     return () => {
       active = false; wanted = false; ++attempt; actions.current = { play: () => {}, pause: () => {}, live: () => {}, volume: () => {} };
       timers.forEach(clearInterval); cancelAnimationFrame(frame);
-      document.removeEventListener('visibilitychange', visible); window.removeEventListener('pageshow', visible);
+      document.removeEventListener('visibilitychange', visible);
+      window.removeEventListener('pageshow', visible);
+      document.removeEventListener('pointerdown', resumeSpectrum);
+      document.removeEventListener('keydown', resumeSpectrum);
       hls?.destroy();
       if (audio) { audio.onplaying = audio.onpause = audio.onwaiting = audio.onerror = audio.onloadedmetadata = audio.onended = null; audio.pause(); audio.removeAttribute('src'); audio.load(); }
       void context?.close(); panel.current?.style.removeProperty('--bass'); panel.current?.style.removeProperty('--treble');
