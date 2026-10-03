@@ -29,7 +29,7 @@ jobs:
       - run: npm run build
         env:
           STUDIO_BACKEND_URL: https://studiokbot.up.railway.app
-          STUDIO_PUBLIC_URL: https://studiokoficial.netlify.app
+          STUDIO_PUBLIC_URL: https://studiokatelier.infinityfreeapp.com
 
       - name: Package deploy source
         uses: actions/upload-artifact@v4
@@ -49,3 +49,11 @@ jobs:
             README.md
           if-no-files-found: error
           retention-days: 1
+
+      - name: Deploy InfinityFree via FTP
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          INFINITYFREE_FTP_HOST: ${{ secrets.INFINITYFREE_FTP_HOST }}
+          INFINITYFREE_FTP_USER: ${{ secrets.INFINITYFREE_FTP_USER }}
+          INFINITYFREE_FTP_PASSWORD: ${{ secrets.INFINITYFREE_FTP_PASSWORD }}
+        run: python .github/scripts/deploy_infinityfree.py
