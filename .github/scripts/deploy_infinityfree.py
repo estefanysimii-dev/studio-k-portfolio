@@ -59,10 +59,35 @@ def upload_tree(ftp: ftplib.FTP) -> tuple[int, int]:
             with file_path.open("rb") as handle:
                 ftp.storbinary(f"STOR {file_path.name}", handle, blocksize=1024 * 64)
         except ftplib.error_perm as exc:
-            if relative == ".htaccess" and str(exc).startswith("553"):
-                print("warning: InfinityFree recusou sobrescrever .htaccess; mantendo o arquivo já existente em /htdocs.")
-                continue
-            raise
+            if not str(exc).startswith("553"):
+                raise
+
+            # InfinityFree can keep older files with ownership/permissions that
+            # allow deleting but not overwriting. Replace those atomically by
+            # deleting the old file and retrying the upload.
+            try:
+                ftp.delete(file_path.name)
+                print(f"replacing protected remote file: {relative}")
+                with file_path.open("rb") as handle:
+                    ftp.storbinary(f"STOR {file_path.name}", handle, blocksize=1024 * 64)
+            except ftplib.error_perm:
+                # If the remote file is identical, keeping it is safe.
+                try:
+                    remote_size = ftp.size(file_path.name)
+                except ftplib.all_errors:
+                    remote_size = None
+
+                if remote_size == size:
+                    print(f"unchanged protected remote file kept: {relative}")
+                    continue
+
+                # .htaccess may be protected by the host. It was already
+                # validated during the initial InfinityFree publication.
+                if relative == ".htaccess":
+                    print("warning: InfinityFree recusou substituir .htaccess; mantendo o arquivo existente em /htdocs.")
+                    continue
+
+                raise
 
         files_uploaded += 1
         bytes_uploaded += size
