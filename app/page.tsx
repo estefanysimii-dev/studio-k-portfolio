@@ -28,7 +28,7 @@ export default function HomePage() {
         <div className="home-banner-shade" />
         <div className="home-banner-copy">
           <span>STUDIO K · FIVEM DESIGN</span>
-          <strong>Sua identidade. Sua cidade.</strong>
+          <strong>{site.brandTagline || "Sua identidade. Sua cidade."}</strong>
         </div>
       </section>
 
