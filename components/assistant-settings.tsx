@@ -64,7 +64,7 @@ export default function AssistantSettings({ value, onChange, onSave }: Props) {
             <span className="section-eyebrow">ASSISTENTE DO SITE</span>
             <h2>Kiki · Assistente Studio K</h2>
             <p>
-              A Kiki conversa com quem estiver navegando e alterna as falas a cada 5 segundos.
+              A Kiki conversa com quem estiver navegando e alterna as falas conforme o intervalo configurado abaixo.
               Promoções, combos, novidades e destaques geram frases automaticamente.
             </p>
           </div>
@@ -92,6 +92,53 @@ export default function AssistantSettings({ value, onChange, onSave }: Props) {
               placeholder="/studio-assets/studio-k-mascot.webp"
             />
           </label>
+        </div>
+
+        <div className="assistant-timing">
+          <div className="assistant-timing-copy">
+            <span className="section-eyebrow">TEMPO DOS POP-UPS</span>
+            <strong>Intervalo entre as falas</strong>
+            <small>Defina de quanto em quanto tempo a Kiki troca de mensagem no site.</small>
+          </div>
+
+          <div className="assistant-timing-control">
+            <input
+              aria-label="Intervalo dos pop-ups em segundos"
+              type="range"
+              min={5}
+              max={120}
+              step={1}
+              value={config.intervalSeconds}
+              onChange={(event) => patch({ intervalSeconds: Number(event.target.value) })}
+            />
+            <label>
+              <input
+                type="number"
+                min={5}
+                max={120}
+                step={1}
+                value={config.intervalSeconds}
+                onChange={(event) => {
+                  const value = Math.min(120, Math.max(5, Number(event.target.value) || 5));
+                  patch({ intervalSeconds: value });
+                }}
+              />
+              <span>segundos</span>
+            </label>
+          </div>
+
+          <div className="assistant-timing-presets" aria-label="Atalhos de tempo">
+            {[5, 10, 15, 30, 60].map((seconds) => (
+              <button
+                type="button"
+                key={seconds}
+                className={config.intervalSeconds === seconds ? "active" : ""}
+                onClick={() => patch({ intervalSeconds: seconds })}
+              >
+                {seconds}s
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
