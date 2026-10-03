@@ -25,6 +25,7 @@ type ItemDraft = {
   modelUrl: string;
   compareModelUrl: string;
   viewerHotspots: string;
+  viewerVariants: string;
   videoUrl: string;
   gifUrl: string;
   galleryUrls: string;
@@ -46,6 +47,7 @@ const emptyProject: ItemDraft = {
   modelUrl: "",
   compareModelUrl: "",
   viewerHotspots: "",
+  viewerVariants: "",
   videoUrl: "",
   gifUrl: "",
   galleryUrls: "",
@@ -74,6 +76,22 @@ const parseHotspots = (value: string) =>
     };
   }).filter((spot): spot is NonNullable<typeof spot> => Boolean(spot));
 
+const variantText = (variants: StudioItem["viewerVariants"] = []) =>
+  variants.map((variant) => `${variant.label} | ${variant.colorHex || ""} | ${variant.modelUrl} | ${variant.posterUrl || ""}`).join("\n");
+const parseViewerVariants = (value: string) =>
+  value.split("\n").map((line, index) => {
+    const [label = "", colorHex = "", modelUrl = "", posterUrl = ""] = line.split("|").map((part) => part.trim());
+    if (!label || !modelUrl) return null;
+    const normalizedColor = /^#[0-9a-f]{6}$/i.test(colorHex) ? colorHex : "";
+    return {
+      id: `variant-${index + 1}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36) || "style"}`,
+      label,
+      colorHex: normalizedColor,
+      modelUrl,
+      posterUrl
+    };
+  }).filter((variant): variant is NonNullable<typeof variant> => Boolean(variant));
+
 function itemDraft(item: StudioItem): ItemDraft {
   return {
     name: item.name,
@@ -84,6 +102,7 @@ function itemDraft(item: StudioItem): ItemDraft {
     modelUrl: item.modelUrl || "",
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: hotspotText(item.viewerHotspots || []),
+    viewerVariants: variantText(item.viewerVariants || []),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: (item.galleryUrls || []).join("\n"),
@@ -102,6 +121,7 @@ function itemPayload(item: StudioItem) {
     modelUrl: item.modelUrl || "",
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: item.viewerHotspots || [],
+    viewerVariants: item.viewerVariants || [],
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: item.galleryUrls || [],
@@ -120,6 +140,7 @@ function draftPayload(item: ItemDraft) {
     modelUrl: item.modelUrl || "",
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: parseHotspots(item.viewerHotspots),
+    viewerVariants: parseViewerVariants(item.viewerVariants),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: list(item.galleryUrls),
@@ -623,6 +644,10 @@ export default function ControlPage() {
                 <textarea rows={3} value={project.viewerHotspots} onChange={(e) => setProject({ ...project, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Manga emissiva | 0.12 0.84 0.05 | 0 1 0"} />
                 <small>Um hotspot por linha. A posição e normal usam as coordenadas do GLB.</small>
               </label>
+              <label className="span-2">Cores / variantes 3D
+                <textarea rows={4} value={project.viewerVariants} onChange={(e) => setProject({ ...project, viewerVariants: e.target.value })} placeholder={"Nome | #RRGGBB | URL do GLB | URL da capa (opcional)\nEx.: Roxo | #8B2CFF | /portfolio-assets/modelo-roxo.glb | /portfolio-assets/roxo.webp"} />
+                <small>Uma variante por linha. Cada opção pode usar um GLB próprio, sem depender das variantes internas do arquivo.</small>
+              </label>
               <MediaField label="Vídeo" kind="video" value={project.videoUrl} onChange={(value) => setProject({ ...project, videoUrl: value })} />
               <MediaField label="GIF" kind="image" value={project.gifUrl} onChange={(value) => setProject({ ...project, gifUrl: value })} />
               <label className="span-2">Galeria adicional<textarea rows={3} value={project.galleryUrls} onChange={(e) => setProject({ ...project, galleryUrls: e.target.value })} placeholder="Uma URL por linha ou separada por vírgula" /></label>
@@ -671,6 +696,10 @@ export default function ControlPage() {
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={product.viewerHotspots} onChange={(e) => setProduct({ ...product, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Material neon | 0.15 0.90 0.04 | 0 1 0"} />
                 <small>Variantes de material/cor incorporadas no GLB aparecem automaticamente no viewer.</small>
+              </label>
+              <label className="span-2">Cores / variantes 3D
+                <textarea rows={4} value={product.viewerVariants} onChange={(e) => setProduct({ ...product, viewerVariants: e.target.value })} placeholder={"Nome | #RRGGBB | URL do GLB | URL da capa (opcional)\nEx.: Preto | #121212 | /portfolio-assets/produto-preto.glb | /portfolio-assets/preto.webp"} />
+                <small>Essas opções aparecem como swatches no viewer. Variantes internas do GLB continuam funcionando em paralelo.</small>
               </label>
               <MediaField label="Vídeo" kind="video" value={product.videoUrl} onChange={(value) => setProduct({ ...product, videoUrl: value })} />
               <MediaField label="GIF" kind="image" value={product.gifUrl} onChange={(value) => setProduct({ ...product, gifUrl: value })} />
