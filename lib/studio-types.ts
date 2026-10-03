@@ -96,6 +96,33 @@ export type StudioAsset = {
   generated?: boolean;
 };
 
+export type StudioMemberBadge = {
+  id: string;
+  label: string;
+  icon: string;
+};
+
+export type StudioMemberProfile = {
+  studioId: string;
+  joinedAt: string;
+  level: number;
+  xp: number;
+  levelFloor: number;
+  nextLevelXp: number;
+  discountPercent: number;
+  badges: StudioMemberBadge[];
+  favorites: { items: string[]; products: string[] };
+  stats: {
+    purchases: number;
+    lifetimeSpend: number;
+    feedbacks: number;
+    favorites: number;
+    tickets: number;
+    openTickets: number;
+  };
+  purchasedProductIds: string[];
+};
+
 export type StudioMe = {
   authenticated: boolean;
   canControl: boolean;
@@ -109,6 +136,8 @@ export type StudioMe = {
     inGuild?: boolean;
     avatar?: string;
   };
+  profile?: StudioMemberProfile;
+  favorites?: { items: string[]; products: string[] };
 };
 
 export type StudioStatus = {
