@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND = process.env.STUDIO_BACKEND_URL || "https://studiokbot.up.railway.app";
+const PUBLIC_ORIGIN = process.env.STUDIO_PUBLIC_URL || "https://studiokoficial.netlify.app";
 
 async function proxy(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;
@@ -12,7 +13,7 @@ async function proxy(req: NextRequest, context: { params: Promise<{ path: string
   const contentType = req.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
   if (token) headers.set("authorization", `Bearer ${token}`);
-  if (!["GET", "HEAD"].includes(req.method)) headers.set("origin", new URL(BACKEND).origin);
+  if (!["GET", "HEAD"].includes(req.method)) headers.set("origin", new URL(PUBLIC_ORIGIN).origin);
 
   const body = ["GET", "HEAD"].includes(req.method) ? undefined : await req.arrayBuffer();
   const upstream = await fetch(target, {
