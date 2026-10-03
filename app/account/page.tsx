@@ -16,6 +16,12 @@ const statusLabel: Record<string, string> = {
   cancelled: "Cancelado",
   expired: "Expirado"
 };
+const rarityLabel: Record<string, string> = {
+  common: "Comum",
+  rare: "Raro",
+  epic: "Épico",
+  legendary: "Lendário"
+};
 
 export default function AccountPage() {
   const { state, refresh } = useStudio();
@@ -23,6 +29,7 @@ export default function AccountPage() {
   const [orders, setOrders] = useState<StudioOrder[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [delivery, setDelivery] = useState<{ id: string; value: string; instructions: string } | null>(null);
+  const [titleBusy, setTitleBusy] = useState("");
   const [error, setError] = useState("");
   const me = state.me;
   const profile = me.profile;
@@ -78,6 +85,19 @@ export default function AccountPage() {
     }
   };
 
+  const equipTitle = async (titleId: string) => {
+    setTitleBusy(titleId);
+    setError("");
+    try {
+      await studioApi.setProfileTitle(titleId);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível equipar este título.");
+    } finally {
+      setTitleBusy("");
+    }
+  };
+
   if (!me.authenticated) {
     return (
       <StudioShell eyebrow="CONTA" title="Minha Conta">
@@ -109,7 +129,7 @@ export default function AccountPage() {
   return (
     <StudioShell eyebrow="CONTA" title="Minha Conta">
       <section className="studio-id-layout">
-        <article className="studio-id-card">
+        <article className={`studio-id-card studio-rank-${profile?.rank?.id || "member"} ${profile?.perks?.some((perk) => perk.id === "neon-aura" && perk.unlocked) ? "has-neon-aura" : ""}`.trim()}>
           <div className="studio-id-card-glow" aria-hidden="true" />
           <div className="studio-id-top">
             <div className="studio-id-brand">
@@ -119,7 +139,7 @@ export default function AccountPage() {
                 <small>IDENTIDADE DIGITAL</small>
               </div>
             </div>
-            <span className="studio-id-status"><i /> ATIVO</span>
+            <span className={`studio-id-status rarity-${profile?.rank?.rarity || "common"}`}><i /> {profile?.rank?.label || "Studio Member"}</span>
           </div>
 
           <div className="studio-id-person">
@@ -129,6 +149,9 @@ export default function AccountPage() {
             <div>
               <h1>{me.user?.name || me.user?.username || "Membro Studio K"}</h1>
               <span>@{me.user?.username || "studio-k"}</span>
+              <small className={`studio-id-equipped-title rarity-text-${profile?.equippedTitle?.rarity || "common"}`}>
+                {profile?.equippedTitle?.label || "Studio K Member"}
+              </small>
             </div>
           </div>
 
@@ -183,7 +206,13 @@ export default function AccountPage() {
             </div>
             <div className="account-badge-row">
               {profile?.badges.length ? profile.badges.map((badge) => (
-                <span className="account-badge" key={badge.id}><i>{badge.icon}</i>{badge.label}</span>
+                <span
+                  className={`account-badge rarity-${badge.rarity || "common"}`}
+                  key={badge.id}
+                  title={badge.description || badge.label}
+                >
+                  <i>{badge.icon}</i>{badge.label}<small>{rarityLabel[badge.rarity] || badge.rarity}</small>
+                </span>
               )) : <span className="muted">Continue explorando o Studio K para desbloquear badges.</span>}
             </div>
           </div>
@@ -196,6 +225,81 @@ export default function AccountPage() {
               </div>
             </div>
           )}
+        </article>
+      </section>
+
+      <section className="account-evolution-grid">
+        <article className="account-evolution-panel glass-panel">
+          <div className="section-mini-head">
+            <span>TÍTULOS EQUIPÁVEIS</span>
+            <small>{profile?.titles?.filter((title) => title.unlocked).length || 0} desbloqueados</small>
+          </div>
+          <p className="account-evolution-copy">Escolha o título que aparece junto ao seu Studio K ID.</p>
+          <div className="account-title-list">
+            {profile?.titles?.map((title) => {
+              const active = profile.equippedTitle?.id === title.id;
+              return (
+                <button
+                  type="button"
+                  key={title.id}
+                  disabled={!title.unlocked || !!titleBusy}
+                  className={`account-title-option rarity-${title.rarity} ${active ? "active" : ""} ${title.unlocked ? "" : "locked"}`.trim()}
+                  onClick={() => void equipTitle(title.id)}
+                  title={title.description}
+                >
+                  <span>{title.label}</span>
+                  <small>{active ? "Equipado" : title.unlocked ? (titleBusy === title.id ? "Equipando..." : rarityLabel[title.rarity]) : "Bloqueado"}</small>
+                </button>
+              );
+            })}
+          </div>
+        </article>
+
+        <article className="account-evolution-panel glass-panel">
+          <div className="section-mini-head">
+            <span>CONQUISTAS</span>
+            <small>{profile?.achievements?.filter((achievement) => achievement.unlocked).length || 0}/{profile?.achievements?.length || 0}</small>
+          </div>
+          <p className="account-evolution-copy">Seu histórico fica ligado ao Studio K ID e não depende do dispositivo.</p>
+          <div className="account-achievement-list">
+            {profile?.achievements?.map((achievement) => (
+              <div className={`account-achievement rarity-${achievement.rarity} ${achievement.unlocked ? "unlocked" : "locked"}`.trim()} key={achievement.id}>
+                <i>{achievement.icon}</i>
+                <div>
+                  <strong>{achievement.label}</strong>
+                  <span>{achievement.description}</span>
+                  <small>
+                    {achievement.unlocked && achievement.unlockedAt
+                      ? `Desbloqueado em ${new Intl.DateTimeFormat("pt-BR").format(new Date(achievement.unlockedAt))}`
+                      : "Ainda bloqueado"}
+                  </small>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="account-evolution-panel glass-panel">
+          <div className="section-mini-head">
+            <span>PERKS DO ECOSSISTEMA</span>
+            <small>{profile?.perks?.filter((perk) => perk.unlocked).length || 0} ativos</small>
+          </div>
+          <p className="account-evolution-copy">Benefícios e efeitos que evoluem com compras, atividade e participação.</p>
+          <div className="account-perk-list">
+            {profile?.perks?.map((perk) => {
+              const progress = Math.max(0, Math.min(100, (perk.progress / Math.max(1, perk.target)) * 100));
+              return (
+                <div className={`account-perk rarity-${perk.rarity} ${perk.unlocked ? "unlocked" : "locked"}`.trim()} key={perk.id}>
+                  <div className="account-perk-head">
+                    <span><i>{perk.icon}</i>{perk.label}</span>
+                    <small>{perk.unlocked ? "ATIVO" : `${perk.progress}/${perk.target}`}</small>
+                  </div>
+                  <p>{perk.description}</p>
+                  <div className="account-perk-progress"><i style={{ width: `${progress}%` }} /></div>
+                </div>
+              );
+            })}
+          </div>
         </article>
       </section>
 
