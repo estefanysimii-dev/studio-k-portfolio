@@ -54,8 +54,15 @@ def upload_tree(ftp: ftplib.FTP) -> tuple[int, int]:
         ensure_dir(ftp, remote_dir)
 
         size = file_path.stat().st_size
-        with file_path.open("rb") as handle:
-            ftp.storbinary(f"STOR {file_path.name}", handle, blocksize=1024 * 64)
+        print(f"uploading: {relative} ({size} bytes)")
+        try:
+            with file_path.open("rb") as handle:
+                ftp.storbinary(f"STOR {file_path.name}", handle, blocksize=1024 * 64)
+        except ftplib.error_perm as exc:
+            if relative == ".htaccess" and str(exc).startswith("553"):
+                print("warning: InfinityFree recusou sobrescrever .htaccess; mantendo o arquivo já existente em /htdocs.")
+                continue
+            raise
 
         files_uploaded += 1
         bytes_uploaded += size
@@ -75,6 +82,7 @@ def main() -> int:
     password = require_env("INFINITYFREE_FTP_PASSWORD")
 
     last_error: Exception | None = None
+    ftp_errors = ftplib.all_errors + (OSError, socket.timeout)
     for attempt in range(1, 4):
         ftp: ftplib.FTP | None = None
         try:
@@ -87,7 +95,7 @@ def main() -> int:
                 ftp.close()
             print(f"Deploy concluído: {count} arquivos, {total} bytes enviados para {REMOTE_ROOT}.")
             return 0
-        except (ftplib.all_errors, OSError, socket.timeout) as exc:
+        except ftp_errors as exc:
             last_error = exc
             print(f"Falha na tentativa {attempt}: {exc}", file=sys.stderr)
             try:
