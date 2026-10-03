@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import Icon from "./icons";
+import { useStudio } from "./studio-provider";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -16,21 +18,39 @@ type Props = {
   eyebrow?: string;
   title?: string;
   children: React.ReactNode;
+  variant?: "default" | "control";
 };
 
-export default function StudioShell({ eyebrow, title, children }: Props) {
-  const pathname = usePathname();
+function BrandMark({ src, name }: { src?: string; name: string }) {
+  const [failed, setFailed] = useState(false);
+  const usable = src && !src.startsWith("/media/") && !failed;
 
   return (
-    <div className="studio-shell">
+    <div className="brand-mark" aria-label={name}>
+      {usable ? <img src={src} alt="" onError={() => setFailed(true)} /> : <span>K</span>}
+    </div>
+  );
+}
+
+export default function StudioShell({ eyebrow, title, children, variant = "default" }: Props) {
+  const pathname = usePathname();
+  const { state, loading } = useStudio();
+  const { site, me } = state;
+
+  const invite = site.discordInviteUrl || "/discord";
+  const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
+  const profileSub = me.authenticated ? "Discord conectado" : "Discord não conectado";
+
+  return (
+    <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`}>
       <aside className="sidebar">
-        <div className="brand-block">
-          <div className="brand-mark">K</div>
+        <Link href="/" className="brand-block" aria-label="Studio K · Início">
+          <BrandMark src={site.logoUrl} name={site.brandName || "Studio K"} />
           <div>
-            <strong>STUDIO K</strong>
-            <span>KINETIC LOOM</span>
+            <strong>{site.brandName || "STUDIO K"}</strong>
+            <span>{site.brandTagline || "KINETIC LOOM"}</span>
           </div>
-        </div>
+        </Link>
 
         <nav className="side-nav" aria-label="Navegação principal">
           {nav.map((item) => {
@@ -49,16 +69,21 @@ export default function StudioShell({ eyebrow, title, children }: Props) {
         <Link href="/control" className={pathname.startsWith("/control") ? "control-link active" : "control-link"}>
           <Icon name="control" />
           <span>Central de Controle</span>
+          {me.canControl && <i className="admin-dot" aria-label="Acesso administrativo liberado" />}
         </Link>
 
         <div className="sidebar-foot">
-          <div className="mini-profile">
-            <div className="avatar-placeholder">SK</div>
+          <Link href="/account" className="mini-profile">
+            {me.user?.avatar ? (
+              <img className="profile-avatar" src={me.user.avatar} alt="" />
+            ) : (
+              <div className="avatar-placeholder">{me.authenticated ? "SK" : "K"}</div>
+            )}
             <div>
-              <strong>Visitante</strong>
-              <span>Discord não conectado</span>
+              <strong>{profileName}</strong>
+              <span>{loading ? "Sincronizando..." : profileSub}</span>
             </div>
-          </div>
+          </Link>
         </div>
       </aside>
 
@@ -72,18 +97,16 @@ export default function StudioShell({ eyebrow, title, children }: Props) {
           <div className="top-actions">
             <div className="status-chip">
               <span className="status-dot" />
-              Discord online
+              Studio K online
             </div>
-            <a className="btn btn-outline compact" href="#" aria-label="Entrar no Discord">
+            <a className="btn btn-outline compact" href={invite}>
               Entrar no Discord
               <Icon name="arrow" />
             </a>
           </div>
         </header>
 
-        <section className="page-content">
-          {children}
-        </section>
+        <section className="page-content">{children}</section>
       </main>
     </div>
   );
