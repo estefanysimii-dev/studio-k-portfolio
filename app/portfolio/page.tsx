@@ -1,28 +1,81 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ShowcaseCard from "@/components/showcase-card";
+import ModelStage from "@/components/model-stage";
+import { useStudio } from "@/components/studio-provider";
+import type { StudioItem } from "@/lib/studio-types";
 
 export default function PortfolioPage() {
+  const { state } = useStudio();
+  const [filter, setFilter] = useState("Todos");
+  const [selected, setSelected] = useState<StudioItem | null>(null);
+
+  const categories = useMemo(() => {
+    const found = Array.from(new Set(state.items.map((item) => item.category).filter(Boolean)));
+    return ["Todos", ...found];
+  }, [state.items]);
+
+  const visible = filter === "Todos"
+    ? state.items
+    : state.items.filter((item) => item.category === filter || item.tags?.includes(filter));
+
   return (
     <StudioShell eyebrow="PORTFÓLIO" title="Arquivo Studio K">
       <div className="section-heading">
         <div>
           <span className="section-eyebrow">SEM PREÇOS · APENAS EXPOSIÇÃO</span>
           <h1 className="page-title">Portfólio</h1>
-          <p className="page-subtitle">Projetos, roupas, materiais e experimentos 3D selecionados.</p>
+          <p className="page-subtitle">Projetos, roupas, materiais e experiências 3D publicados pela Central de Controle.</p>
         </div>
       </div>
 
       <div className="filter-row">
-        {["Todos", "Feminino", "Masculino", "Camisetas", "Calças", "Acessórios", "Neon"].map((f, i) => (
-          <button className={i === 0 ? "filter-chip active" : "filter-chip"} key={f}>{f}</button>
+        {categories.map((category) => (
+          <button
+            type="button"
+            className={filter === category ? "filter-chip active" : "filter-chip"}
+            key={category}
+            onClick={() => setFilter(category)}
+          >
+            {category}
+          </button>
         ))}
       </div>
 
+      {selected && (
+        <section className="project-focus glass-panel">
+          <div>
+            <span className="section-eyebrow">{selected.category}</span>
+            <h2>{selected.name}</h2>
+            <p>{selected.description}</p>
+            <div className="tag-row">{selected.tags?.map((tag) => <span key={tag}>{tag}</span>)}</div>
+            <button type="button" className="btn btn-outline compact" onClick={() => setSelected(null)}>Fechar prévia</button>
+          </div>
+          <ModelStage modelUrl={selected.modelUrl} posterUrl={selected.coverUrl} title={selected.name} compact />
+        </section>
+      )}
+
       <div className="showcase-grid">
-        <ShowcaseCard eyebrow="FEMININO" title="Polo + Manguito" copy="Modelagem, integração de peças e materialização para FiveM." meta="3D · GTA V · FIVEM" />
-        <ShowcaseCard eyebrow="NEON" title="Emissive Nightwear" copy="Projeto com brilho noturno e controle de material emissivo." meta="EMISSIVE · NIGHT" />
-        <ShowcaseCard eyebrow="TEXTURE" title="Gradient Studies" copy="Exploração de degradês, contraste e resposta visual dentro do jogo." meta="DDS · MATERIAL" />
-        <ShowcaseCard eyebrow="CONVERSION" title="Game-to-FiveM" copy="Adaptação de modelos externos para o pipeline do GTA V / FiveM." meta="RIG · WEIGHTS · UV" />
+        {visible.length ? visible.map((item) => (
+          <div key={item.id} onClick={() => setSelected(item)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") setSelected(item); }}>
+            <ShowcaseCard
+              eyebrow={item.category || "STUDIO K"}
+              title={item.name}
+              copy={item.description}
+              meta={(item.tags || []).join(" · ")}
+              coverUrl={item.coverUrl || item.gifUrl}
+              modelUrl={item.modelUrl}
+              href="#preview"
+            />
+          </div>
+        )) : (
+          <div className="empty-state glass-panel">
+            <strong>Nenhum projeto publicado nesta categoria.</strong>
+            <span>Novos trabalhos aparecerão aqui assim que forem publicados pela Central.</span>
+          </div>
+        )}
       </div>
     </StudioShell>
   );
