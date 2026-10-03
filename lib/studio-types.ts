@@ -68,6 +68,14 @@ export type StudioViewerHotspot = {
   normal: string;
 };
 
+export type StudioViewerVariant = {
+  id: string;
+  label: string;
+  colorHex: string;
+  modelUrl: string;
+  posterUrl?: string;
+};
+
 export type StudioItem = {
   id: string;
   name: string;
@@ -81,6 +89,7 @@ export type StudioItem = {
   galleryUrls?: string[];
   compareModelUrl?: string;
   viewerHotspots?: StudioViewerHotspot[];
+  viewerVariants?: StudioViewerVariant[];
   featured: boolean;
   published: boolean;
   created?: string;
