@@ -4659,3 +4659,229 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .product-card { position: relative; }
 .product-card > .favorite-card-button { top: 32px; right: 32px; }
+
+
+/* ===== Studio K ID · progression, titles, achievements + perks ===== */
+.studio-id-equipped-title {
+  display: block;
+  margin-top: 7px;
+  font: 800 9px/1.2 "Sora",Arial,sans-serif;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+.studio-rank-creator { border-color: rgba(137,166,255,.42); }
+.studio-rank-insider { border-color: rgba(203,105,255,.52); }
+.studio-rank-icon {
+  border-color: rgba(255,218,142,.56);
+  box-shadow: 0 30px 90px rgba(20,4,38,.42), 0 0 48px rgba(255,205,115,.11), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.studio-id-card.has-neon-aura {
+  box-shadow: 0 30px 90px rgba(20,4,38,.42), 0 0 55px rgba(177,52,255,.18), inset 0 1px 0 rgba(255,255,255,.09);
+}
+.studio-id-card.has-neon-aura .studio-id-card-glow {
+  opacity: 1;
+  filter: saturate(1.35) brightness(1.18);
+}
+.rarity-text-common { color: rgba(237,224,255,.72); }
+.rarity-text-rare { color: #9fc4ff; }
+.rarity-text-epic { color: #d9a2ff; }
+.rarity-text-legendary { color: #ffe0a1; text-shadow: 0 0 14px rgba(255,211,118,.22); }
+
+.account-badge small {
+  padding-left: 2px;
+  color: currentColor;
+  font-size: 6.5px;
+  opacity: .62;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.rarity-common { border-color: rgba(255,255,255,.12)!important; }
+.rarity-rare { border-color: rgba(112,166,255,.32)!important; }
+.rarity-epic { border-color: rgba(193,98,255,.38)!important; }
+.rarity-legendary { border-color: rgba(255,205,111,.42)!important; }
+.account-badge.rarity-rare { color: #b7d3ff; background: linear-gradient(125deg,rgba(62,110,230,.14),rgba(108,25,255,.06)); }
+.account-badge.rarity-epic { color: #e2b4ff; background: linear-gradient(125deg,rgba(140,38,232,.18),rgba(205,75,255,.08)); }
+.account-badge.rarity-legendary { color: #ffe0a0; background: linear-gradient(125deg,rgba(212,151,42,.14),rgba(124,45,192,.08)); }
+
+.account-evolution-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.account-evolution-panel {
+  min-width: 0;
+  padding: 21px;
+}
+.account-evolution-copy {
+  min-height: 42px;
+  margin: 0 0 15px;
+  color: var(--text-2);
+  font-size: 10px;
+  line-height: 1.55;
+}
+.account-title-list,
+.account-achievement-list,
+.account-perk-list {
+  display: grid;
+  gap: 8px;
+}
+.account-title-option {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 11px;
+  border: 1px solid rgba(164,83,255,.14);
+  border-radius: 11px;
+  color: var(--white);
+  background: rgba(var(--surface-rgb),.48);
+  text-align: left;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.account-title-option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: rgba(108,25,255,.08);
+  border-color: rgba(191,112,255,.34);
+}
+.account-title-option.active {
+  background: linear-gradient(125deg,rgba(108,25,255,.22),rgba(171,44,255,.09));
+  box-shadow: inset 0 0 0 1px rgba(209,151,255,.08), 0 8px 24px rgba(44,8,76,.12);
+}
+.account-title-option.locked {
+  opacity: .42;
+  cursor: not-allowed;
+}
+.account-title-option span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 10px/1.2 "Sora",Arial,sans-serif;
+}
+.account-title-option small {
+  color: var(--text-2);
+  font-size: 7px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.account-achievement {
+  display: grid;
+  grid-template-columns: 34px minmax(0,1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px;
+  border: 1px solid rgba(164,83,255,.12);
+  border-radius: 11px;
+  background: rgba(var(--surface-rgb),.44);
+}
+.account-achievement > i {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: #e2bcff;
+  background: rgba(108,25,255,.14);
+  font-style: normal;
+  font: 800 11px/1 "Sora",Arial,sans-serif;
+}
+.account-achievement > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.account-achievement strong {
+  font: 700 9.5px/1.25 "Sora",Arial,sans-serif;
+}
+.account-achievement span {
+  color: var(--text-2);
+  font-size: 8px;
+  line-height: 1.45;
+}
+.account-achievement small {
+  color: var(--purple-light);
+  font-size: 7px;
+}
+.account-achievement.locked {
+  opacity: .42;
+  filter: saturate(.45);
+}
+.account-achievement.rarity-legendary.unlocked {
+  background: linear-gradient(125deg,rgba(201,143,35,.09),rgba(108,25,255,.04));
+}
+
+.account-perk {
+  padding: 11px;
+  border: 1px solid rgba(164,83,255,.12);
+  border-radius: 11px;
+  background: rgba(var(--surface-rgb),.44);
+}
+.account-perk.locked { opacity: .56; }
+.account-perk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.account-perk-head > span {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 9.5px/1.2 "Sora",Arial,sans-serif;
+}
+.account-perk-head > span i {
+  color: var(--purple-light);
+  font-style: normal;
+}
+.account-perk-head small {
+  flex: 0 0 auto;
+  color: var(--purple-light);
+  font-size: 7px;
+  font-weight: 800;
+}
+.account-perk p {
+  min-height: 31px;
+  margin: 8px 0;
+  color: var(--text-2);
+  font-size: 8px;
+  line-height: 1.45;
+}
+.account-perk-progress {
+  overflow: hidden;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+}
+.account-perk-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#8b2cff,#d7a6ff);
+}
+.account-perk.unlocked .account-perk-progress i {
+  box-shadow: 0 0 12px rgba(190,111,255,.40);
+}
+
+[data-theme="light"] .account-title-option,
+[data-theme="light"] .account-achievement,
+[data-theme="light"] .account-perk {
+  background: rgba(255,255,255,.58);
+}
+
+@media (max-width: 1180px) {
+  .account-evolution-grid { grid-template-columns: 1fr 1fr; }
+  .account-evolution-panel:last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 720px) {
+  .account-evolution-grid { grid-template-columns: 1fr; }
+  .account-evolution-panel:last-child { grid-column: auto; }
+  .account-evolution-copy { min-height: 0; }
+  .studio-id-equipped-title { font-size: 8px; }
+}
+/* ===== /Studio K ID · progression ===== */
