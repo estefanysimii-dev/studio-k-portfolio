@@ -1,5 +1,27 @@
+export type AssistantCampaignType = "promotion" | "combo" | "news" | "bestseller" | "motivation" | "cute";
+
+export type AssistantCampaign = {
+  id: string;
+  type: AssistantCampaignType;
+  title: string;
+  text: string;
+  ctaLabel: string;
+  href: string;
+  priceCents: number;
+  oldPriceCents: number;
+  active: boolean;
+};
+
+export type StudioAssistantConfig = {
+  enabled: boolean;
+  intervalSeconds: number;
+  imageUrl: string;
+  campaigns: AssistantCampaign[];
+};
+
 export type StudioSite = {
   radio?: RadioConfig;
+  assistant?: StudioAssistantConfig;
   brandName: string;
   brandTagline: string;
   logoUrl: string;
