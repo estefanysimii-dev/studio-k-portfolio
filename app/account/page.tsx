@@ -237,7 +237,7 @@ export default function AccountPage() {
           <p className="account-evolution-copy">Escolha o título que aparece junto ao seu Studio K ID.</p>
           <div className="account-title-list">
             {profile?.titles?.map((title) => {
-              const active = profile.equippedTitle?.id === title.id;
+              const active = profile?.equippedTitle?.id === title.id;
               return (
                 <button
                   type="button"
