@@ -124,12 +124,28 @@ export type StudioCheckout = {
   };
 };
 
+export type StudioFeedback = {
+  id: string;
+  rating: number;
+  comment: string;
+  source: string;
+  reference: string;
+  name: string;
+  avatar: string;
+  submittedAt: string;
+  meta?: {
+    service?: number | null;
+    speed?: number | null;
+    resolution?: number | null;
+  };
+};
+
 export type StudioPublicState = {
   site: StudioSite;
   status: StudioStatus;
   items: StudioItem[];
   products: StudioProduct[];
-  feedbacks: unknown[];
+  feedbacks: StudioFeedback[];
   me: StudioMe;
 };
 
