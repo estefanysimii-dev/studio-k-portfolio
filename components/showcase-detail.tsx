@@ -22,6 +22,10 @@ export default function ShowcaseDetail(props: Props) {
   const item = props.item;
   const isProduct = props.kind === "product";
   const product = isProduct ? props.item : null;
+  const memberDiscount = state.me.profile?.discountPercent || 0;
+  const memberPrice = product && memberDiscount > 0
+    ? Math.max(0, Math.floor(product.priceCents * (100 - memberDiscount) / 100))
+    : product?.priceCents || 0;
   const [coupon, setCoupon] = useState("");
   const [checkout, setCheckout] = useState<StudioCheckout | null>(null);
   const [busy, setBusy] = useState(false);
@@ -60,7 +64,17 @@ export default function ShowcaseDetail(props: Props) {
           {isProduct && product && (
             <div className="detail-commerce glass-panel">
               <span className="section-eyebrow">STUDIO K STORE</span>
-              <strong className="detail-price">{product.priceCents > 0 ? money.format(product.priceCents / 100) : "Sob consulta"}</strong>
+              <div className="detail-price-stack">
+                {state.me.authenticated && memberDiscount > 0 && product.priceCents > 0 ? (
+                  <>
+                    <span className="detail-price-original">{money.format(product.priceCents / 100)}</span>
+                    <strong className="detail-price">{money.format(memberPrice / 100)}</strong>
+                    <span className="detail-member-discount">Studio K ID · {memberDiscount}% OFF automático</span>
+                  </>
+                ) : (
+                  <strong className="detail-price">{product.priceCents > 0 ? money.format(product.priceCents / 100) : "Sob consulta"}</strong>
+                )}
+              </div>
 
               {product.priceCents > 0 && product.botProductId ? (
                 state.me.authenticated ? (
