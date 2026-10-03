@@ -68,6 +68,12 @@ export const studioApi = {
       method: "POST",
       body: JSON.stringify({ couponCode })
     }),
+  myProfile: () => request<{ profile: import("./studio-types").StudioMemberProfile; favorites: { items: string[]; products: string[] } }>("me/profile"),
+  setFavorite: (kind: "items" | "products", id: string, favorite: boolean) =>
+    request<{ ok: boolean; favorite: boolean; favorites: { items: string[]; products: string[] }; profile: import("./studio-types").StudioMemberProfile }>(
+      `me/favorites/${kind}/${encodeURIComponent(id)}`,
+      { method: "PUT", body: JSON.stringify({ favorite }) }
+    ),
   myOrders: () => request<{ orders: StudioOrder[] }>("me/orders"),
   orderDelivery: (id: string) =>
     request<{ delivery: string; instructions: string; productName: string }>(`me/orders/${encodeURIComponent(id)}/delivery`),
