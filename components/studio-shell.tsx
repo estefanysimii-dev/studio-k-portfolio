@@ -66,11 +66,13 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
 
         <div className="sidebar-spacer" />
 
-        <Link href="/control" className={pathname.startsWith("/control") ? "control-link active" : "control-link"}>
-          <Icon name="control" />
-          <span>Central de Controle</span>
-          {me.canControl && <i className="admin-dot" aria-label="Acesso administrativo liberado" />}
-        </Link>
+        {me.canControl && (
+          <Link href="/control" className={pathname.startsWith("/control") ? "control-link active" : "control-link"}>
+            <Icon name="control" />
+            <span>Central de Controle</span>
+            <i className="admin-dot" aria-label="Acesso Staff liberado" />
+          </Link>
+        )}
 
         <div className="sidebar-foot">
           <Link href="/account" className="mini-profile">

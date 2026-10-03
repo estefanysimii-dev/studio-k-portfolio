@@ -6,6 +6,7 @@ import ModelStage from "@/components/model-stage";
 import ObjConverter from "@/components/obj-converter";
 import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
+import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
 type Tab = "overview" | "site" | "portfolio" | "products" | "media" | "converter" | "integrations";
@@ -67,12 +68,12 @@ export default function ControlPage() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [siteDraft, setSiteDraft] = useState<StudioSite | null>(null);
-  const [adminRoles, setAdminRoles] = useState("");
   const [project, setProject] = useState(emptyProject);
   const [product, setProduct] = useState(emptyProduct);
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
   const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
+  const { state: publicState } = useStudio();
 
   const refresh = async () => {
     try {
@@ -80,7 +81,6 @@ export default function ControlPage() {
       const next = await studioApi.controlState();
       setState(next);
       setSiteDraft(next.site);
-      setAdminRoles((next.site.adminRoleIds || []).join(", "));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível abrir a Central.");
       setState(null);
@@ -107,8 +107,7 @@ export default function ControlPage() {
     event.preventDefault();
     if (!siteDraft) return;
     try {
-      const roles = adminRoles.split(",").map((x) => x.trim()).filter(Boolean);
-      await studioApi.saveSite({ ...siteDraft, adminRoleIds: roles });
+      await studioApi.saveSite(siteDraft);
       flash("Configurações do site salvas.");
       await refresh();
     } catch (err) {
@@ -205,13 +204,26 @@ export default function ControlPage() {
   }
 
   if (!state) {
+    const connected = publicState.me.authenticated;
     return (
-      <StudioShell eyebrow="CENTRAL" title="Acesso administrativo" variant="control">
+      <StudioShell eyebrow="CENTRAL" title="Acesso Staff" variant="control">
         <section className="control-gate glass-panel">
-          <span className="section-eyebrow">ACESSO PROTEGIDO</span>
-          <h1>Central de Controle</h1>
-          <p>{error || "Conecte uma conta Discord com permissão administrativa para continuar."}</p>
-          <a className="btn btn-primary" href="/api/oauth/start?next=/control">Conectar com Discord</a>
+          <span className="section-eyebrow">ÁREA EXCLUSIVA DA STAFF</span>
+          <h1>{connected ? "Acesso não autorizado" : "Central de Controle"}</h1>
+          <p>
+            {connected
+              ? "Sua conta está conectada, mas não possui um dos cargos de Staff configurados no servidor do Discord do Studio K."
+              : "Conecte sua conta do Discord. O acesso será liberado somente se você possuir um dos cargos de Staff configurados no servidor."}
+          </p>
+          <div className="hero-actions">
+            {connected ? (
+              <a className="btn btn-primary" href="/account">Voltar para Minha Conta</a>
+            ) : (
+              <a className="btn btn-primary" href="/api/oauth/start?next=/control">Conectar com Discord</a>
+            )}
+            <a className="btn btn-outline" href="/">Voltar ao site</a>
+          </div>
+          {error && <small className="staff-gate-error">{error}</small>}
         </section>
       </StudioShell>
     );
@@ -297,7 +309,6 @@ export default function ControlPage() {
             <label>Background Home<input value={siteDraft.homeBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, homeBackgroundUrl: e.target.value })} /></label>
             <label>Background Central<input value={siteDraft.controlBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, controlBackgroundUrl: e.target.value })} /></label>
             <label>Convite Discord<input value={siteDraft.discordInviteUrl} onChange={(e) => setSiteDraft({ ...siteDraft, discordInviteUrl: e.target.value })} placeholder="https://discord.gg/..." /></label>
-            <label className="span-2">IDs dos cargos administrativos<input value={adminRoles} onChange={(e) => setAdminRoles(e.target.value)} placeholder="123..., 456..." /><small>Separe por vírgulas. Administradores/Manage Server também são reconhecidos automaticamente.</small></label>
           </div>
         </form>
       )}
@@ -461,7 +472,7 @@ export default function ControlPage() {
           <section className="integration-card glass-panel">
             <span className="section-eyebrow">BOT STUDIO K</span>
             <h2>{state.discord?.botConnected ? "Online" : "Offline"}</h2>
-            <p>A Central consulta os cargos do servidor para liberar administradores e integra produtos pelo ID do bot.</p>
+            <p>A Central só é liberada para membros que possuam cargos incluídos nos grupos Staff ou High Staff configurados no bot. Permissões de Administrator ou Manage Server, sozinhas, não liberam acesso.</p>
           </section>
           <section className="integration-card glass-panel">
             <span className="section-eyebrow">VIEWER 3D</span>
