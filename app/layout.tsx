@@ -12,6 +12,11 @@ export const metadata: Metadata = {
     template: "%s · Studio K"
   },
   description: "Portfólio, produtos e experiências 3D do Studio K para GTA V / FiveM.",
+  icons: {
+    icon: "/studio-assets/studio-k-logo.webp",
+    shortcut: "/studio-assets/studio-k-logo.webp",
+    apple: "/studio-assets/studio-k-logo.webp"
+  },
   openGraph: {
     title: "Studio K",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
