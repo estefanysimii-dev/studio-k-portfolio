@@ -72,11 +72,6 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="trust-row">
-            <div><strong>360°</strong><span>Visualização 3D</span></div>
-            <div><strong>GLB</strong><span>Viewer otimizado</span></div>
-            <div><strong>SK</strong><span>Identidade Studio K</span></div>
-          </div>
         </div>
 
         <ModelStage
