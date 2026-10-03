@@ -55,7 +55,9 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
     : "/studio-assets/studio-k-banner-hq.webp";
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
-  const profileSub = me.authenticated ? "Discord conectado" : "Discord não conectado";
+  const profileSub = me.authenticated
+    ? `${me.profile?.equippedTitle?.label || "Studio K Member"} · LV ${me.profile?.level || 1}`
+    : "Discord não conectado";
 
   return (
     <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`} style={shellStyle}>
