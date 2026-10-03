@@ -71,8 +71,10 @@ export default function BehaviorTracker() {
         const key = "studio-k-product-view-memory";
         const memory = JSON.parse(localStorage.getItem(key) || "{}") as Record<string, { count?: number; lastViewedAt?: number }>;
         const current = memory[itemId] || {};
-        memory[itemId] = { count: Math.min(999, Number(current.count || 0) + 1), lastViewedAt: Date.now() };
+        const count = Math.min(999, Number(current.count || 0) + 1);
+        memory[itemId] = { count, lastViewedAt: Date.now() };
         localStorage.setItem(key, JSON.stringify(memory));
+        window.dispatchEvent(new CustomEvent("studio-k-product-viewed", { detail: { itemId, count } }));
       } catch {}
     } else if (itemKind === "portfolio") {
       void studioApi.track({ sessionId, event: "portfolio_view", itemKind, itemId, path: pathname });
