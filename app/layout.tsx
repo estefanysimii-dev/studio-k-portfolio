@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
 import { StudioProvider } from "@/components/studio-provider";
@@ -24,6 +25,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="pt-BR">
       <body>
+        <Script
+          type="module"
+          src="https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js"
+          strategy="afterInteractive"
+        />
         <StudioProvider>
           <AmbientLight />
           {children}
