@@ -162,6 +162,46 @@ export type StudioPerk = {
   target: number;
 };
 
+export type StudioIdRankConfig = {
+  id: string;
+  label: string;
+  icon: string;
+  rarity: StudioMemberRarity;
+  minLevel: number;
+};
+
+export type StudioIdConfig = {
+  enabled: boolean;
+  xp: {
+    base: number;
+    discordMember: number;
+    purchase: number;
+    feedback: number;
+    favorite: number;
+  };
+  levelStep: number;
+  earlyMemberLimit: number;
+  thresholds: {
+    collectorPurchases: number;
+    profileFramePurchases: number;
+    creatorLevel: number;
+    levelFive: number;
+    insiderLevel: number;
+    iconLevel: number;
+  };
+  supporterRolePattern: string;
+  features: {
+    badges: boolean;
+    achievements: boolean;
+    perks: boolean;
+  };
+  ranks: StudioIdRankConfig[];
+  discordRankSync: {
+    enabled: boolean;
+    roleIds: Record<string, string>;
+  };
+};
+
 export type StudioMemberProfile = {
   studioId: string;
   joinedAt: string;
@@ -302,6 +342,7 @@ export type StudioAnalytics = {
 
 export type StudioControlState = StudioPublicState & {
   authorized: boolean;
+  studioIdConfig?: StudioIdConfig;
   analytics?: StudioAnalytics;
   assets: StudioAsset[];
   user?: { name?: string; id?: string };
@@ -311,5 +352,6 @@ export type StudioControlState = StudioPublicState & {
     publicOrigin: string;
     botConnected: boolean;
     channels?: { id: string; name: string; type?: number }[];
+    roles?: { id: string; name: string }[];
   };
 };
