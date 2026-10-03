@@ -231,8 +231,40 @@ export type StudioPublicState = {
   me: StudioMe;
 };
 
+export type StudioAnalytics = {
+  days: number;
+  pageViews: number;
+  uniqueVisitors: number;
+  productViews: number;
+  portfolioViews: number;
+  favoriteAdds: number;
+  checkoutStarts: number;
+  ordersCreated: number;
+  paidOrders: number;
+  revenue: number;
+  checkoutAbandonment: number;
+  checkoutConversion: number;
+  viewToOrder: number;
+  topProducts: {
+    id: string;
+    name: string;
+    views: number;
+    favorites: number;
+    checkouts: number;
+    orders: number;
+  }[];
+  daily: {
+    day: string;
+    pageViews: number;
+    productViews: number;
+    checkouts: number;
+    orders: number;
+  }[];
+};
+
 export type StudioControlState = StudioPublicState & {
   authorized: boolean;
+  analytics?: StudioAnalytics;
   assets: StudioAsset[];
   user?: { name?: string; id?: string };
   discord?: {
