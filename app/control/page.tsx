@@ -1,4 +1,5 @@
 "use client";
+import RadioSettings from '@/components/radio-settings';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -467,6 +468,7 @@ export default function ControlPage() {
             <label>Background Central<input value={siteDraft.controlBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, controlBackgroundUrl: e.target.value })} /></label>
             <label>Convite Discord<input value={siteDraft.discordInviteUrl} onChange={(e) => setSiteDraft({ ...siteDraft, discordInviteUrl: e.target.value })} placeholder="https://discord.gg/..." /></label>
           </div>
+          <RadioSettings value={siteDraft.radio} onChange={radio => setSiteDraft({ ...siteDraft, radio })} />
         </form>
       )}
 
