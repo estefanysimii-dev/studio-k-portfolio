@@ -24,6 +24,7 @@ export type RadioConfig = {
   spotifyUrl: string;
   streamUrl: string;
   tracks: { title: string; url: string; duration: number }[];
+  shuffle?: boolean;
   epochMs: number;
   position: 'left' | 'right';
   compact: boolean;
