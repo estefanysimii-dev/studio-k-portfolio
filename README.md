@@ -202,3 +202,8 @@ Depois do visual:
 6. storage de mídia
 7. integração bot
 8. ClothToolStudioK por último
+
+
+## Estado da implementação
+
+A base atual inclui showroom público, Portfólio sem preços, Produtos com checkout integrado ao bot, OAuth2 Discord, Central de Controle, biblioteca multimídia, visualizador GLB/GLTF 360°, processamento de BLEND/FBX/OBJ para GLB, preview de PSD, galeria multimídia, OpenGraph por projeto/produto e recuperação de entregas digitais. A integração direta com ClothToolStudioK permanece reservada para a última etapa.
