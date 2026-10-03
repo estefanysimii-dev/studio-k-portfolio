@@ -2240,7 +2240,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .radio-settings { margin: 24px 0 0; padding: 20px; border: 1px solid var(--line); border-radius: 16px; }
 .radio-settings legend { color: var(--purple-light); padding: 0 8px; font-weight: 800; }
 .radio-settings p { color: var(--text-2); line-height: 1.6; }
-.studio-radio { --bass: 0; --treble: 0; position: fixed; bottom: 20px; z-index: 100; width: min(360px, calc(100vw - 24px)); padding: 16px; background: var(--panel-raised); color: var(--white); backdrop-filter: blur(24px); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 35px #0003; }
+.studio-radio { --bass: var(--studio-radio-bass, 0); --treble: var(--studio-radio-treble, 0); position: fixed; bottom: 20px; z-index: 100; width: min(360px, calc(100vw - 24px)); padding: 16px; background: var(--panel-raised); color: var(--white); backdrop-filter: blur(24px); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 8px 35px #0003; }
 .studio-radio[hidden] { display: none; }
 .radio-right { right: 20px; }
 .radio-left { left: 248px; }
