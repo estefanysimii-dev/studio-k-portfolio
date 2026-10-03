@@ -3,6 +3,8 @@ import Script from "next/script";
 import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
 import { StudioProvider } from "@/components/studio-provider";
+import StudioRadio from '@/components/studio-radio';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://studiokoficial.netlify.app"),
@@ -37,8 +39,9 @@ const threeImportMap = JSON.stringify({
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: "try{document.documentElement.dataset.theme=localStorage.getItem('studio-theme')==='light'?'light':'dark'}catch(e){document.documentElement.dataset.theme='dark'}" }} />
         <script type="importmap" dangerouslySetInnerHTML={{ __html: threeImportMap }} />
       </head>
       <body>
@@ -48,8 +51,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           strategy="afterInteractive"
         />
         <StudioProvider>
+          <ThemeProvider>
           <AmbientLight />
           {children}
+          <StudioRadio />
+          </ThemeProvider>
         </StudioProvider>
       </body>
     </html>

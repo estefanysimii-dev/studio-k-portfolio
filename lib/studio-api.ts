@@ -18,6 +18,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const studioApi = {
+  radio: () => request<import('./studio-types').RadioSnapshot>('radio'),
   publicState: () => request<StudioPublicState>("public-state"),
   controlState: () => request<StudioControlState>("control/state"),
   saveSite: (body: unknown) =>

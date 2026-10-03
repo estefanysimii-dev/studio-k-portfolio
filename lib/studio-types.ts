@@ -1,4 +1,5 @@
 export type StudioSite = {
+  radio?: RadioConfig;
   brandName: string;
   brandTagline: string;
   logoUrl: string;
@@ -13,6 +14,24 @@ export type StudioSite = {
   discordInviteUrl: string;
   adminRoleIds: string[];
 };
+
+export type RadioConfig = {
+  enabled: boolean;
+  name: string;
+  source: 'spotify' | 'schedule' | 'hls';
+  spotifyUrl: string;
+  streamUrl: string;
+  tracks: { title: string; url: string; duration: number }[];
+  epochMs: number;
+  position: 'left' | 'right';
+  compact: boolean;
+  showInControl: boolean;
+  autoplay: boolean;
+  defaultVolume: number;
+  analyze: boolean;
+};
+
+export type RadioSnapshot = { radio: RadioConfig; serverNowMs: number };
 
 export type StudioItem = {
   id: string;

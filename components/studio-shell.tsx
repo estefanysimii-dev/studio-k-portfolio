@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { CSSProperties, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
+import { ThemeToggle } from './theme-provider';
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -131,6 +132,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
 
           <div className="top-actions">
+            <ThemeToggle />
             <div className={`status-chip ${status.storeOpen ? "online" : "offline"}`} title="Sincronizado com o status configurado no bot">
               <span className="status-dot" />
               {status.storeOpen ? "Loja Online" : "Loja Offline"}
