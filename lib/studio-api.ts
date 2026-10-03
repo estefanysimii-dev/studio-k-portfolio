@@ -1,4 +1,4 @@
-import type { StudioControlState, StudioPublicState } from "./studio-types";
+import type { StudioCheckout, StudioControlState, StudioOrder, StudioPublicState } from "./studio-types";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/studio/${path.replace(/^\//, "")}`, {
@@ -34,10 +34,30 @@ export const studioApi = {
     request(`control/products/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteProduct: (id: string) =>
     request(`control/products/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  syncBotProduct: (id: string) =>
+    request<{ ok: boolean; botProductId: string }>(`control/products/${encodeURIComponent(id)}/sync-bot`, { method: "POST", body: "{}" }),
+  announceProduct: (id: string, channelId: string) =>
+    request<{ ok: boolean; messageId: string }>(`control/products/${encodeURIComponent(id)}/announce`, {
+      method: "POST",
+      body: JSON.stringify({ channelId })
+    }),
   uploadTicket: (name: string, isPublic: boolean) =>
     request<{ uploadUrl: string; expiresIn: number }>("control/upload-ticket", {
       method: "POST",
       body: JSON.stringify({ name, public: isPublic })
     }),
+  processAsset: (id: string) =>
+    request<{ publicUrl: string; kind: "model" | "preview" }>(`control/assets/${encodeURIComponent(id)}/process`, {
+      method: "POST",
+      body: "{}"
+    }),
+  createOrder: (productId: string, couponCode = "") =>
+    request<StudioCheckout>(`products/${encodeURIComponent(productId)}/order`, {
+      method: "POST",
+      body: JSON.stringify({ couponCode })
+    }),
+  myOrders: () => request<{ orders: StudioOrder[] }>("me/orders"),
+  orderDelivery: (id: string) =>
+    request<{ delivery: string; instructions: string; productName: string }>(`me/orders/${encodeURIComponent(id)}/delivery`),
   logout: () => request("logout", { method: "POST" })
 };

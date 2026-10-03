@@ -15,13 +15,16 @@ type Props = {
 };
 
 const accepts: Record<Kind, string> = {
-  image: ".png,.jpg,.jpeg,.webp,.gif",
-  model: ".glb,.gltf",
+  image: ".png,.jpg,.jpeg,.webp,.gif,.psd",
+  model: ".glb,.gltf,.obj,.fbx,.blend",
   video: ".mp4,.webm"
 };
 
-async function uploadPublic(file: File) {
-  const ticket = await studioApi.uploadTicket(file.name, true);
+const sourceFormats = new Set(["psd", "obj", "fbx", "blend"]);
+const extension = (name: string) => name.toLowerCase().split(".").pop() || "";
+
+async function uploadAsset(file: File, isPublic: boolean) {
+  const ticket = await studioApi.uploadTicket(file.name, isPublic);
   const target = new URL(ticket.uploadUrl);
   target.searchParams.set("name", file.name);
 
@@ -31,29 +34,45 @@ async function uploadPublic(file: File) {
     body: file
   });
 
-  const result = await response.json().catch(() => ({})) as { publicUrl?: string; error?: string };
-  if (!response.ok || !result.publicUrl) {
-    throw new Error(result.error || "Não foi possível publicar o arquivo.");
-  }
-  return result.publicUrl;
+  const result = await response.json().catch(() => ({})) as {
+    id?: string;
+    publicUrl?: string;
+    visibility?: "public" | "private";
+    error?: string;
+  };
+  if (!response.ok || !result.id) throw new Error(result.error || "Não foi possível enviar o arquivo.");
+  return result;
 }
 
 export default function MediaField({ label, kind, value, onChange, onConvertObj }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [status, setStatus] = useState("");
 
   const upload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
 
+    const ext = extension(file.name);
     setBusy(true);
     setError("");
+    setStatus(sourceFormats.has(ext) ? "Enviando fonte privada..." : "Enviando mídia...");
     try {
-      const url = await uploadPublic(file);
-      onChange(url);
+      const source = await uploadAsset(file, !sourceFormats.has(ext));
+      if (sourceFormats.has(ext)) {
+        setStatus(ext === "psd" ? "Gerando preview..." : "Convertendo para GLB...");
+        const processed = await studioApi.processAsset(source.id!);
+        onChange(processed.publicUrl);
+        setStatus(ext === "psd" ? "Preview gerado" : "GLB pronto");
+      } else {
+        if (!source.publicUrl) throw new Error("O arquivo foi enviado, mas não recebeu URL pública.");
+        onChange(source.publicUrl);
+        setStatus("Upload concluído");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha no upload.");
+      setStatus("");
     } finally {
       setBusy(false);
     }
@@ -65,11 +84,11 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
         <span>{label}</span>
         <div className="media-field-actions">
           <label className="mini-upload">
-            {busy ? "Enviando..." : "Fazer upload"}
+            {busy ? "Processando..." : "Upload"}
             <input type="file" accept={accepts[kind]} disabled={busy} onChange={(event) => void upload(event)} />
           </label>
           {kind === "model" && onConvertObj && (
-            <button type="button" onClick={onConvertObj}>Converter OBJ</button>
+            <button type="button" onClick={onConvertObj}>OBJ + texturas</button>
           )}
         </div>
       </div>
@@ -79,21 +98,22 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
         onChange={(event) => onChange(event.target.value)}
         placeholder={
           kind === "image"
-            ? "Envie uma capa ou cole a URL"
+            ? "PNG/JPG/WebP/GIF ou PSD (preview automático)"
             : kind === "model"
-              ? "Envie GLB/GLTF ou use o Conversor OBJ"
-              : "Envie MP4/WebM ou cole a URL"
+              ? "GLB/GLTF, OBJ, FBX ou BLEND"
+              : "MP4/WebM ou URL"
         }
       />
 
+      {status && <small className="media-field-status">{status}</small>}
       {error && <small className="media-field-error">{error}</small>}
 
       {kind === "image" && value && (
         <div className="media-preview image-preview">
-          <img src={value} alt="Pré-visualização da capa" />
+          <img src={value} alt="Pré-visualização" />
           <div>
-            <strong>Prévia da capa</strong>
-            <span>Esta é a imagem que será usada no card do projeto.</span>
+            <strong>Prévia</strong>
+            <span>Arquivos PSD permanecem privados; somente o preview gerado é publicado.</span>
           </div>
         </div>
       )}
@@ -101,8 +121,8 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
       {kind === "model" && value && (
         <div className="media-preview model-preview">
           <div className="media-preview-title">
-            <strong>Prévia 3D antes de publicar</strong>
-            <span>Gire e confira o modelo dentro da própria Central.</span>
+            <strong>Prévia 3D</strong>
+            <span>BLEND/FBX/OBJ são convertidos em GLB antes de aparecerem no site.</span>
           </div>
           <ModelStage modelUrl={value} compact />
         </div>

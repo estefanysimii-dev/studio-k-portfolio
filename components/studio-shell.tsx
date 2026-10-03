@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 
@@ -44,11 +44,16 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const tagline = !site.brandTagline || site.brandTagline === "KINETIC LOOM"
     ? "SUA IDENTIDADE. SUA CIDADE."
     : site.brandTagline;
+  const configuredBg = variant === "control" ? site.controlBackgroundUrl : site.homeBackgroundUrl;
+  const backgroundUrl = configuredBg && !configuredBg.startsWith("/media/")
+    ? configuredBg
+    : "/studio-assets/studio-k-banner-hq.webp";
+  const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated ? "Discord conectado" : "Discord não conectado";
 
   return (
-    <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`}>
+    <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`} style={shellStyle}>
       <aside className="sidebar">
         <Link href="/" className="brand-block" aria-label="Studio K · Início">
           <BrandMark src={logoSrc} name={site.brandName || "Studio K"} />
@@ -126,7 +131,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
 
           <div className="top-actions">
-            <div className={`status-chip ${status.storeOpen ? "online" : "offline"}`} title="Sincronizado com o status da loja configurado no bot">
+            <div className={`status-chip ${status.storeOpen ? "online" : "offline"}`} title="Sincronizado com o status configurado no bot">
               <span className="status-dot" />
               {status.storeOpen ? "Loja Online" : "Loja Offline"}
             </div>

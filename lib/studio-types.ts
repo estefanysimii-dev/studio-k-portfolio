@@ -45,6 +45,8 @@ export type StudioAsset = {
   size: number;
   created: string;
   publicUrl: string;
+  sourceAssetId?: string;
+  generated?: boolean;
 };
 
 export type StudioMe = {
@@ -71,6 +73,35 @@ export type StudioStatus = {
   updatedAt: string;
 };
 
+export type StudioOrder = {
+  id: string;
+  productId: string;
+  productName: string;
+  price: number;
+  status: string;
+  created: string;
+  expires?: string;
+  approvedAt?: string;
+  deliveredAt?: string;
+  couponCode?: string;
+  discount?: number;
+  error?: string;
+  deliveryType?: "digital" | "service";
+};
+
+export type StudioCheckout = {
+  id: string;
+  status: string;
+  price: number;
+  expires?: string;
+  productName: string;
+  payment: {
+    pixKey: string;
+    recipient: string;
+    instructions: string;
+  };
+};
+
 export type StudioPublicState = {
   site: StudioSite;
   status: StudioStatus;
@@ -89,5 +120,6 @@ export type StudioControlState = StudioPublicState & {
     redirectUri: string;
     publicOrigin: string;
     botConnected: boolean;
+    channels?: { id: string; name: string; type?: number }[];
   };
 };
