@@ -21,6 +21,9 @@ const fallback: StudioPublicState = {
     defaultAnnouncementChannelId: "",
     autoAnnounceProducts: false,
     adminRoleIds: [],
+    memberDiscountPercent: 0,
+    memberBenefitTitle: "Benefícios exclusivos para membros",
+    memberBenefitDescription: "Conecte sua conta do Discord para acessar vantagens, novidades e condições especiais do Studio K.",
     assistant: {
       enabled: true,
       intervalSeconds: 5,
