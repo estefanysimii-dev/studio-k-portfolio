@@ -20,6 +20,8 @@ type ItemDraft = {
   tags: string;
   coverUrl: string;
   modelUrl: string;
+  compareModelUrl: string;
+  viewerHotspots: string;
   videoUrl: string;
   gifUrl: string;
   galleryUrls: string;
@@ -39,6 +41,8 @@ const emptyProject: ItemDraft = {
   tags: "",
   coverUrl: "",
   modelUrl: "",
+  compareModelUrl: "",
+  viewerHotspots: "",
   videoUrl: "",
   gifUrl: "",
   galleryUrls: "",
@@ -53,6 +57,19 @@ const emptyProduct: ProductDraft = {
 };
 
 const list = (value: string) => value.split(/[\n,]/).map((entry) => entry.trim()).filter(Boolean);
+const hotspotText = (spots: StudioItem["viewerHotspots"] = []) =>
+  spots.map((spot) => `${spot.label} | ${spot.position} | ${spot.normal || "0 1 0"}`).join("\n");
+const parseHotspots = (value: string) =>
+  value.split("\n").map((line, index) => {
+    const [label = "", position = "", normal = "0 1 0"] = line.split("|").map((part) => part.trim());
+    if (!label || !position) return null;
+    return {
+      id: `hotspot-${index + 1}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 36) || "detail"}`,
+      label,
+      position,
+      normal: normal || "0 1 0"
+    };
+  }).filter((spot): spot is NonNullable<typeof spot> => Boolean(spot));
 
 function itemDraft(item: StudioItem): ItemDraft {
   return {
@@ -62,6 +79,8 @@ function itemDraft(item: StudioItem): ItemDraft {
     tags: (item.tags || []).join(", "),
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
+    compareModelUrl: item.compareModelUrl || "",
+    viewerHotspots: hotspotText(item.viewerHotspots || []),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: (item.galleryUrls || []).join("\n"),
@@ -78,6 +97,8 @@ function itemPayload(item: StudioItem) {
     tags: item.tags || [],
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
+    compareModelUrl: item.compareModelUrl || "",
+    viewerHotspots: item.viewerHotspots || [],
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: item.galleryUrls || [],
@@ -94,6 +115,8 @@ function draftPayload(item: ItemDraft) {
     tags: list(item.tags),
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
+    compareModelUrl: item.compareModelUrl || "",
+    viewerHotspots: parseHotspots(item.viewerHotspots),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: list(item.galleryUrls),
@@ -554,6 +577,11 @@ export default function ControlPage() {
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={project.coverUrl} onChange={(value) => setProject({ ...project, coverUrl: value })} />
               <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertObj={() => { setConverterTarget("project"); setTab("converter"); }} />
+              <MediaField label="Modelo Antes / Comparação" kind="model" value={project.compareModelUrl} onChange={(value) => setProject({ ...project, compareModelUrl: value })} />
+              <label className="span-2">Hotspots 3D
+                <textarea rows={3} value={project.viewerHotspots} onChange={(e) => setProject({ ...project, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Manga emissiva | 0.12 0.84 0.05 | 0 1 0"} />
+                <small>Um hotspot por linha. A posição e normal usam as coordenadas do GLB.</small>
+              </label>
               <MediaField label="Vídeo" kind="video" value={project.videoUrl} onChange={(value) => setProject({ ...project, videoUrl: value })} />
               <MediaField label="GIF" kind="image" value={project.gifUrl} onChange={(value) => setProject({ ...project, gifUrl: value })} />
               <label className="span-2">Galeria adicional<textarea rows={3} value={project.galleryUrls} onChange={(e) => setProject({ ...project, galleryUrls: e.target.value })} placeholder="Uma URL por linha ou separada por vírgula" /></label>
@@ -598,6 +626,11 @@ export default function ControlPage() {
               <label>Tags<input value={product.tags} onChange={(e) => setProduct({ ...product, tags: e.target.value })} /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
               <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertObj={() => { setConverterTarget("product"); setTab("converter"); }} />
+              <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
+              <label className="span-2">Hotspots 3D
+                <textarea rows={3} value={product.viewerHotspots} onChange={(e) => setProduct({ ...product, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Material neon | 0.15 0.90 0.04 | 0 1 0"} />
+                <small>Variantes de material/cor incorporadas no GLB aparecem automaticamente no viewer.</small>
+              </label>
               <MediaField label="Vídeo" kind="video" value={product.videoUrl} onChange={(value) => setProduct({ ...product, videoUrl: value })} />
               <MediaField label="GIF" kind="image" value={product.gifUrl} onChange={(value) => setProduct({ ...product, gifUrl: value })} />
               <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} placeholder="Gerado ao sincronizar" /></label>
