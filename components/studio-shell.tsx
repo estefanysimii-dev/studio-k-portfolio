@@ -8,6 +8,7 @@ import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
 import { externalLinkProps } from "@/lib/links";
 import StudioRadio from "./studio-radio";
+import StudioAssistant from "./studio-assistant";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -151,14 +152,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
         <section className="page-content">{children}</section>
       </main>
 
-      {variant !== "control" && (
-        <img
-          className="site-mascot"
-          src="/studio-assets/studio-k-mascot.webp"
-          alt=""
-          aria-hidden="true"
-        />
-      )}
+      {variant !== "control" && <StudioAssistant />}
     </div>
   );
 }
