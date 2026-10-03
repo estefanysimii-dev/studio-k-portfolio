@@ -73,7 +73,7 @@ export default function ControlPage() {
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
   const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
-  const { state: publicState } = useStudio();
+  const { state: publicState, refresh: refreshPublic } = useStudio();
 
   const refresh = async () => {
     try {
@@ -109,7 +109,7 @@ export default function ControlPage() {
     try {
       await studioApi.saveSite(siteDraft);
       flash("Configurações do site salvas.");
-      await refresh();
+      await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao salvar.");
     }
