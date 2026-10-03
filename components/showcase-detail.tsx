@@ -9,6 +9,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import { externalLinkProps } from "@/lib/links";
 import type { StudioCheckout, StudioItem, StudioProduct } from "@/lib/studio-types";
+import FavoriteButton from "@/components/favorite-button";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -46,7 +47,10 @@ export default function ShowcaseDetail(props: Props) {
       <section className="detail-hero">
         <div className="detail-copy">
           <span className="section-eyebrow">{item.category || "STUDIO K"}</span>
-          <h1>{item.name}</h1>
+          <div className="detail-title-row">
+            <h1>{item.name}</h1>
+            <FavoriteButton kind={isProduct ? "products" : "items"} itemId={item.id} label />
+          </div>
           <p>{item.description}</p>
 
           {!!item.tags?.length && (
