@@ -82,6 +82,19 @@ export const studioApi = {
       body: JSON.stringify({ couponCode })
     }),
   myProfile: () => request<{ profile: import("./studio-types").StudioMemberProfile; favorites: { items: string[]; products: string[] } }>("me/profile"),
+  setProfileTitle: (titleId: string) =>
+    request<{ ok: boolean; equippedTitle: import("./studio-types").StudioMemberProfile["equippedTitle"]; profile: import("./studio-types").StudioMemberProfile }>(
+      "me/profile/title",
+      { method: "PUT", body: JSON.stringify({ titleId }) }
+    ),
+  ecosystemIdentity: () => request<{
+    schemaVersion: number;
+    subject: string;
+    issuedAt: string;
+    identity: { studioId: string; discordId: string; username: string; displayName: string; avatar: string };
+    progression: { level: number; xp: number; rank: import("./studio-types").StudioMemberProfile["rank"]; title: import("./studio-types").StudioMemberProfile["equippedTitle"] };
+    entitlements: { discountPercent: number; badges: import("./studio-types").StudioMemberBadge[]; perks: Omit<import("./studio-types").StudioPerk, "progress" | "target">[] };
+  }>("me/ecosystem"),
   setFavorite: (kind: "items" | "products", id: string, favorite: boolean) =>
     request<{ ok: boolean; favorite: boolean; favorites: { items: string[]; products: string[] }; profile: import("./studio-types").StudioMemberProfile }>(
       `me/favorites/${kind}/${encodeURIComponent(id)}`,
