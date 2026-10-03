@@ -403,7 +403,7 @@ export default function ControlPage() {
           <strong>{state.user?.name || "Administrador Studio K"}</strong>
           <a
             className="control-panel-switch"
-            href="https://studiokbot.up.railway.app/"
+            href="https://studio-k-wmrj.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
           >
