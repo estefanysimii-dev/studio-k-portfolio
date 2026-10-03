@@ -4656,3 +4656,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .drop-live-banner.is-live .drop-live-status i { animation: none!important; }
 }
 /* ===== /Drops + behavior dashboard ===== */
+
+.product-card { position: relative; }
+.product-card > .favorite-card-button { top: 32px; right: 32px; }
