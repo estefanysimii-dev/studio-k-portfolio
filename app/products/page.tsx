@@ -38,8 +38,8 @@ export default function ProductsPage() {
                 {product.videoUrl && <span className="media-badge secondary">VÍDEO</span>}
                 {product.gifUrl && <span className="media-badge secondary">GIF</span>}
               </div>
-              <FavoriteButton kind="products" itemId={product.id} className="favorite-card-button" />
             </a>
+            <FavoriteButton kind="products" itemId={product.id} className="favorite-card-button" />
             <span className="meta-line">{product.category || "STUDIO K"}</span>
             <h3><a href={`/products/${product.id}`}>{product.name}</a></h3>
             <p className="product-description">{product.description}</p>
