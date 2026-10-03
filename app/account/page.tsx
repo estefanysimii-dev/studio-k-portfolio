@@ -129,7 +129,13 @@ export default function AccountPage() {
   return (
     <StudioShell eyebrow="CONTA" title="Minha Conta">
       <section className="studio-id-layout">
-        <article className={`studio-id-card studio-rank-${profile?.rank?.id || "member"} ${profile?.perks?.some((perk) => perk.id === "neon-aura" && perk.unlocked) ? "has-neon-aura" : ""}`.trim()}>
+        <article className={[
+          "studio-id-card",
+          `studio-rank-${profile?.rank?.id || "member"}`,
+          profile?.perks?.some((perk) => perk.id === "profile-frame" && perk.unlocked) ? "has-collector-frame" : "",
+          profile?.perks?.some((perk) => perk.id === "neon-aura" && perk.unlocked) ? "has-neon-aura" : "",
+          profile?.perks?.some((perk) => perk.id === "icon-aura" && perk.unlocked) ? "has-icon-aura" : ""
+        ].filter(Boolean).join(" ")}>
           <div className="studio-id-card-glow" aria-hidden="true" />
           <div className="studio-id-top">
             <div className="studio-id-brand">
