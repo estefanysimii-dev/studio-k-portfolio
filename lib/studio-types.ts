@@ -123,10 +123,43 @@ export type StudioAsset = {
   generated?: boolean;
 };
 
+export type StudioMemberRarity = "common" | "rare" | "epic" | "legendary";
+
 export type StudioMemberBadge = {
   id: string;
   label: string;
   icon: string;
+  rarity: StudioMemberRarity;
+  description?: string;
+};
+
+export type StudioMemberTitle = {
+  id: string;
+  label: string;
+  rarity: StudioMemberRarity;
+  description: string;
+  unlocked: boolean;
+};
+
+export type StudioAchievement = {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  rarity: StudioMemberRarity;
+  unlocked: boolean;
+  unlockedAt: string;
+};
+
+export type StudioPerk = {
+  id: string;
+  label: string;
+  description: string;
+  icon: string;
+  rarity: StudioMemberRarity;
+  unlocked: boolean;
+  progress: number;
+  target: number;
 };
 
 export type StudioMemberProfile = {
@@ -136,8 +169,13 @@ export type StudioMemberProfile = {
   xp: number;
   levelFloor: number;
   nextLevelXp: number;
+  rank: { id: string; label: string; icon: string; rarity: StudioMemberRarity };
+  equippedTitle: { id: string; label: string; rarity: StudioMemberRarity };
+  titles: StudioMemberTitle[];
   discountPercent: number;
   badges: StudioMemberBadge[];
+  achievements: StudioAchievement[];
+  perks: StudioPerk[];
   favorites: { items: string[]; products: string[] };
   stats: {
     purchases: number;
