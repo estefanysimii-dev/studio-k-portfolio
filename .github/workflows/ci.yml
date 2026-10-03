@@ -16,7 +16,16 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run build:infinityfree
+      - run: php -l infinityfree/index.php
       - run: npm test
+      - name: Package InfinityFree website
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-k-infinityfree-htdocs
+          path: dist-infinityfree/
+          include-hidden-files: true
+          retention-days: 7
       - run: npm run build
         env:
           STUDIO_BACKEND_URL: https://studiokbot.up.railway.app
