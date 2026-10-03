@@ -21,9 +21,19 @@ export const metadata: Metadata = {
   }
 };
 
+const threeImportMap = JSON.stringify({
+  imports: {
+    three: "https://unpkg.com/three@0.180.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+  }
+});
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
+      <head>
+        <script type="importmap" dangerouslySetInnerHTML={{ __html: threeImportMap }} />
+      </head>
       <body>
         <Script
           type="module"
