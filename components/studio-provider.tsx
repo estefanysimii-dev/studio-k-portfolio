@@ -53,6 +53,7 @@ const fallback: StudioPublicState = {
   },
   items: [],
   products: [],
+  drops: [],
   feedbacks: [],
   me: { authenticated: false, canControl: false }
 };
