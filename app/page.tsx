@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
@@ -15,7 +17,14 @@ export default function HomePage() {
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
       <section className="home-banner glass-panel" aria-label="Studio K">
-        <img src="/studio-assets/studio-k-banner.webp" alt="Studio K · Kiki em seu estúdio de criação 3D" />
+        <Image
+          src="/studio-assets/studio-k-banner-hq.webp"
+          alt="Studio K · Kiki em seu estúdio de criação 3D"
+          fill
+          priority
+          quality={100}
+          sizes="(max-width: 720px) 100vw, (max-width: 1100px) calc(100vw - 228px), 1400px"
+        />
         <div className="home-banner-shade" />
         <div className="home-banner-copy">
           <span>STUDIO K · FIVEM DESIGN</span>
