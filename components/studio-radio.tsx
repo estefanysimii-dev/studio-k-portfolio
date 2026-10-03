@@ -7,26 +7,6 @@ import { studioApi } from '@/lib/studio-api';
 import { scheduledPosition } from '@/lib/radio-clock';
 import type Hls from 'hls.js';
 
-type Controller = {
-  play: () => void; pause: () => void; destroy: () => void;
-  addListener: (event: string, cb: (event: { data: { isPaused: boolean; isBuffering: boolean } }) => void) => void;
-};
-type SpotifyAPI = { createController: (element: HTMLElement, options: { url: string; width: string; height: number }, cb: (controller: Controller) => void) => void };
-let spotifyAPI: Promise<SpotifyAPI> | undefined;
-function loadSpotify() {
-  if (!spotifyAPI) spotifyAPI = new Promise<SpotifyAPI>((resolve, reject) => {
-    const timeout = window.setTimeout(() => reject(new Error('Spotify indisponível. Tente novamente mais tarde.')), 15000);
-    (window as unknown as { onSpotifyIframeApiReady: (api: SpotifyAPI) => void }).onSpotifyIframeApiReady = api => {
-      clearTimeout(timeout); resolve(api);
-    };
-    const script = document.createElement('script');
-    script.src = 'https://open.spotify.com/embed/iframe-api/v1';
-    script.onerror = () => { clearTimeout(timeout); reject(new Error('Não foi possível conectar ao Spotify.')); };
-    document.body.appendChild(script);
-  });
-  return spotifyAPI;
-}
-
 export default function StudioRadio() {
   const { state } = useStudio();
   const pathname = usePathname();
@@ -44,12 +24,12 @@ export default function StudioRadio() {
   const [spectrum, setSpectrum] = useState(false);
 
   useEffect(() => {
-    if (!radio?.enabled) return;
-    let active = true, wanted = false, controller: Controller | undefined;
+    if (!radio?.enabled || radio.source === 'spotify') return;
+    let active = true, wanted = false;
     let audio: HTMLAudioElement | undefined, hls: Hls | undefined;
     let context: AudioContext | undefined, analyser: AnalyserNode | undefined, frame = 0, attempt = 0;
     let clock: { now: number; at: number } | undefined, selected = -1;
-    let syncing = false, playbackTimer = 0;
+    let syncing = false;
     const timers: number[] = [];
     const safeRead = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
     const safeWrite = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch {} };
@@ -139,16 +119,12 @@ export default function StudioRadio() {
     actions.current = {
       play: () => {
         wanted = true;
-        if (controller) {
-          controller.play(); setMessage('Iniciando no Spotify…');
-          clearTimeout(playbackTimer);
-          playbackTimer = window.setTimeout(() => { if (active) setMessage('Se não iniciou, use Play no player do Spotify.'); }, 5000);
-        } else if (audio) {
+        if (audio) {
           if (!clock && radio.source === 'schedule') { setMessage('Sincronizando… Clique em iniciar novamente.'); void updateClock(); return; }
           analyze(); void context?.resume(); align(true); void playAudio();
         }
       },
-      pause: () => { wanted = false; ++attempt; clearTimeout(playbackTimer); controller?.pause(); audio?.pause(); setMessage('Pausada · retomar ao vivo'); },
+      pause: () => { wanted = false; ++attempt; audio?.pause(); setMessage('Pausada · retomar ao vivo'); },
       live: () => { if (audio) { wanted = true; analyze(); void context?.resume(); align(true); void playAudio(); } },
       volume: value => { if (audio) audio.volume = value; safeWrite('studio-radio-volume', String(value)); }
     };
@@ -156,26 +132,7 @@ export default function StudioRadio() {
     document.addEventListener('visibilitychange', visible);
     window.addEventListener('pageshow', visible);
 
-    if (radio.source === 'spotify') {
-      const element = document.createElement('div'); host.current?.replaceChildren(element);
-      void loadSpotify().then(api => {
-        if (!active) return;
-        api.createController(element, { url: radio.spotifyUrl, width: '100%', height: 152 }, value => {
-          if (!active) { value.destroy(); return; }
-          controller = value;
-          const readyTimeout = window.setTimeout(() => { if (active) setMessage('Spotify não carregou. Abra a playlist no Spotify ou recarregue a página.'); }, 15000);
-          timers.push(readyTimeout);
-          controller.addListener('ready', () => { clearTimeout(readyTimeout); if (active) { setReady(true); if (radio.autoplay) actions.current.play(); } });
-          controller.addListener('playback_update', event => {
-            if (!active) return;
-            const isPlaying = !event.data.isPaused && !event.data.isBuffering;
-            setPlaying(isPlaying);
-            if (isPlaying) { clearTimeout(playbackTimer); setMessage('Tocando no Spotify · sem sincronização ao vivo'); }
-            else setMessage(event.data.isBuffering ? 'Carregando Spotify…' : 'Iniciar no Spotify');
-          });
-        });
-      }).catch(error => { if (active) setMessage(error.message); });
-    } else {
+    {
       audio = new Audio();
       host.current?.replaceChildren(audio);
       if (radio.analyze) audio.crossOrigin = 'anonymous';
@@ -211,9 +168,9 @@ export default function StudioRadio() {
     }
     return () => {
       active = false; wanted = false; ++attempt; actions.current = { play: () => {}, pause: () => {}, live: () => {}, volume: () => {} };
-      timers.forEach(clearInterval); clearTimeout(playbackTimer); cancelAnimationFrame(frame);
+      timers.forEach(clearInterval); cancelAnimationFrame(frame);
       document.removeEventListener('visibilitychange', visible); window.removeEventListener('pageshow', visible);
-      controller?.destroy(); hls?.destroy();
+      hls?.destroy();
       if (audio) { audio.onplaying = audio.onpause = audio.onwaiting = audio.onerror = audio.onloadedmetadata = audio.onended = null; audio.pause(); audio.removeAttribute('src'); audio.load(); }
       void context?.close(); panel.current?.style.removeProperty('--bass'); panel.current?.style.removeProperty('--treble');
     };
@@ -221,24 +178,22 @@ export default function StudioRadio() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  if (!radio?.enabled) return null;
+  if (!radio?.enabled || radio.source === 'spotify') return null;
   const hidden = pathname.startsWith('/control') && !radio.showInControl;
-  const spotify = radio.source === 'spotify';
   return <aside ref={panel} hidden={hidden} className={`studio-radio radio-${radio.position} ${playing ? 'is-playing' : ''} ${spectrum ? 'has-spectrum' : ''}`} aria-label={radio.name}>
-    <div className="radio-heading"><div><small>{spotify ? 'SPOTIFY' : 'RÁDIO AO VIVO'}</small><strong>{radio.name}</strong></div>
+    <div className="radio-heading"><div><small>RÁDIO AO VIVO</small><strong>{radio.name}</strong></div>
       <button type="button" aria-expanded={!compact} aria-label={compact ? 'Expandir rádio' : 'Recolher rádio'} onClick={() => { setCompact(!compact); try { localStorage.setItem('studio-radio-compact', String(!compact)); } catch {} }}>{compact ? '+' : '−'}</button>
     </div>
     <div className="radio-controls">
       <button type="button" disabled={!ready} onClick={() => playing ? actions.current.pause() : actions.current.play()}>{playing ? 'Pausar' : 'Iniciar rádio'}</button>
-      <button type="button" disabled={spotify || !ready} title={spotify ? 'Spotify Embed não garante sincronização musical' : 'Retomar o ponto atual da programação'} onClick={() => actions.current.live()}>Voltar ao vivo</button>
+      <button type="button" disabled={!ready} title="Retomar o ponto atual da programação" onClick={() => actions.current.live()}>Voltar ao vivo</button>
       <span className="radio-bars" aria-hidden="true">{[0, 1, 2, 3, 4].map(i => <i key={i} style={{ animationDelay: `${i * 0.13}s` }} />)}</span>
     </div>
     <p role="status">{message}{playing && trackTitle ? ` · ${trackTitle}` : ''}</p>
     <div hidden={compact}>
-      <label>Volume <input type="range" min="0" max="1" step="0.01" disabled={spotify} value={volume} onChange={e => { const value = Number(e.target.value); setVolume(value); actions.current.volume(value); }} /></label>
-      <small>{spotify ? 'Volume pelo Spotify/dispositivo. Animação decorativa baseada na reprodução; sem análise de áudio. Sincronização ao vivo indisponível neste modo.' : spectrum ? 'Graves e agudos medidos do áudio.' : 'Animação decorativa baseada na reprodução.'}</small>
+      <label>Volume <input type="range" min="0" max="1" step="0.01" value={volume} onChange={e => { const value = Number(e.target.value); setVolume(value); actions.current.volume(value); }} /></label>
+      <small>{spectrum ? 'Graves e agudos medidos do áudio.' : 'Animação decorativa baseada na reprodução.'}</small>
     </div>
-    <div ref={host} hidden={compact || !spotify} />
-    {radio.spotifyUrl && <a href={radio.spotifyUrl} target="_blank" rel="noopener noreferrer">Abrir no Spotify ↗</a>}
+    <div ref={host} hidden />
   </aside>;
 }
