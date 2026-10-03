@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client';
 import { useEffect } from 'react';
 import { StudioProvider, useStudio } from '@/components/studio-provider';
 import { ThemeProvider } from '@/components/theme-provider';
-import StudioRadio from '@/components/studio-radio';
 import AmbientLight from '@/components/ambient-light';
 import StudioShell from '@/components/studio-shell';
 import ShowcaseDetail from '@/components/showcase-detail';
@@ -51,5 +50,5 @@ function Routes() {
   }
 }
 createRoot(document.getElementById('root')!).render(
-  <StudioProvider><ThemeProvider><AmbientLight /><Routes /><StudioRadio /></ThemeProvider></StudioProvider>
+  <StudioProvider><ThemeProvider><AmbientLight /><Routes /></ThemeProvider></StudioProvider>
 );
