@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Icon from "./icons";
-import type { StudioViewerHotspot } from "@/lib/studio-types";
+import type { StudioViewerHotspot, StudioViewerVariant } from "@/lib/studio-types";
 
 type Props = {
   modelUrl?: string;
   compareModelUrl?: string;
   hotspots?: StudioViewerHotspot[];
+  viewerVariants?: StudioViewerVariant[];
   posterUrl?: string;
   title?: string;
   compact?: boolean;
@@ -26,6 +27,7 @@ export default function ModelStage({
   modelUrl = "",
   compareModelUrl = "",
   hotspots = [],
+  viewerVariants = [],
   posterUrl = "",
   title = "Modelo Studio K",
   compact = false
@@ -37,10 +39,13 @@ export default function ModelStage({
   const [zoom, setZoom] = useState(105);
   const [variants, setVariants] = useState<string[]>([]);
   const [variant, setVariant] = useState("");
+  const [catalogVariant, setCatalogVariant] = useState("");
   const [lighting, setLighting] = useState<LightingMode>("studio");
   const [compare, setCompare] = useState(false);
 
-  const activeModelUrl = compare && compareModelUrl ? compareModelUrl : modelUrl;
+  const activeCatalogVariant = viewerVariants.find((item) => item.id === catalogVariant);
+  const activeModelUrl = compare && compareModelUrl ? compareModelUrl : (activeCatalogVariant?.modelUrl || modelUrl);
+  const activePosterUrl = compare ? posterUrl : (activeCatalogVariant?.posterUrl || posterUrl);
   const exposure = lighting === "day" ? "1.32" : lighting === "night" ? "0.58" : "1.05";
   const shadow = lighting === "night" ? "0.35" : lighting === "day" ? "0.82" : "1";
 
@@ -94,6 +99,7 @@ export default function ModelStage({
   const reset = () => {
     setZoom(105);
     setVariant("");
+    setCatalogVariant("");
     setAutoRotate(true);
     setLighting("studio");
     const viewer = viewerRef.current;
@@ -134,7 +140,7 @@ export default function ModelStage({
         <model-viewer
           ref={(node) => { viewerRef.current = node as ModelViewerElement | null; }}
           src={activeModelUrl}
-          poster={posterUrl || undefined}
+          poster={activePosterUrl || undefined}
           alt={compare ? `${title} · antes` : title}
           camera-controls=""
           {...autoProps}
@@ -160,8 +166,8 @@ export default function ModelStage({
             </button>
           ))}
         </model-viewer>
-      ) : posterUrl ? (
-        <img className="model-poster" src={posterUrl} alt={title} />
+      ) : activePosterUrl ? (
+        <img className="model-poster" src={activePosterUrl} alt={title} />
       ) : (
         <div className="model-placeholder">
           <Icon name="cube" />
@@ -190,9 +196,40 @@ export default function ModelStage({
         <button type="button" onClick={fullscreen}>Tela cheia</button>
       </div>
 
+      {viewerVariants.length > 0 && !compare && (
+        <div className="model-catalog-variants" aria-label="Cores e variantes disponíveis">
+          <span>CORES / VERSÕES</span>
+          <div>
+            <button
+              type="button"
+              className={!catalogVariant ? "active" : ""}
+              onClick={() => setCatalogVariant("")}
+              aria-label="Modelo padrão"
+              title="Padrão"
+            >
+              <i className="variant-default" />
+              <small>Padrão</small>
+            </button>
+            {viewerVariants.map((item) => (
+              <button
+                type="button"
+                key={item.id}
+                className={catalogVariant === item.id ? "active" : ""}
+                onClick={() => setCatalogVariant(item.id)}
+                aria-label={item.label}
+                title={item.label}
+              >
+                <i style={item.colorHex ? { backgroundColor: item.colorHex } : undefined} />
+                <small>{item.label}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {variants.length > 0 && (
         <label className="model-variant-picker">
-          <span>Cor / Variante</span>
+          <span>Material interno</span>
           <select value={variant} onChange={(event) => chooseVariant(event.target.value)}>
             <option value="">Padrão</option>
             {variants.map((name) => <option value={name} key={name}>{name}</option>)}
