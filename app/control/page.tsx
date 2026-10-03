@@ -401,6 +401,18 @@ export default function ControlPage() {
         <div className="control-user glass-panel">
           <span>Conectado como</span>
           <strong>{state.user?.name || "Administrador Studio K"}</strong>
+          <a
+            className="control-panel-switch"
+            href="https://studiokbot.up.railway.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>
+              <b>Painel do Bot</b>
+              <small>Abrir central do bot</small>
+            </span>
+            <i aria-hidden="true">↗</i>
+          </a>
         </div>
       </div>
 
