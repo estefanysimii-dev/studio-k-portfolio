@@ -92,6 +92,24 @@ export type StudioProduct = StudioItem & {
   botProductId?: string;
 };
 
+export type StudioDrop = {
+  id: string;
+  title: string;
+  description: string;
+  productId: string;
+  discountPercent: number;
+  startsAt: string;
+  endsAt: string;
+  channelId: string;
+  announceDiscord: boolean;
+  published: boolean;
+  status?: "draft" | "scheduled" | "active" | "ended";
+  created?: string;
+  updated?: string;
+  announcedAt?: string;
+  announcementMessageId?: string;
+};
+
 export type StudioAsset = {
   id: string;
   originalName: string;
@@ -208,6 +226,7 @@ export type StudioPublicState = {
   status: StudioStatus;
   items: StudioItem[];
   products: StudioProduct[];
+  drops: StudioDrop[];
   feedbacks: StudioFeedback[];
   me: StudioMe;
 };
