@@ -4067,3 +4067,115 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   font-weight:800;
   letter-spacing:.04em;
 }
+
+
+/* ===== Advanced Studio K 3D viewer ===== */
+.model-stage {
+  transition: background .28s ease, border-color .28s ease, box-shadow .28s ease;
+}
+.model-lighting-day {
+  background:
+    radial-gradient(circle at 52% 30%, rgba(255,255,255,.18), transparent 28%),
+    radial-gradient(circle at 50% 58%, rgba(151,78,255,.16), transparent 48%),
+    var(--panel);
+}
+.model-lighting-night {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(108,25,255,.18), transparent 44%),
+    linear-gradient(180deg, rgba(2,2,7,.95), rgba(7,3,14,.98));
+  border-color: rgba(120,52,190,.24);
+}
+.model-controls button.active {
+  color:#fff;
+  border-color:rgba(208,145,255,.55);
+  background:linear-gradient(120deg,rgba(108,25,255,.44),rgba(171,44,255,.25));
+}
+.model-viewer-mode {
+  position:absolute;
+  top:14px;
+  left:14px;
+  z-index:8;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  pointer-events:none;
+}
+.model-viewer-mode span,
+.model-viewer-mode small {
+  padding:6px 8px;
+  border-radius:999px;
+  background:rgba(var(--surface-rgb),.70);
+  border:1px solid rgba(184,103,255,.20);
+  backdrop-filter:blur(14px);
+}
+.model-viewer-mode span {
+  color:var(--purple-light);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.11em;
+}
+.model-viewer-mode small {
+  color:var(--text-2);
+  font-size:8px;
+}
+.model-hotspot {
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:0;
+  background:transparent;
+  color:white;
+  cursor:pointer;
+  transform:translate(-50%,-50%);
+}
+.model-hotspot > i {
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#c477ff;
+  border:2px solid rgba(255,255,255,.95);
+  box-shadow:
+    0 0 0 6px rgba(139,44,255,.15),
+    0 0 24px rgba(179,89,255,.70);
+  animation:hotspotPulse 1.8s ease-in-out infinite;
+}
+.model-hotspot > span {
+  max-width:180px;
+  padding:7px 9px;
+  border-radius:9px;
+  opacity:0;
+  transform:translateX(5px) scale(.96);
+  color:white;
+  background:rgba(8,5,14,.90);
+  border:1px solid rgba(194,119,255,.32);
+  backdrop-filter:blur(12px);
+  font:700 9px/1.35 "Manrope",Arial,sans-serif;
+  white-space:nowrap;
+  transition:.18s ease;
+  pointer-events:none;
+}
+.model-hotspot:hover > span,
+.model-hotspot:focus-visible > span {
+  opacity:1;
+  transform:translateX(0) scale(1);
+}
+.model-variant-picker {
+  max-width:calc(100% - 28px);
+}
+.model-variant-picker select {
+  max-width:180px;
+}
+@keyframes hotspotPulse {
+  50% { transform:scale(1.18); box-shadow:0 0 0 8px rgba(139,44,255,.08),0 0 30px rgba(179,89,255,.82); }
+}
+@media (max-width:720px) {
+  .model-controls { padding-right:4px; }
+  .model-controls button { font-size:8px; }
+  .model-viewer-mode { top:10px; left:10px; }
+  .model-hotspot > span { display:none; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .model-hotspot > i { animation:none!important; }
+}
+/* ===== /Advanced Studio K 3D viewer ===== */
