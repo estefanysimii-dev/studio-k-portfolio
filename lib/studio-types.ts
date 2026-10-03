@@ -322,6 +322,7 @@ export type StudioAnalytics = {
   days: number;
   pageViews: number;
   uniqueVisitors: number;
+  returningVisitors: number;
   productViews: number;
   portfolioViews: number;
   favoriteAdds: number;
@@ -329,6 +330,12 @@ export type StudioAnalytics = {
   ordersCreated: number;
   paidOrders: number;
   revenue: number;
+  clicks: number;
+  searches: number;
+  filters: number;
+  checkoutErrors: number;
+  avgPageSeconds: number;
+  avgScrollDepth: number;
   checkoutAbandonment: number;
   checkoutConversion: number;
   viewToOrder: number;
@@ -339,7 +346,13 @@ export type StudioAnalytics = {
     favorites: number;
     checkouts: number;
     orders: number;
+    dwellSeconds: number;
+    avgDwellSeconds: number;
   }[];
+  topSources: { label: string; value: number }[];
+  topClicks: { label: string; value: number }[];
+  topSearches: { label: string; value: number }[];
+  exitPages: { label: string; value: number }[];
   daily: {
     day: string;
     pageViews: number;
