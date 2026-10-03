@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useStudio } from "./studio-provider";
 import { buildAssistantMessage, normalizeAssistantConfig } from "@/lib/studio-assistant";
 
@@ -42,14 +43,112 @@ const BUILT_IN_TIPS = [
 
 export default function StudioAssistant() {
   const { state } = useStudio();
+  const pathname = usePathname();
   const config = normalizeAssistantConfig(state.site.assistant);
-  const messages = useMemo(() => {
-    const configured = config.campaigns.filter((campaign) => campaign.active);
-    return [...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [config.campaigns]);
-
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [dwellReady, setDwellReady] = useState(false);
+
+  useEffect(() => {
+    setDwellReady(false);
+    if (!/^\/products\/[^/]+$/.test(pathname)) return;
+    const timer = window.setTimeout(() => setDwellReady(true), 7000);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
+
+  const messages = useMemo(() => {
+    const configured = config.campaigns.filter((campaign) => campaign.active);
+    const contextual = [];
+    const productMatch = pathname.match(/^\/products\/([^/]+)$/);
+    const portfolioMatch = pathname.match(/^\/portfolio\/([^/]+)$/);
+
+    if (productMatch) {
+      const product = state.products.find((entry) => entry.id === decodeURIComponent(productMatch[1]));
+      if (product) {
+        if (dwellReady) {
+          contextual.push({
+            id: `context-look-${product.id}`,
+            type: "cute" as const,
+            title: `${product.name} chamou sua atenção? 👀`,
+            text: "Hmmm... você está olhando bastante esse. Dá uma olhadinha nos detalhes, materiais e visualização 3D antes de decidir. 💜",
+            ctaLabel: "",
+            href: "",
+            priceCents: 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        }
+
+        const promo = configured.find((campaign) =>
+          campaign.type === "promotion" &&
+          (!campaign.href || campaign.href.includes(product.id) || campaign.title.toLowerCase().includes(product.name.toLowerCase()))
+        );
+        if (promo) contextual.push({ ...promo, id: `context-promo-${promo.id}` });
+
+        const purchased = state.me.profile?.purchasedProductIds || [];
+        const related = state.products.find((entry) =>
+          purchased.includes(entry.id) &&
+          entry.id !== product.id &&
+          (
+            (entry.category && product.category && entry.category === product.category) ||
+            entry.tags?.some((tag) => product.tags?.includes(tag))
+          )
+        );
+        if (related) {
+          contextual.push({
+            id: `context-related-${product.id}`,
+            type: "cute" as const,
+            title: "Eu reconheci seu estilo ✨",
+            text: `Esse combina MUITO com ${related.name}, que já faz parte da sua biblioteca Studio K.`,
+            ctaLabel: "Ver minha conta",
+            href: "/account",
+            priceCents: 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        }
+      }
+    } else if (portfolioMatch) {
+      const item = state.items.find((entry) => entry.id === decodeURIComponent(portfolioMatch[1]));
+      if (item) contextual.push({
+        id: `context-portfolio-${item.id}`,
+        type: "cute" as const,
+        title: "Olha esses detalhes ✨",
+        text: `Esse é o projeto ${item.name}. Se tiver modelo 3D, gira ele e olha o acabamento de todos os lados.`,
+        ctaLabel: "",
+        href: "",
+        priceCents: 0,
+        oldPriceCents: 0,
+        active: true
+      });
+    } else if (pathname === "/products") {
+      contextual.push({
+        id: "context-products",
+        type: "bestseller" as const,
+        title: "Procurando alguma coisa específica?",
+        text: "Vai explorando com calma. Eu apareço quando encontrar promoção, novidade ou algum queridinho do Studio K. 👀",
+        ctaLabel: "",
+        href: "",
+        priceCents: 0,
+        oldPriceCents: 0,
+        active: true
+      });
+    } else if (pathname === "/account" && state.me.authenticated) {
+      contextual.push({
+        id: "context-account",
+        type: "cute" as const,
+        title: `${state.me.profile?.studioId || "Seu Studio K ID"} ficou lindo 💜`,
+        text: `Você está no level ${state.me.profile?.level || 1}. Favoritos, compras e feedbacks ajudam seu perfil a evoluir.`,
+        ctaLabel: "",
+        href: "",
+        priceCents: 0,
+        oldPriceCents: 0,
+        active: true
+      });
+    }
+
+    return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
+  }, [config.campaigns, dwellReady, pathname, state.items, state.me.authenticated, state.me.profile, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
