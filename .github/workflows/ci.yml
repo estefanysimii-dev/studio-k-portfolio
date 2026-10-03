@@ -20,3 +20,22 @@ jobs:
         env:
           STUDIO_BACKEND_URL: https://studiokbot.up.railway.app
           STUDIO_PUBLIC_URL: https://studiokoficial.netlify.app
+
+      - name: Package deploy source
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-k-netlify-source
+          path: |
+            app
+            components
+            lib
+            public
+            types
+            package.json
+            package-lock.json
+            tsconfig.json
+            next-env.d.ts
+            .gitignore
+            README.md
+          if-no-files-found: error
+          retention-days: 1
