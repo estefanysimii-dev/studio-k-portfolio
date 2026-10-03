@@ -41,6 +41,8 @@ export const studioApi = {
   controlState: () => request<StudioControlState>("control/state"),
   saveSite: (body: unknown) =>
     request("control/site", { method: "PUT", body: JSON.stringify(body) }),
+  saveStudioIdConfig: (body: import("./studio-types").StudioIdConfig) =>
+    request<import("./studio-types").StudioIdConfig>("control/studio-id", { method: "PUT", body: JSON.stringify(body) }),
   createItem: (body: unknown) =>
     request("control/items", { method: "POST", body: JSON.stringify(body) }),
   updateItem: (id: string, body: unknown) =>
