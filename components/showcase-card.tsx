@@ -1,4 +1,5 @@
 import Icon from "./icons";
+import { externalLinkProps } from "@/lib/links";
 
 type Props = {
   eyebrow: string;
@@ -26,7 +27,7 @@ export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, mod
         <h3>{title}</h3>
         <p>{copy}</p>
         {meta && <span className="meta-line">{meta}</span>}
-        <a className="text-action" href={href}>
+        <a className="text-action" href={href} {...externalLinkProps(href)}>
           Ver projeto <Icon name="arrow" />
         </a>
       </div>

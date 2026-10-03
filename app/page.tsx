@@ -5,6 +5,7 @@ import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
+import { externalLinkProps } from "@/lib/links";
 
 export default function HomePage() {
   const { state } = useStudio();
@@ -39,7 +40,7 @@ export default function HomePage() {
             <a className="btn btn-primary" href="/portfolio">
               {site.primaryCtaLabel || "Explorar Portfólio"} <Icon name="arrow" />
             </a>
-            <a className="btn btn-outline" href={site.discordInviteUrl || "/discord"}>
+            <a className="btn btn-outline" href={site.discordInviteUrl || "/discord"} {...externalLinkProps(site.discordInviteUrl || "/discord")}>
               {site.secondaryCtaLabel || "Entrar no Discord"}
             </a>
           </div>
@@ -93,7 +94,7 @@ export default function HomePage() {
           <span className="section-eyebrow">COMUNIDADE STUDIO K</span>
           <h2>Entre no Discord e acompanhe drops, projetos e novidades.</h2>
         </div>
-        <a className="btn btn-primary" href={site.discordInviteUrl || "/discord"}>Entrar no Discord <Icon name="arrow" /></a>
+        <a className="btn btn-primary" href={site.discordInviteUrl || "/discord"} {...externalLinkProps(site.discordInviteUrl || "/discord")}>Entrar no Discord <Icon name="arrow" /></a>
       </section>
     </StudioShell>
   );
