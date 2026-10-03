@@ -7,6 +7,7 @@ import ModelStage from "@/components/model-stage";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioItem } from "@/lib/studio-types";
+import { studioApi } from "@/lib/studio-api";
 
 export default function PortfolioPage() {
   const { state } = useStudio();
@@ -38,7 +39,12 @@ export default function PortfolioPage() {
             type="button"
             className={filter === category ? "filter-chip active" : "filter-chip"}
             key={category}
-            onClick={() => setFilter(category)}
+            onClick={() => {
+              setFilter(category);
+              let sessionId = `filter-${Date.now()}`;
+              try { sessionId = localStorage.getItem("studio-k-visitor-id") || sessionId; } catch {}
+              void studioApi.track({ sessionId, event: "filter", itemKind: "page", path: "/portfolio", meta: { filter: category } });
+            }}
           >
             {category}
           </button>
