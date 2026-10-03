@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 const php = process.env.PHP_BINARY || 'php';
 const available = spawnSync(php, ['-v'], { windowsHide: true }).status === 0;
 test('PHP gateway protects writes, hides OAuth exchange and bounds return URLs', { skip: !available }, async () => {
@@ -30,4 +31,13 @@ test('PHP gateway protects writes, hides OAuth exchange and bounds return URLs',
     assert.match(logout.headers.get('set-cookie'), /httponly/i);
     assert.match(logout.headers.get('set-cookie'), /samesite=Lax/i);
   } finally { server.kill(); }
+});
+
+
+test('InfinityFree gateway exposes Studio K ID ecosystem routes', () => {
+  const gateway = readFileSync(resolve('dist-infinityfree/index.php'), 'utf8');
+  for (const route of ['analytics/event', 'me/profile', 'me/ecosystem', 'me/favorites/']) {
+    assert.match(gateway, new RegExp(route.replace('/', '\\/')));
+  }
+  assert.match(gateway, /me\/profile\(\?:\/title\)\?/);
 });
