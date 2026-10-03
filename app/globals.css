@@ -1759,3 +1759,85 @@ button { font: inherit; }
     opacity: .72;
   }
 }
+
+
+/* ===== Studio K · Hero spacing, rounded surface and readability ===== */
+.home-banner + .hero-grid {
+  margin-top: 54px;
+  padding: 46px clamp(28px, 3.2vw, 52px);
+  min-height: auto;
+  border-radius: 48px;
+  overflow: hidden;
+}
+
+.home-banner + .hero-grid::before,
+.home-banner + .hero-grid::after {
+  inset: 0 !important;
+  border-radius: inherit;
+}
+
+.home-banner + .hero-grid::before {
+  border: 1px solid rgba(174, 91, 255, .18);
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, .28),
+    inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.home-banner + .hero-grid::after {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(192,112,255,.15), transparent 24%),
+    linear-gradient(180deg, transparent 66%, rgba(5,5,8,.92) 100%);
+}
+
+.section-eyebrow,
+.home-banner-copy span,
+.top-eyebrow {
+  color: #e4c1ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  line-height: 1.45;
+  text-shadow:
+    0 0 12px rgba(182, 93, 255, .42),
+    0 1px 2px rgba(0,0,0,.7);
+}
+
+.top-title {
+  color: #d5cfdb;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.hero-copy p,
+.page-subtitle {
+  color: #c9c2d1;
+}
+
+.meta-line {
+  color: #b9afc3;
+  font-size: 10px;
+  letter-spacing: .1em;
+}
+
+.trust-row span {
+  color: #aaa1b4;
+  font-size: 11px;
+}
+
+@media (max-width: 720px) {
+  .home-banner + .hero-grid {
+    margin-top: 36px;
+    padding: 34px 20px 38px;
+    border-radius: 36px;
+  }
+
+  .section-eyebrow,
+  .home-banner-copy span {
+    font-size: 10.5px;
+    letter-spacing: .14em;
+  }
+
+  .home-banner-copy span {
+    color: #efd7ff;
+  }
+}
