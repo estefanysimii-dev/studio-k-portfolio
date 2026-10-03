@@ -72,6 +72,8 @@ export default function PortfolioPage() {
               coverUrl={item.coverUrl || item.gifUrl}
               modelUrl={item.modelUrl}
               href={`/portfolio/${item.id}`}
+              favoriteKind="items"
+              favoriteId={item.id}
             />
           </div>
         )) : (
