@@ -120,7 +120,13 @@ export default function ShowcaseDetail(props: Props) {
           )}
         </div>
 
-        <ModelStage modelUrl={item.modelUrl} posterUrl={item.coverUrl || item.gifUrl} title={item.name} />
+        <ModelStage
+          modelUrl={item.modelUrl}
+          compareModelUrl={item.compareModelUrl}
+          hotspots={item.viewerHotspots}
+          posterUrl={item.coverUrl || item.gifUrl}
+          title={item.name}
+        />
       </section>
 
       <MediaGallery
