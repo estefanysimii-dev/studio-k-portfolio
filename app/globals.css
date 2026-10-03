@@ -5073,3 +5073,97 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .model-catalog-variants button > small { display: none; }
 }
 /* ===== /Viewer 3D · configurable catalog variants ===== */
+
+
+/* ===== Analytics 2.0 + catalog search ===== */
+.catalog-search {
+  margin: -6px 0 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 14px;
+}
+.catalog-search label {
+  flex: 1;
+  display: grid;
+  gap: 6px;
+}
+.catalog-search label > span {
+  color: var(--text-2);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.catalog-search input {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid rgba(177,96,255,.18);
+  background: rgba(var(--surface-rgb),.62);
+  color: var(--white);
+  outline: none;
+  font: 11px "Manrope",Arial,sans-serif;
+}
+.catalog-search input:focus {
+  border-color: rgba(199,128,255,.48);
+  box-shadow: 0 0 0 3px rgba(139,44,255,.08);
+}
+.catalog-search > small {
+  flex: 0 0 auto;
+  color: var(--text-2);
+  font-size: 8px;
+}
+
+.analytics-metrics-extended {
+  grid-template-columns: repeat(4,minmax(0,1fr));
+}
+.analytics-ranked-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.analytics-ranked-panel {
+  min-width: 0;
+  padding: 14px;
+  border-radius: 13px;
+  background: rgba(var(--surface-rgb),.40);
+  border: 1px solid rgba(164,83,255,.11);
+}
+.analytics-ranked-row {
+  display: grid;
+  grid-template-columns: 22px minmax(0,1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 34px;
+  border-bottom: 1px solid rgba(164,83,255,.07);
+}
+.analytics-ranked-row:last-child { border-bottom: 0; }
+.analytics-ranked-row > b {
+  color: var(--purple-light);
+  font: 800 7px/1 "Sora",Arial,sans-serif;
+}
+.analytics-ranked-row > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-2);
+  font-size: 8px;
+}
+.analytics-ranked-row > strong {
+  font: 800 8px/1 "Sora",Arial,sans-serif;
+}
+
+@media (max-width: 1180px) {
+  .analytics-ranked-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 800px) {
+  .catalog-search { align-items: stretch; flex-direction: column; }
+  .analytics-metrics-extended { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .analytics-ranked-grid { grid-template-columns: 1fr; }
+}
+/* ===== /Analytics 2.0 + catalog search ===== */
