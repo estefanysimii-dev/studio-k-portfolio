@@ -69,7 +69,9 @@ export default function StudioAssistant() {
         text: activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do Studio K.` : "Tem promoção rolando agora no Studio K."),
         ctaLabel: dropProduct ? "Ver o drop" : "Ver produtos",
         href: dropProduct ? `/products/${dropProduct.id}` : "/products",
-        priceCents: dropProduct?.priceCents || 0,
+        priceCents: dropProduct
+          ? Math.max(0, Math.floor(dropProduct.priceCents * (100 - Number(activeDrop.discountPercent || 0)) / 100))
+          : 0,
         oldPriceCents: dropProduct?.priceCents || 0,
         active: true
       });
