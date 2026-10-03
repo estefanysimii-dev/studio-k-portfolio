@@ -380,6 +380,12 @@ export default function ControlPage() {
                   setTab("converter");
                 }}
               />
+              <MediaField
+                label="Vídeo"
+                kind="video"
+                value={product.videoUrl}
+                onChange={(value) => setProduct({ ...product, videoUrl: value })}
+              />
               <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} /></label>
               <label className="span-2">Descrição<textarea required rows={4} value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} /></label>
             </div>
