@@ -49,13 +49,14 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
   const [spectrum, setSpectrum] = useState(false);
 
   useEffect(() => {
-    if (!radio?.enabled || radio.source === "spotify") {
+    if (!radio?.enabled || currentRadio.source === "spotify") {
       setPlaying(false);
       setReady(false);
       setMessage("Rádio indisponível");
       return;
     }
 
+    const currentRadio = radio;
     let active = true;
     let wanted = false;
     let audio: HTMLAudioElement | undefined;
@@ -76,8 +77,8 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
       try { localStorage.setItem(key, value); } catch {}
     };
 
-    const saved = Number(safeRead("studio-radio-volume") ?? radio.defaultVolume);
-    const initialVolume = Number.isFinite(saved) ? Math.max(0, Math.min(1, saved)) : radio.defaultVolume;
+    const saved = Number(safeRead("studio-radio-volume") ?? currentRadio.defaultVolume);
+    const initialVolume = Number.isFinite(saved) ? Math.max(0, Math.min(1, saved)) : currentRadio.defaultVolume;
 
     setReady(false);
     setPlaying(false);
@@ -105,17 +106,17 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
 
     function align(force = false) {
       if (!audio) return;
-      if (radio.source === "schedule") {
+      if (currentRadio.source === "schedule") {
         const time = now();
         if (time === null) return;
-        const target = scheduledPosition(radio, time);
+        const target = scheduledPosition(currentRadio, time);
         if (!target) return;
 
         if (selected !== target.index) {
           selected = target.index;
-          audio.src = radio.tracks[selected].url;
+          audio.src = currentRadio.tracks[selected].url;
           audio.load();
-          setTrackTitle(radio.tracks[selected].title);
+          setTrackTitle(currentRadio.tracks[selected].title);
           if (wanted) void playAudio();
         }
 
@@ -153,7 +154,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
     }
 
     function analyze() {
-      if (!audio || !radio.analyze) return;
+      if (!audio || !currentRadio.analyze) return;
       if (context && analyser) {
         if (context.state === "suspended") void context.resume().catch(() => {});
         return;
@@ -208,7 +209,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
     }
 
     const resumeSpectrum = () => {
-      if (!active || !radio.analyze || !audio) return;
+      if (!active || !currentRadio.analyze || !audio) return;
       analyze();
       if (context?.state === "suspended") void context.resume().catch(() => {});
     };
@@ -217,7 +218,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
       play: () => {
         wanted = true;
         if (!audio) return;
-        if (!clock && radio.source === "schedule") {
+        if (!clock && currentRadio.source === "schedule") {
           setMessage("Sincronizando… Clique em iniciar novamente.");
           void updateClock();
           return;
@@ -264,7 +265,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
 
     audio = new Audio();
     host.current?.replaceChildren(audio);
-    if (radio.analyze) audio.crossOrigin = "anonymous";
+    if (currentRadio.analyze) audio.crossOrigin = "anonymous";
     audio.preload = "metadata";
     audio.volume = initialVolume;
 
@@ -299,28 +300,28 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
 
     void updateClock().then(() => {
       if (!active) return;
-      if (radio.source === "schedule") {
+      if (currentRadio.source === "schedule") {
         align(true);
         setReady(Boolean(clock));
-        if (radio.autoplay && clock) {
+        if (currentRadio.autoplay && clock) {
           wanted = true;
           void playAudio();
         }
       }
     });
 
-    if (radio.source === "hls") {
+    if (currentRadio.source === "hls") {
       const initialize = () => {
         if (!active) return;
         setReady(true);
-        if (radio.autoplay) {
+        if (currentRadio.autoplay) {
           wanted = true;
           void playAudio();
         }
       };
 
       if (audio.canPlayType("application/vnd.apple.mpegurl")) {
-        audio.src = radio.streamUrl;
+        audio.src = currentRadio.streamUrl;
         initialize();
       } else {
         void import("hls.js").then(({ default: HLS }) => {
@@ -337,7 +338,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
               setMessage("Transmissão indisponível. Verifique a fonte na Central.");
             }
           });
-          hls.loadSource(radio.streamUrl);
+          hls.loadSource(currentRadio.streamUrl);
           hls.attachMedia(audio);
         }).catch(() => {
           if (active) setMessage("Não foi possível carregar a transmissão.");
@@ -346,14 +347,14 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
     }
 
     timers.push(window.setInterval(() => {
-      if (wanted && radio.source === "schedule") align();
+      if (wanted && currentRadio.source === "schedule") align();
     }, 1000));
     timers.push(window.setInterval(() => {
-      if (wanted && radio.source === "hls") align();
+      if (wanted && currentRadio.source === "hls") align();
     }, 15000));
     timers.push(window.setInterval(() => {
       void updateClock().then(() => {
-        if (active && radio.source === "schedule") {
+        if (active && currentRadio.source === "schedule") {
           setReady(Boolean(clock));
           if (wanted) align();
         }
