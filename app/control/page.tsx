@@ -3,10 +3,12 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
+import ObjConverter from "@/components/obj-converter";
+import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
 import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "portfolio" | "products" | "media" | "integrations";
+type Tab = "overview" | "site" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 const emptyProject = {
   name: "",
@@ -70,6 +72,7 @@ export default function ControlPage() {
   const [product, setProduct] = useState(emptyProduct);
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
+  const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
 
   const refresh = async () => {
     try {
@@ -238,6 +241,7 @@ export default function ControlPage() {
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
+          ["converter", "Conversor 3D"],
           ["integrations", "Integrações"]
         ].map(([key, label]) => (
           <button type="button" key={key} className={tab === key ? "active" : ""} onClick={() => setTab(key as Tab)}>
@@ -260,7 +264,7 @@ export default function ControlPage() {
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">PUBLICAÇÃO</span>
               <h2>Fluxo unificado</h2>
-              <p>Projetos e produtos cadastrados aqui passam a alimentar as páginas públicas. Arquivos GLB/GLTF abrem no viewer 360°; BLEND/OBJ/FBX/PSD ficam privados como fonte.</p>
+              <p>Projetos e produtos cadastrados aqui passam a alimentar as páginas públicas. GLB/GLTF abrem no viewer 360° e arquivos OBJ podem ser convertidos automaticamente pelo Conversor 3D.</p>
             </section>
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">STATUS</span>
@@ -306,9 +310,28 @@ export default function ControlPage() {
               <label>Nome<input required value={project.name} onChange={(e) => setProject({ ...project, name: e.target.value })} /></label>
               <label>Categoria<input value={project.category} onChange={(e) => setProject({ ...project, category: e.target.value })} /></label>
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
-              <label>Capa / imagem URL<input value={project.coverUrl} onChange={(e) => setProject({ ...project, coverUrl: e.target.value })} /></label>
-              <label>Modelo GLB/GLTF URL<input value={project.modelUrl} onChange={(e) => setProject({ ...project, modelUrl: e.target.value })} /></label>
-              <label>Vídeo URL<input value={project.videoUrl} onChange={(e) => setProject({ ...project, videoUrl: e.target.value })} /></label>
+              <MediaField
+                label="Capa / imagem"
+                kind="image"
+                value={project.coverUrl}
+                onChange={(value) => setProject({ ...project, coverUrl: value })}
+              />
+              <MediaField
+                label="Modelo 3D"
+                kind="model"
+                value={project.modelUrl}
+                onChange={(value) => setProject({ ...project, modelUrl: value })}
+                onConvertObj={() => {
+                  setConverterTarget("project");
+                  setTab("converter");
+                }}
+              />
+              <MediaField
+                label="Vídeo"
+                kind="video"
+                value={project.videoUrl}
+                onChange={(value) => setProject({ ...project, videoUrl: value })}
+              />
               <label className="span-2">Descrição<textarea required rows={4} value={project.description} onChange={(e) => setProject({ ...project, description: e.target.value })} /></label>
               <div className="check-row span-2">
                 <label><input type="checkbox" checked={project.featured} onChange={(e) => setProject({ ...project, featured: e.target.checked })} /> Destaque da Home</label>
@@ -341,8 +364,28 @@ export default function ControlPage() {
               <label>Preço em R$<input value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} placeholder="49,90" /></label>
               <label>Categoria<input value={product.category} onChange={(e) => setProduct({ ...product, category: e.target.value })} /></label>
               <label>Tags<input value={product.tags} onChange={(e) => setProduct({ ...product, tags: e.target.value })} /></label>
-              <label>Capa URL<input value={product.coverUrl} onChange={(e) => setProduct({ ...product, coverUrl: e.target.value })} /></label>
-              <label>Modelo GLB/GLTF URL<input value={product.modelUrl} onChange={(e) => setProduct({ ...product, modelUrl: e.target.value })} /></label>
+              <MediaField
+                label="Capa / imagem"
+                kind="image"
+                value={product.coverUrl}
+                onChange={(value) => setProduct({ ...product, coverUrl: value })}
+              />
+              <MediaField
+                label="Modelo 3D"
+                kind="model"
+                value={product.modelUrl}
+                onChange={(value) => setProduct({ ...product, modelUrl: value })}
+                onConvertObj={() => {
+                  setConverterTarget("product");
+                  setTab("converter");
+                }}
+              />
+              <MediaField
+                label="Vídeo"
+                kind="video"
+                value={product.videoUrl}
+                onChange={(value) => setProduct({ ...product, videoUrl: value })}
+              />
               <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} /></label>
               <label className="span-2">Descrição<textarea required rows={4} value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} /></label>
             </div>
@@ -368,7 +411,7 @@ export default function ControlPage() {
           <section className="upload-zone glass-panel">
             <span className="section-eyebrow">BIBLIOTECA</span>
             <h2>Mídia e arquivos-fonte</h2>
-            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. BLEND, OBJ, FBX e PSD são guardados como fonte privada.</p>
+            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. BLEND, OBJ, FBX e PSD são guardados como fonte privada. OBJ pode ser convertido para GLB na aba Conversor 3D.</p>
             <div className="upload-actions">
               <label className="btn btn-primary file-button">
                 {uploading ? "Enviando..." : "Selecionar arquivo"}
@@ -389,6 +432,23 @@ export default function ControlPage() {
             ))}
           </div>
         </>
+      )}
+
+      {tab === "converter" && (
+        <ObjConverter
+          onChanged={refresh}
+          onUse={(url) => {
+            if (converterTarget === "product") {
+              setProduct((current) => ({ ...current, modelUrl: url }));
+              setTab("products");
+              flash("GLB inserido automaticamente no novo produto.");
+            } else {
+              setProject((current) => ({ ...current, modelUrl: url }));
+              setTab("portfolio");
+              flash("GLB inserido automaticamente no novo projeto.");
+            }
+          }}
+        />
       )}
 
       {tab === "integrations" && (
