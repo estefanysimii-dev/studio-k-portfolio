@@ -19,43 +19,116 @@ function visitorId() {
   }
 }
 
+function sourceMeta() {
+  let referrerHost = "";
+  try {
+    if (document.referrer) referrerHost = new URL(document.referrer).hostname.replace(/^www\./, "");
+  } catch {}
+  const params = new URLSearchParams(window.location.search);
+  const source = params.get("utm_source") || referrerHost || "Direto";
+  return {
+    source: source.slice(0, 80),
+    referrerHost: referrerHost.slice(0, 80),
+    device: window.innerWidth <= 720 ? "mobile" : window.innerWidth <= 1100 ? "tablet" : "desktop"
+  };
+}
+
 export default function BehaviorTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
     if (!pathname || pathname.startsWith("/control")) return;
     const sessionId = visitorId();
+    const started = performance.now();
+    let maxScrollDepth = 0;
+    let sentLeave = false;
     const product = pathname.match(/^\/products\/([^/]+)$/);
     const portfolio = pathname.match(/^\/portfolio\/([^/]+)$/);
+    let itemKind: "product" | "portfolio" | "page" = "page";
+    let itemId = "";
+
+    if (product) {
+      itemKind = "product";
+      itemId = product[1];
+      try { itemId = decodeURIComponent(itemId); } catch {}
+    } else if (portfolio) {
+      itemKind = "portfolio";
+      itemId = portfolio[1];
+      try { itemId = decodeURIComponent(itemId); } catch {}
+    }
 
     void studioApi.track({
       sessionId,
       event: "page_view",
       itemKind: "page",
-      path: pathname
+      path: pathname,
+      meta: sourceMeta()
     });
 
-    if (product) {
-      let itemId = product[1];
-      try { itemId = decodeURIComponent(itemId); } catch {}
-      void studioApi.track({
-        sessionId,
-        event: "product_view",
-        itemKind: "product",
-        itemId,
-        path: pathname
-      });
-    } else if (portfolio) {
-      let itemId = portfolio[1];
-      try { itemId = decodeURIComponent(itemId); } catch {}
-      void studioApi.track({
-        sessionId,
-        event: "portfolio_view",
-        itemKind: "portfolio",
-        itemId,
-        path: pathname
-      });
+    if (itemKind === "product") {
+      void studioApi.track({ sessionId, event: "product_view", itemKind, itemId, path: pathname });
+    } else if (itemKind === "portfolio") {
+      void studioApi.track({ sessionId, event: "portfolio_view", itemKind, itemId, path: pathname });
     }
+
+    const updateScroll = () => {
+      const scrollable = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      maxScrollDepth = Math.max(maxScrollDepth, Math.min(100, Math.round(window.scrollY / scrollable * 100)));
+    };
+    window.addEventListener("scroll", updateScroll, { passive: true });
+    updateScroll();
+
+    const sendLeave = () => {
+      if (sentLeave) return;
+      sentLeave = true;
+      updateScroll();
+      const durationSec = Math.max(0, Math.round((performance.now() - started) / 1000));
+      void studioApi.track({
+        sessionId,
+        event: "page_leave",
+        itemKind,
+        itemId,
+        path: pathname,
+        meta: { durationSec, scrollDepth: maxScrollDepth }
+      });
+      if (itemKind === "product" && itemId) {
+        void studioApi.track({
+          sessionId,
+          event: "product_dwell",
+          itemKind: "product",
+          itemId,
+          path: pathname,
+          meta: { durationSec }
+        });
+      }
+    };
+
+    window.addEventListener("pagehide", sendLeave);
+    return () => {
+      window.removeEventListener("scroll", updateScroll);
+      window.removeEventListener("pagehide", sendLeave);
+      sendLeave();
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!pathname || pathname.startsWith("/control")) return;
+    const handleClick = (event: MouseEvent) => {
+      const target = event.target instanceof Element ? event.target.closest("a,button") : null;
+      if (!target) return;
+      const label = (target.textContent || target.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 100);
+      const href = target instanceof HTMLAnchorElement ? target.getAttribute("href") || "" : "";
+      if (!label && !href) return;
+      void studioApi.track({
+        sessionId: visitorId(),
+        event: "click",
+        itemKind: "page",
+        path: pathname,
+        meta: { label, href: href.slice(0, 180) }
+      });
+    };
+    document.addEventListener("click", handleClick, true);
+    return () => document.removeEventListener("click", handleClick, true);
   }, [pathname]);
 
   return null;
