@@ -1841,3 +1841,75 @@ button { font: inherit; }
     color: #efd7ff;
   }
 }
+
+
+/* ===== Studio K · Live status readability ===== */
+.sidebar-live {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(139,44,255,.19), transparent 42%),
+    linear-gradient(180deg, rgba(18,11,30,.94), rgba(8,5,14,.93));
+  border-color: rgba(177, 96, 255, .30);
+}
+
+.sidebar-live-head > span {
+  color: #e1b9ff;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-shadow: 0 0 10px rgba(184, 100, 255, .22);
+}
+
+.sidebar-live-row {
+  min-height: 27px;
+  font-size: 11px;
+}
+
+.sidebar-live-row > span {
+  color: #c4bacd;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.sidebar-live-row strong {
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.sidebar-live-row strong.online {
+  color: #71f3a2;
+  text-shadow: 0 0 8px rgba(72,231,124,.16);
+}
+
+.sidebar-live-row strong.offline {
+  color: #ff92a4;
+}
+
+.sidebar-live-totals {
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.sidebar-live-totals > div {
+  padding: 10px 9px;
+  border-radius: 11px;
+  background: rgba(255,255,255,.035);
+  border-color: rgba(177, 96, 255, .18);
+}
+
+.sidebar-live-totals strong {
+  font: 800 16px/1 "Sora", sans-serif;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(190, 130, 255, .15);
+}
+
+.sidebar-live-totals span {
+  margin-top: 6px;
+  color: #b8aebf;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: .035em;
+}
