@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
@@ -14,7 +14,36 @@ export default function HomePage() {
   const featured = items.find((item) => item.featured) || items[0];
   const selected = items.slice(0, 4);
   const [feedbackFilter, setFeedbackFilter] = useState(0);
+  const [dropNow, setDropNow] = useState(() => Date.now());
   const feedbacks = state.feedbacks || [];
+  const liveDrop = useMemo(
+    () => (state.drops || []).find((drop) => drop.status === "active") || null,
+    [state.drops]
+  );
+  const nextDrop = useMemo(
+    () => (state.drops || [])
+      .filter((drop) => drop.status === "scheduled")
+      .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt))[0] || null,
+    [state.drops]
+  );
+  const featuredDrop = liveDrop || nextDrop;
+  const featuredDropProduct = featuredDrop
+    ? state.products.find((product) => product.id === featuredDrop.productId)
+    : undefined;
+
+  useEffect(() => {
+    if (!featuredDrop) return;
+    const timer = window.setInterval(() => setDropNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [featuredDrop?.id]);
+
+  const dropTarget = featuredDrop
+    ? Date.parse(liveDrop ? featuredDrop.endsAt : featuredDrop.startsAt)
+    : 0;
+  const dropRemaining = Math.max(0, dropTarget - dropNow);
+  const dropHours = Math.floor(dropRemaining / 3_600_000);
+  const dropMinutes = Math.floor((dropRemaining % 3_600_000) / 60_000);
+  const dropSeconds = Math.floor((dropRemaining % 60_000) / 1000);
   const validFeedbacks = useMemo(
     () => feedbacks.filter((feedback) => Number(feedback.rating) >= 1 && Number(feedback.rating) <= 5),
     [feedbacks]
@@ -53,6 +82,31 @@ export default function HomePage() {
           <strong>{site.brandTagline || "Sua identidade. Sua cidade."}</strong>
         </div>
       </section>
+
+      {featuredDrop && featuredDropProduct && (
+        <section className={`drop-live-banner glass-panel ${liveDrop ? "is-live" : "is-scheduled"}`}>
+          <div className="drop-live-copy">
+            <span className="drop-live-status"><i /> {liveDrop ? "DROP AO VIVO" : "PRÓXIMO DROP"}</span>
+            <div>
+              <strong>{featuredDrop.title}</strong>
+              <p>{featuredDrop.description || featuredDropProduct.description}</p>
+            </div>
+          </div>
+          <div className="drop-live-offer">
+            {featuredDrop.discountPercent > 0 && <b>{featuredDrop.discountPercent}% OFF</b>}
+            <div className="drop-countdown" aria-label={liveDrop ? "Tempo restante do drop" : "Tempo para o início do drop"}>
+              <span>{String(dropHours).padStart(2, "0")}<small>H</small></span>
+              <em>:</em>
+              <span>{String(dropMinutes).padStart(2, "0")}<small>M</small></span>
+              <em>:</em>
+              <span>{String(dropSeconds).padStart(2, "0")}<small>S</small></span>
+            </div>
+            <a className="btn btn-primary compact" href={`/products/${featuredDropProduct.id}`}>
+              {liveDrop ? "Ver oferta" : "Ver produto"} <Icon name="arrow" />
+            </a>
+          </div>
+        </section>
+      )}
 
       <section className="hero-grid">
         <div className="hero-copy">
