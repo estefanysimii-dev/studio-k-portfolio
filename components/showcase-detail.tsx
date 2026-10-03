@@ -22,10 +22,22 @@ export default function ShowcaseDetail(props: Props) {
   const item = props.item;
   const isProduct = props.kind === "product";
   const product = isProduct ? props.item : null;
-  const memberDiscount = state.me.profile?.discountPercent || 0;
-  const memberPrice = product && memberDiscount > 0
-    ? Math.max(0, Math.floor(product.priceCents * (100 - memberDiscount) / 100))
+  const activeDrop = product
+    ? (state.drops || []).find((drop) =>
+        drop.productId === product.id &&
+        drop.published !== false &&
+        Date.parse(drop.startsAt) <= Date.now() &&
+        Date.parse(drop.endsAt) > Date.now()
+      )
+    : undefined;
+  const dropDiscount = Math.max(0, Number(activeDrop?.discountPercent || 0));
+  const dropPrice = product && dropDiscount > 0
+    ? Math.max(0, Math.floor(product.priceCents * (100 - dropDiscount) / 100))
     : product?.priceCents || 0;
+  const memberDiscount = state.me.profile?.discountPercent || 0;
+  const memberPrice = memberDiscount > 0
+    ? Math.max(0, Math.floor(dropPrice * (100 - memberDiscount) / 100))
+    : dropPrice;
   const [coupon, setCoupon] = useState("");
   const [checkout, setCheckout] = useState<StudioCheckout | null>(null);
   const [busy, setBusy] = useState(false);
@@ -65,15 +77,19 @@ export default function ShowcaseDetail(props: Props) {
             <div className="detail-commerce glass-panel">
               <span className="section-eyebrow">STUDIO K STORE</span>
               <div className="detail-price-stack">
-                {state.me.authenticated && memberDiscount > 0 && product.priceCents > 0 ? (
+                {(dropDiscount > 0 || (state.me.authenticated && memberDiscount > 0)) && product.priceCents > 0 ? (
                   <>
                     <span className="detail-price-original">{money.format(product.priceCents / 100)}</span>
                     <strong className="detail-price">{money.format(memberPrice / 100)}</strong>
-                    <span className="detail-member-discount">Studio K ID · {memberDiscount}% OFF automático</span>
+                    <div className="detail-discount-tags">
+                      {dropDiscount > 0 && <span className="detail-drop-discount">DROP · {dropDiscount}% OFF</span>}
+                      {state.me.authenticated && memberDiscount > 0 && <span className="detail-member-discount">Studio K ID · +{memberDiscount}% OFF</span>}
+                    </div>
                   </>
                 ) : (
                   <strong className="detail-price">{product.priceCents > 0 ? money.format(product.priceCents / 100) : "Sob consulta"}</strong>
                 )}
+                {activeDrop && <small className="detail-drop-expiry">Drop termina {new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(activeDrop.endsAt))}</small>}
               </div>
 
               {product.priceCents > 0 && product.botProductId ? (
