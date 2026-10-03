@@ -136,6 +136,7 @@ export default function HomePage() {
           modelUrl={featured?.modelUrl}
           compareModelUrl={featured?.compareModelUrl}
           hotspots={featured?.viewerHotspots}
+          viewerVariants={featured?.viewerVariants}
           posterUrl={featured?.coverUrl || featured?.gifUrl}
           title={featured?.name || "Studio K"}
         />
