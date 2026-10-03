@@ -48,6 +48,16 @@ export default function ShowcaseDetail(props: Props) {
     setBusy(true);
     setError("");
     try {
+      let sessionId = `member-${state.me.user?.id || "studio-k"}`;
+      try { sessionId = localStorage.getItem("studio-k-visitor-id") || sessionId; } catch {}
+      void studioApi.track({
+        sessionId,
+        event: "checkout_start",
+        itemKind: "product",
+        itemId: product.id,
+        path: `/products/${product.id}`,
+        meta: { hasCoupon: Boolean(coupon.trim()), drop: Boolean(activeDrop) }
+      });
       setCheckout(await studioApi.createOrder(product.id, coupon));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível criar o pedido.");
