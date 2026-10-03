@@ -14,6 +14,15 @@ export default function HomePage() {
 
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
+      <section className="home-banner glass-panel" aria-label="Studio K">
+        <img src="/studio-assets/studio-k-banner.webp" alt="Studio K · Kiki em seu estúdio de criação 3D" />
+        <div className="home-banner-shade" />
+        <div className="home-banner-copy">
+          <span>STUDIO K · FIVEM DESIGN</span>
+          <strong>Sua identidade. Sua cidade.</strong>
+        </div>
+      </section>
+
       <section className="hero-grid">
         <div className="hero-copy">
           <span className="section-eyebrow">{site.heroEyebrow}</span>

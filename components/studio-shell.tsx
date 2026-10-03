@@ -35,9 +35,15 @@ function BrandMark({ src, name }: { src?: string; name: string }) {
 export default function StudioShell({ eyebrow, title, children, variant = "default" }: Props) {
   const pathname = usePathname();
   const { state, loading } = useStudio();
-  const { site, me } = state;
+  const { site, me, status } = state;
 
   const invite = site.discordInviteUrl || "/discord";
+  const logoSrc = site.logoUrl && !site.logoUrl.startsWith("/media/")
+    ? site.logoUrl
+    : "/studio-assets/studio-k-logo.webp";
+  const tagline = !site.brandTagline || site.brandTagline === "KINETIC LOOM"
+    ? "SUA IDENTIDADE. SUA CIDADE."
+    : site.brandTagline;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated ? "Discord conectado" : "Discord não conectado";
 
@@ -45,10 +51,10 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
     <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`}>
       <aside className="sidebar">
         <Link href="/" className="brand-block" aria-label="Studio K · Início">
-          <BrandMark src={site.logoUrl} name={site.brandName || "Studio K"} />
+          <BrandMark src={logoSrc} name={site.brandName || "Studio K"} />
           <div>
             <strong>{site.brandName || "STUDIO K"}</strong>
-            <span>{site.brandTagline || "KINETIC LOOM"}</span>
+            <span>{tagline}</span>
           </div>
         </Link>
 
@@ -63,6 +69,29 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
             );
           })}
         </nav>
+
+        <div className="sidebar-live glass-panel" aria-label="Status ao vivo do Studio K">
+          <div className="sidebar-live-head">
+            <span>Status ao vivo</span>
+            <i className={status.botOnline ? "live-pulse online" : "live-pulse offline"} />
+          </div>
+          <div className="sidebar-live-row">
+            <span>Bot</span>
+            <strong className={status.botOnline ? "online" : "offline"}>{status.botOnline ? "Online" : "Offline"}</strong>
+          </div>
+          <div className="sidebar-live-row">
+            <span>Loja</span>
+            <strong className={status.storeOpen ? "online" : "offline"}>{status.storeOpen ? "Online" : "Offline"}</strong>
+          </div>
+          <div className="sidebar-live-row">
+            <span>Tickets</span>
+            <strong className={status.ticketsOpen ? "online" : "offline"}>{status.ticketsOpen ? "Disponíveis" : "Fechados"}</strong>
+          </div>
+          <div className="sidebar-live-totals">
+            <div><strong>{status.openTickets}</strong><span>Tickets abertos</span></div>
+            <div><strong>{status.pendingOrders}</strong><span>Pedidos pendentes</span></div>
+          </div>
+        </div>
 
         <div className="sidebar-spacer" />
 
@@ -97,9 +126,9 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
 
           <div className="top-actions">
-            <div className="status-chip">
+            <div className={`status-chip ${status.storeOpen ? "online" : "offline"}`} title="Sincronizado com o status da loja configurado no bot">
               <span className="status-dot" />
-              Studio K online
+              {status.storeOpen ? "Loja Online" : "Loja Offline"}
             </div>
             <a className="btn btn-outline compact" href={invite}>
               Entrar no Discord
@@ -110,6 +139,15 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
 
         <section className="page-content">{children}</section>
       </main>
+
+      {variant !== "control" && (
+        <img
+          className="site-mascot"
+          src="/studio-assets/studio-k-mascot.webp"
+          alt=""
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }

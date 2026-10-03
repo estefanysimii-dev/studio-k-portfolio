@@ -7,8 +7,8 @@ import type { StudioPublicState } from "@/lib/studio-types";
 const fallback: StudioPublicState = {
   site: {
     brandName: "Studio K",
-    brandTagline: "KINETIC LOOM",
-    logoUrl: "",
+    brandTagline: "SUA IDENTIDADE. SUA CIDADE.",
+    logoUrl: "/studio-assets/studio-k-logo.webp",
     homeBackgroundUrl: "",
     controlBackgroundUrl: "",
     heroEyebrow: "DESIGN 3D · FIVEM · MODA DIGITAL",
@@ -19,6 +19,14 @@ const fallback: StudioPublicState = {
     secondaryCtaLabel: "Entrar no Discord",
     discordInviteUrl: "",
     adminRoleIds: []
+  },
+  status: {
+    botOnline: false,
+    storeOpen: true,
+    ticketsOpen: true,
+    openTickets: 0,
+    pendingOrders: 0,
+    updatedAt: ""
   },
   items: [],
   products: [],
@@ -57,7 +65,18 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    void refresh();
+    const timer = window.setInterval(() => void refresh(), 60000);
+    const syncWhenVisible = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    document.addEventListener("visibilitychange", syncWhenVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", syncWhenVisible);
+    };
+  }, [refresh]);
 
   const value = useMemo(() => ({ state, loading, error, refresh }), [state, loading, error, refresh]);
 

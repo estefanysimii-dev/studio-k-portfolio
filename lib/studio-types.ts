@@ -62,8 +62,18 @@ export type StudioMe = {
   };
 };
 
+export type StudioStatus = {
+  botOnline: boolean;
+  storeOpen: boolean;
+  ticketsOpen: boolean;
+  openTickets: number;
+  pendingOrders: number;
+  updatedAt: string;
+};
+
 export type StudioPublicState = {
   site: StudioSite;
+  status: StudioStatus;
   items: StudioItem[];
   products: StudioProduct[];
   feedbacks: unknown[];
