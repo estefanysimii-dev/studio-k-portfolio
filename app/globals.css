@@ -2358,3 +2358,120 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   display: block;
   margin-top: 6px;
 }
+
+
+/* ===== Studio K · Sidebar radio placement ===== */
+@media (min-width: 721px) {
+  .sidebar > .studio-radio {
+    position: relative;
+    inset: auto;
+    z-index: 1;
+    width: 100%;
+    max-width: none;
+    margin: 12px 0 0;
+    padding: 12px;
+    border-radius: 15px;
+    background:
+      radial-gradient(circle at 88% 0%, rgba(139,44,255,.13), transparent 38%),
+      linear-gradient(180deg, rgba(var(--surface-rgb), .94), rgba(var(--surface-rgb), .91));
+    box-shadow:
+      0 14px 34px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.025);
+    flex: 0 0 auto;
+  }
+
+  .sidebar > .studio-radio .radio-heading strong {
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+  .sidebar > .studio-radio .radio-heading small {
+    font-size: 7.5px;
+    letter-spacing: .10em;
+  }
+
+  .sidebar > .studio-radio .radio-heading > button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    flex: 0 0 30px;
+    display: grid;
+    place-items: center;
+  }
+
+  .sidebar > .studio-radio .radio-controls {
+    margin: 9px 0 6px;
+    gap: 5px;
+    font-size: 9px;
+  }
+
+  .sidebar > .studio-radio .radio-controls button {
+    padding: 6px 7px;
+    font-size: 8.5px;
+    min-height: 29px;
+  }
+
+  .sidebar > .studio-radio .radio-bars {
+    height: 18px;
+    gap: 2px;
+  }
+
+  .sidebar > .studio-radio .radio-bars i {
+    width: 2px;
+  }
+
+  .sidebar > .studio-radio p {
+    margin: 6px 0 0;
+    font-size: 8.5px;
+    line-height: 1.4;
+  }
+
+  .sidebar > .studio-radio > div:not(.radio-heading):not(.radio-controls)[hidden] {
+    display: none;
+  }
+
+  .sidebar > .studio-radio label {
+    margin-top: 8px;
+    gap: 7px;
+    font-size: 9px;
+  }
+
+  .sidebar > .studio-radio small {
+    font-size: 8px;
+  }
+
+  .sidebar > .studio-radio.has-spectrum {
+    box-shadow:
+      0 0 calc(8px + var(--bass) * 34px) rgba(139,44,255,.33),
+      inset 0 1px 0 rgba(255,255,255,.025);
+  }
+
+  .sidebar > .studio-radio.is-playing:not(.has-spectrum) {
+    animation-name: radio-sidebar-glow;
+  }
+
+  @keyframes radio-sidebar-glow {
+    from { box-shadow: 0 0 8px rgba(139,44,255,.10); }
+    to { box-shadow: 0 0 20px rgba(139,44,255,.24); }
+  }
+}
+
+/* Keep the radio usable on mobile even though the desktop target is the sidebar gap. */
+@media (max-width: 720px) {
+  .sidebar { overflow: visible; }
+
+  .sidebar > .studio-radio {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    top: auto;
+    width: auto;
+    z-index: 100;
+  }
+}
+
+/* The radio now lives in the sidebar, so the page no longer needs extra bottom padding for a floating desktop player. */
+@media (min-width: 721px) {
+  .page-content { padding-bottom: 80px; }
+}

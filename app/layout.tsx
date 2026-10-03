@@ -3,7 +3,6 @@ import Script from "next/script";
 import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
 import { StudioProvider } from "@/components/studio-provider";
-import StudioRadio from '@/components/studio-radio';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
@@ -54,7 +53,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <ThemeProvider>
           <AmbientLight />
           {children}
-          <StudioRadio />
           </ThemeProvider>
         </StudioProvider>
       </body>

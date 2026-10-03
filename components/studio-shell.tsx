@@ -7,6 +7,7 @@ import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
 import { externalLinkProps } from "@/lib/links";
+import StudioRadio from "./studio-radio";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -99,6 +100,8 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
             <div><strong>{status.pendingOrders}</strong><span>Pedidos pendentes</span></div>
           </div>
         </div>
+
+        <StudioRadio />
 
         <div className="sidebar-spacer" />
 
