@@ -4,6 +4,22 @@ import type { StudioAnalytics } from "@/lib/studio-types";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const number = new Intl.NumberFormat("pt-BR");
+const duration = (seconds: number) => seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+
+function RankedList({ title, subtitle, rows }: { title: string; subtitle: string; rows: { label: string; value: number }[] }) {
+  return (
+    <div className="analytics-ranked-panel">
+      <div className="analytics-subhead"><strong>{title}</strong><span>{subtitle}</span></div>
+      {rows.length ? rows.slice(0, 8).map((row, index) => (
+        <div className="analytics-ranked-row" key={row.label}>
+          <b>{String(index + 1).padStart(2, "0")}</b>
+          <span title={row.label}>{row.label}</span>
+          <strong>{number.format(row.value)}</strong>
+        </div>
+      )) : <p className="muted">Ainda não há dados suficientes.</p>}
+    </div>
+  );
+}
 
 export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics }) {
   if (!data) {
@@ -28,9 +44,9 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
     <section className="analytics-dashboard glass-panel">
       <div className="analytics-head">
         <div>
-          <span className="section-eyebrow">COMPORTAMENTO · ÚLTIMOS {data.days} DIAS</span>
-          <h2>O que as pessoas fazem no Studio K</h2>
-          <p>Visualizações, favoritos e conversão reunidos no mesmo funil.</p>
+          <span className="section-eyebrow">COMPORTAMENTO 2.0 · ÚLTIMOS {data.days} DIAS</span>
+          <h2>O que as pessoas realmente fazem no Studio K</h2>
+          <p>Origem, permanência, buscas, cliques, scroll, conversão e pontos de saída em um único painel.</p>
         </div>
         <div className="analytics-revenue">
           <small>Receita confirmada</small>
@@ -38,18 +54,20 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         </div>
       </div>
 
-      <div className="analytics-metrics">
+      <div className="analytics-metrics analytics-metrics-extended">
         <article><span>Visitas</span><strong>{number.format(data.pageViews)}</strong><small>{number.format(data.uniqueVisitors)} visitantes únicos</small></article>
+        <article><span>Retornaram</span><strong>{number.format(data.returningVisitors)}</strong><small>voltaram em outro dia</small></article>
+        <article><span>Tempo médio</span><strong>{duration(data.avgPageSeconds)}</strong><small>por página registrada</small></article>
+        <article><span>Scroll médio</span><strong>{data.avgScrollDepth}%</strong><small>profundidade da página</small></article>
         <article><span>Produtos vistos</span><strong>{number.format(data.productViews)}</strong><small>{data.viewToOrder}% viraram pedido</small></article>
         <article><span>Favoritados</span><strong>{number.format(data.favoriteAdds)}</strong><small>ações de favorito</small></article>
         <article><span>Conversão</span><strong>{data.checkoutConversion}%</strong><small>início de compra → pago</small></article>
-        <article><span>Abandono</span><strong>{data.checkoutAbandonment}%</strong><small>iniciou, mas não criou pedido</small></article>
-        <article><span>Pedidos pagos</span><strong>{number.format(data.paidOrders)}</strong><small>{number.format(data.ordersCreated)} pedidos criados</small></article>
+        <article><span>Erros checkout</span><strong>{number.format(data.checkoutErrors)}</strong><small>{number.format(data.checkoutStarts)} compras iniciadas</small></article>
       </div>
 
       <div className="analytics-panels">
         <div className="analytics-funnel">
-          <div className="analytics-subhead"><strong>Funil de compra</strong><span>30 dias</span></div>
+          <div className="analytics-subhead"><strong>Funil de compra</strong><span>{data.checkoutAbandonment}% de abandono</span></div>
           {funnel.map((item, index) => {
             const width = index === 0 ? 100 : Math.max(4, Math.min(100, item.value / item.base * 100));
             return (
@@ -62,22 +80,32 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         </div>
 
         <div className="analytics-top-products">
-          <div className="analytics-subhead"><strong>Produtos mais observados</strong><span>Views · Favoritos · Pedidos</span></div>
+          <div className="analytics-subhead"><strong>Produtos mais observados</strong><span>Views · Tempo · Favoritos · Pedidos</span></div>
           {data.topProducts.length ? data.topProducts.slice(0, 8).map((product, index) => (
             <div className="analytics-product-row" key={product.id}>
               <b>{String(index + 1).padStart(2, "0")}</b>
-              <div><strong>{product.name}</strong><span>{product.views} views · {product.favorites} favoritos · {product.checkouts} compras iniciadas</span></div>
+              <div>
+                <strong>{product.name}</strong>
+                <span>{product.views} views · média {duration(product.avgDwellSeconds)} · {product.favorites} favoritos · {product.checkouts} checkouts</span>
+              </div>
               <em>{product.orders}</em>
             </div>
           )) : <p className="muted">Ainda não há visualizações de produtos suficientes.</p>}
         </div>
       </div>
 
+      <div className="analytics-ranked-grid">
+        <RankedList title="Origens" subtitle="de onde chegaram" rows={data.topSources || []} />
+        <RankedList title="Buscas" subtitle={data.searches + " buscas"} rows={data.topSearches || []} />
+        <RankedList title="Cliques" subtitle={data.clicks + " interações"} rows={data.topClicks || []} />
+        <RankedList title="Páginas de saída" subtitle="onde encerraram" rows={data.exitPages || []} />
+      </div>
+
       <div className="analytics-daily">
         <div className="analytics-subhead"><strong>Tráfego diário</strong><span>Visualizações de página</span></div>
         <div className="analytics-chart" aria-label="Visualizações por dia">
           {data.daily.slice(-14).map((day) => (
-            <div className="analytics-day" key={day.day} title={`${day.day}: ${day.pageViews} visualizações`}>
+            <div className="analytics-day" key={day.day} title={day.day + ": " + day.pageViews + " visualizações"}>
               <div className="analytics-day-bar"><i style={{ height: `${Math.max(5, day.pageViews / maxDaily * 100)}%` }} /></div>
               <small>{day.day.slice(5).replace("-", "/")}</small>
             </div>
