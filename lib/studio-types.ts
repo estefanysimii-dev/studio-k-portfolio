@@ -12,6 +12,8 @@ export type StudioSite = {
   primaryCtaLabel: string;
   secondaryCtaLabel: string;
   discordInviteUrl: string;
+  defaultAnnouncementChannelId: string;
+  autoAnnounceProducts: boolean;
   adminRoleIds: string[];
 };
 

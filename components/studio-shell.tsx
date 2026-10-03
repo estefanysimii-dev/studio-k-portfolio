@@ -6,6 +6,7 @@ import { CSSProperties, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
+import { externalLinkProps } from "@/lib/links";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -137,7 +138,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
               <span className="status-dot" />
               {status.storeOpen ? "Loja Online" : "Loja Offline"}
             </div>
-            <a className="btn btn-outline compact" href={invite}>
+            <a className="btn btn-outline compact" href={invite} {...externalLinkProps(invite)}>
               Entrar no Discord
               <Icon name="arrow" />
             </a>

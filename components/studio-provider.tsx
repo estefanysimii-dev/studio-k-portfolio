@@ -18,6 +18,8 @@ const fallback: StudioPublicState = {
     primaryCtaLabel: "Explorar Portfólio",
     secondaryCtaLabel: "Entrar no Discord",
     discordInviteUrl: "",
+    defaultAnnouncementChannelId: "",
+    autoAnnounceProducts: false,
     adminRoleIds: []
   },
   status: {

@@ -3,6 +3,7 @@
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
+import { externalLinkProps } from "@/lib/links";
 
 export default function DiscordPage() {
   const { state } = useStudio();
@@ -19,7 +20,7 @@ export default function DiscordPage() {
           </p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="/api/oauth/start?next=/account">Conectar com Discord <Icon name="arrow" /></a>
-            <a className={`btn btn-outline ${invite === "#" ? "disabled" : ""}`} href={invite}>Entrar no servidor</a>
+            <a className={`btn btn-outline ${invite === "#" ? "disabled" : ""}`} href={invite} {...externalLinkProps(invite)}>Entrar no servidor</a>
           </div>
         </div>
 

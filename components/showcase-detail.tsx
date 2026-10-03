@@ -7,6 +7,7 @@ import MediaGallery from "@/components/media-gallery";
 import Icon from "@/components/icons";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
+import { externalLinkProps } from "@/lib/links";
 import type { StudioCheckout, StudioItem, StudioProduct } from "@/lib/studio-types";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -74,7 +75,7 @@ export default function ShowcaseDetail(props: Props) {
                   </a>
                 )
               ) : (
-                <a className="btn btn-primary" href={state.site.discordInviteUrl || "/discord"}>
+                <a className="btn btn-primary" href={state.site.discordInviteUrl || "/discord"} {...externalLinkProps(state.site.discordInviteUrl || "/discord")}>
                   Solicitar no Discord <Icon name="arrow" />
                 </a>
               )}
@@ -118,7 +119,7 @@ export default function ShowcaseDetail(props: Props) {
             <span className="section-eyebrow">STUDIO K · SHOWROOM</span>
             <h2>Este projeto faz parte do portfólio e não possui valor de venda.</h2>
           </div>
-          <a className="btn btn-outline" href={state.site.discordInviteUrl || "/discord"}>Conhecer o Discord</a>
+          <a className="btn btn-outline" href={state.site.discordInviteUrl || "/discord"} {...externalLinkProps(state.site.discordInviteUrl || "/discord")}>Conhecer o Discord</a>
         </section>
       )}
     </StudioShell>
