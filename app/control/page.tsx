@@ -1,5 +1,6 @@
 "use client";
 import RadioSettings from '@/components/radio-settings';
+import AssistantSettings from '@/components/assistant-settings';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -10,7 +11,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "assistant" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 type ItemDraft = {
   name: string;
@@ -177,6 +178,18 @@ export default function ControlPage() {
       await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao salvar.");
+    }
+  };
+
+  const saveAssistantSettings = async () => {
+    if (!siteDraft) return;
+    try {
+      setError("");
+      await studioApi.saveSite(siteDraft);
+      flash("Assistente Kiki atualizada.");
+      await Promise.all([refresh(), refreshPublic()]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível salvar a assistente.");
     }
   };
 
@@ -423,6 +436,7 @@ export default function ControlPage() {
         {[
           ["overview", "Visão geral"],
           ["site", "Site"],
+          ["assistant", "Assistente"],
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
@@ -482,6 +496,14 @@ export default function ControlPage() {
           </div>
           <RadioSettings value={siteDraft.radio} onChange={radio => setSiteDraft({ ...siteDraft, radio })} />
         </form>
+      )}
+
+      {tab === "assistant" && siteDraft && (
+        <AssistantSettings
+          value={siteDraft.assistant}
+          onChange={(assistant) => setSiteDraft({ ...siteDraft, assistant })}
+          onSave={() => void saveAssistantSettings()}
+        />
       )}
 
       {tab === "portfolio" && (
