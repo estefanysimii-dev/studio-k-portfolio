@@ -4675,12 +4675,23 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   border-color: rgba(255,218,142,.56);
   box-shadow: 0 30px 90px rgba(20,4,38,.42), 0 0 48px rgba(255,205,115,.11), inset 0 1px 0 rgba(255,255,255,.09);
 }
+.studio-id-card.has-collector-frame {
+  outline: 1px solid rgba(193,132,255,.28);
+  outline-offset: -7px;
+}
 .studio-id-card.has-neon-aura {
   box-shadow: 0 30px 90px rgba(20,4,38,.42), 0 0 55px rgba(177,52,255,.18), inset 0 1px 0 rgba(255,255,255,.09);
 }
 .studio-id-card.has-neon-aura .studio-id-card-glow {
   opacity: 1;
   filter: saturate(1.35) brightness(1.18);
+}
+.studio-id-card.has-icon-aura {
+  box-shadow:
+    0 34px 100px rgba(20,4,38,.46),
+    0 0 70px rgba(255,211,118,.14),
+    0 0 95px rgba(177,52,255,.14),
+    inset 0 1px 0 rgba(255,255,255,.11);
 }
 .rarity-text-common { color: rgba(237,224,255,.72); }
 .rarity-text-rare { color: #9fc4ff; }
