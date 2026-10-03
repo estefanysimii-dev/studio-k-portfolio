@@ -3,6 +3,7 @@
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
+import FavoriteButton from "@/components/favorite-button";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -31,6 +32,7 @@ export default function ProductsPage() {
                 {product.videoUrl && <span className="media-badge secondary">VÍDEO</span>}
                 {product.gifUrl && <span className="media-badge secondary">GIF</span>}
               </div>
+              <FavoriteButton kind="products" itemId={product.id} className="favorite-card-button" />
             </a>
             <span className="meta-line">{product.category || "STUDIO K"}</span>
             <h3><a href={`/products/${product.id}`}>{product.name}</a></h3>
