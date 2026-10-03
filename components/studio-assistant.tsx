@@ -59,7 +59,12 @@ export default function StudioAssistant() {
   const messages = useMemo(() => {
     const configured = config.campaigns.filter((campaign) => campaign.active);
     const contextual = [];
-    const activeDrop = (state.drops || []).find((drop) => drop.status === "active");
+    const now = Date.now();
+    const activeDrop = (state.drops || []).find((drop) =>
+      drop.published !== false &&
+      Date.parse(drop.startsAt) <= now &&
+      Date.parse(drop.endsAt) > now
+    );
     if (activeDrop) {
       const dropProduct = state.products.find((entry) => entry.id === activeDrop.productId);
       contextual.push({
@@ -165,7 +170,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [config.campaigns, dwellReady, pathname, state.drops, state.items, state.me.authenticated, state.me.profile, state.products]);
+  }, [config.campaigns, dwellReady, index, pathname, state.drops, state.items, state.me.authenticated, state.me.profile, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
