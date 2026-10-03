@@ -48,6 +48,9 @@ export default function StudioAssistant() {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
   const [dwellReady, setDwellReady] = useState(false);
+  const [revisitCount, setRevisitCount] = useState(0);
+  const [levelUp, setLevelUp] = useState<{ from: number; to: number } | null>(null);
+  const [newAchievement, setNewAchievement] = useState("");
 
   useEffect(() => {
     setDwellReady(false);
@@ -56,10 +59,77 @@ export default function StudioAssistant() {
     return () => window.clearTimeout(timer);
   }, [pathname]);
 
+  useEffect(() => {
+    setRevisitCount(0);
+    const match = pathname.match(/^\/products\/([^/]+)$/);
+    if (!match) return;
+    let itemId = match[1];
+    try { itemId = decodeURIComponent(itemId); } catch {}
+    try {
+      const memory = JSON.parse(localStorage.getItem("studio-k-product-view-memory") || "{}") as Record<string, { count?: number }>;
+      setRevisitCount(Number(memory[itemId]?.count || 0));
+    } catch {}
+    const onViewed = (event: Event) => {
+      const detail = (event as CustomEvent<{ itemId?: string; count?: number }>).detail || {};
+      if (detail.itemId === itemId) setRevisitCount(Number(detail.count || 0));
+    };
+    window.addEventListener("studio-k-product-viewed", onViewed);
+    return () => window.removeEventListener("studio-k-product-viewed", onViewed);
+  }, [pathname]);
+
+  useEffect(() => {
+    const profile = state.me.profile;
+    const userId = state.me.user?.id;
+    if (!state.me.authenticated || !profile || !userId) return;
+    try {
+      const levelKey = `studio-k-last-level:${userId}`;
+      const previous = Number(localStorage.getItem(levelKey) || 0);
+      if (previous > 0 && profile.level > previous) setLevelUp({ from: previous, to: profile.level });
+      localStorage.setItem(levelKey, String(profile.level));
+
+      const achievementKey = `studio-k-known-achievements:${userId}`;
+      const current = (profile.achievements || []).filter((item) => item.unlocked).map((item) => item.id);
+      const savedRaw = localStorage.getItem(achievementKey);
+      if (savedRaw) {
+        const known = new Set(JSON.parse(savedRaw) as string[]);
+        const unlocked = (profile.achievements || []).find((item) => item.unlocked && !known.has(item.id));
+        if (unlocked) setNewAchievement(unlocked.label);
+      }
+      localStorage.setItem(achievementKey, JSON.stringify(current));
+    } catch {}
+  }, [state.me.authenticated, state.me.profile, state.me.user?.id]);
+
   const messages = useMemo(() => {
     const configured = config.campaigns.filter((campaign) => campaign.active);
     const contextual = [];
     const now = Date.now();
+
+    if (levelUp) {
+      contextual.push({
+        id: `context-level-up-${levelUp.to}`,
+        type: "motivation" as const,
+        title: `LEVEL ${levelUp.to} desbloqueado! ✨`,
+        text: `Seu Studio K ID evoluiu do level ${levelUp.from} para o ${levelUp.to}. Seu rank, títulos e perks podem ter mudado também. 💜`,
+        ctaLabel: "Ver meu Studio K ID",
+        href: "/account",
+        priceCents: 0,
+        oldPriceCents: 0,
+        active: true
+      });
+    }
+    if (newAchievement) {
+      contextual.push({
+        id: `context-achievement-${newAchievement}`,
+        type: "cute" as const,
+        title: "Nova conquista desbloqueada! 🏆",
+        text: `Você acabou de liberar “${newAchievement}” no seu Studio K ID.`,
+        ctaLabel: "Ver conquistas",
+        href: "/account",
+        priceCents: 0,
+        oldPriceCents: 0,
+        active: true
+      });
+    }
     const activeDrop = (state.drops || []).find((drop) =>
       drop.published !== false &&
       Date.parse(drop.startsAt) <= now &&
@@ -67,11 +137,15 @@ export default function StudioAssistant() {
     );
     if (activeDrop) {
       const dropProduct = state.products.find((entry) => entry.id === activeDrop.productId);
+      const remainingMinutes = Math.max(0, Math.round((Date.parse(activeDrop.endsAt) - now) / 60000));
+      const endingSoon = remainingMinutes <= 120;
       contextual.push({
         id: `context-drop-${activeDrop.id}`,
         type: "promotion" as const,
-        title: `${activeDrop.title} está AO VIVO ✨`,
-        text: activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do Studio K.` : "Tem promoção rolando agora no Studio K."),
+        title: endingSoon ? `${activeDrop.title} termina logo 👀` : `${activeDrop.title} está AO VIVO ✨`,
+        text: endingSoon
+          ? `Faltam cerca de ${remainingMinutes} min para esse drop acabar. ${activeDrop.description || ""}`.trim()
+          : activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do Studio K.` : "Tem promoção rolando agora no Studio K."),
         ctaLabel: dropProduct ? "Ver o drop" : "Ver produtos",
         href: dropProduct ? `/products/${dropProduct.id}` : "/products",
         priceCents: dropProduct
@@ -87,6 +161,32 @@ export default function StudioAssistant() {
     if (productMatch) {
       const product = state.products.find((entry) => entry.id === decodeURIComponent(productMatch[1]));
       if (product) {
+        const alreadyFavorite = (state.me.favorites?.products || state.me.profile?.favorites?.products || []).includes(product.id);
+        if (revisitCount >= 3) {
+          contextual.push({
+            id: `context-revisit-${product.id}`,
+            type: "cute" as const,
+            title: `Você voltou para ${product.name} 👀`,
+            text: `Essa já é pelo menos a sua ${revisitCount}ª visita a este produto. Acho que ele realmente entrou no seu radar. 💜`,
+            ctaLabel: alreadyFavorite ? "Ver meus favoritos" : "",
+            href: alreadyFavorite ? "/account" : "",
+            priceCents: 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        } else if (alreadyFavorite) {
+          contextual.push({
+            id: `context-favorite-${product.id}`,
+            type: "cute" as const,
+            title: "Esse já está salvo 💜",
+            text: `${product.name} está nos seus favoritos. Seu Studio K ID guardou ele para você voltar quando quiser.`,
+            ctaLabel: "Ver favoritos",
+            href: "/account",
+            priceCents: 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        }
         if (dwellReady) {
           contextual.push({
             id: `context-look-${product.id}`,
@@ -170,7 +270,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [config.campaigns, dwellReady, index, pathname, state.drops, state.items, state.me.authenticated, state.me.profile, state.products]);
+  }, [config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
