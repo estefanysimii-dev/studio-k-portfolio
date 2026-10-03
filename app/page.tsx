@@ -76,6 +76,8 @@ export default function HomePage() {
 
         <ModelStage
           modelUrl={featured?.modelUrl}
+          compareModelUrl={featured?.compareModelUrl}
+          hotspots={featured?.viewerHotspots}
           posterUrl={featured?.coverUrl || featured?.gifUrl}
           title={featured?.name || "Studio K"}
         />
