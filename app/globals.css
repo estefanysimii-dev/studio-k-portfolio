@@ -4048,3 +4048,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .studio-id-card-glow { animation: none!important; }
 }
 /* ===== /Studio K ID + favorites ===== */
+
+.detail-price-stack { display:grid; gap:5px; }
+.detail-price-original {
+  width:max-content;
+  color:var(--text-2);
+  font-size:11px;
+  text-decoration:line-through;
+}
+.detail-member-discount {
+  width:max-content;
+  padding:5px 8px;
+  border-radius:999px;
+  color:#dcb2ff;
+  background:rgba(108,25,255,.10);
+  border:1px solid rgba(190,111,255,.18);
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.04em;
+}
