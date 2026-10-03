@@ -60,6 +60,16 @@ export default function ShowcaseDetail(props: Props) {
       });
       setCheckout(await studioApi.createOrder(product.id, coupon));
     } catch (err) {
+      let sessionId = `member-${state.me.user?.id || "studio-k"}`;
+      try { sessionId = localStorage.getItem("studio-k-visitor-id") || sessionId; } catch {}
+      void studioApi.track({
+        sessionId,
+        event: "checkout_error",
+        itemKind: "product",
+        itemId: product.id,
+        path: `/products/${product.id}`,
+        meta: { hasCoupon: Boolean(coupon.trim()) }
+      });
       setError(err instanceof Error ? err.message : "Não foi possível criar o pedido.");
     } finally {
       setBusy(false);
