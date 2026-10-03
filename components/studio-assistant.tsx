@@ -159,8 +159,8 @@ export default function StudioAssistant() {
       contextual.push({
         id: "context-account",
         type: "cute" as const,
-        title: `${state.me.profile?.studioId || "Seu Studio K ID"} ficou lindo 💜`,
-        text: `Você está no level ${state.me.profile?.level || 1}. Favoritos, compras e feedbacks ajudam seu perfil a evoluir.`,
+        title: `${state.me.profile?.studioId || "Seu Studio K ID"} · ${state.me.profile?.rank?.label || "Studio Member"} 💜`,
+        text: `Você está no level ${state.me.profile?.level || 1} com o título “${state.me.profile?.equippedTitle?.label || "Studio K Member"}”. Favoritos, compras e feedbacks ajudam seu perfil a evoluir.`,
         ctaLabel: "",
         href: "",
         priceCents: 0,
