@@ -59,6 +59,21 @@ export default function StudioAssistant() {
   const messages = useMemo(() => {
     const configured = config.campaigns.filter((campaign) => campaign.active);
     const contextual = [];
+    const activeDrop = (state.drops || []).find((drop) => drop.status === "active");
+    if (activeDrop) {
+      const dropProduct = state.products.find((entry) => entry.id === activeDrop.productId);
+      contextual.push({
+        id: `context-drop-${activeDrop.id}`,
+        type: "promotion" as const,
+        title: `${activeDrop.title} está AO VIVO ✨`,
+        text: activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do Studio K.` : "Tem promoção rolando agora no Studio K."),
+        ctaLabel: dropProduct ? "Ver o drop" : "Ver produtos",
+        href: dropProduct ? `/products/${dropProduct.id}` : "/products",
+        priceCents: dropProduct?.priceCents || 0,
+        oldPriceCents: dropProduct?.priceCents || 0,
+        active: true
+      });
+    }
     const productMatch = pathname.match(/^\/products\/([^/]+)$/);
     const portfolioMatch = pathname.match(/^\/portfolio\/([^/]+)$/);
 
@@ -148,7 +163,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [config.campaigns, dwellReady, pathname, state.items, state.me.authenticated, state.me.profile, state.products]);
+  }, [config.campaigns, dwellReady, pathname, state.drops, state.items, state.me.authenticated, state.me.profile, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
