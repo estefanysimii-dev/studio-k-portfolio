@@ -2,6 +2,7 @@
 import RadioSettings from '@/components/radio-settings';
 import AssistantSettings from '@/components/assistant-settings';
 import DropSettings from '@/components/drop-settings';
+import AnalyticsDashboard from '@/components/analytics-dashboard';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -189,7 +190,7 @@ export default function ControlPage() {
   const metrics = useMemo(() => [
     ["Projetos", String(state?.items?.length || 0)],
     ["Produtos", String(state?.products?.length || 0)],
-    ["Mídias", String(state?.assets?.length || 0)],
+    ["Drops ativos", String((state?.drops || []).filter((drop) => drop.status === "active").length)],
     ["Bot", state?.discord?.botConnected ? "Online" : "Offline"]
   ], [state]);
 
@@ -496,6 +497,7 @@ export default function ControlPage() {
               <p>OAuth: {state.discord?.oauthConfigured ? "configurado" : "pendente"} · Conteúdo público sincronizado pela API Studio K.</p>
             </section>
           </div>
+          <AnalyticsDashboard data={state.analytics} />
         </>
       )}
 
