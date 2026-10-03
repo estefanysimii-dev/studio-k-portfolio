@@ -61,6 +61,13 @@ export type RadioConfig = {
 
 export type RadioSnapshot = { radio: RadioConfig; serverNowMs: number };
 
+export type StudioViewerHotspot = {
+  id: string;
+  label: string;
+  position: string;
+  normal: string;
+};
+
 export type StudioItem = {
   id: string;
   name: string;
@@ -72,6 +79,8 @@ export type StudioItem = {
   videoUrl?: string;
   gifUrl?: string;
   galleryUrls?: string[];
+  compareModelUrl?: string;
+  viewerHotspots?: StudioViewerHotspot[];
   featured: boolean;
   published: boolean;
   created?: string;
