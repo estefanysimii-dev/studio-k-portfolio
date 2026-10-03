@@ -1,5 +1,6 @@
 import Icon from "./icons";
 import { externalLinkProps } from "@/lib/links";
+import FavoriteButton from "./favorite-button";
 
 type Props = {
   eyebrow: string;
@@ -9,9 +10,11 @@ type Props = {
   coverUrl?: string;
   modelUrl?: string;
   href?: string;
+  favoriteKind?: "items" | "products";
+  favoriteId?: string;
 };
 
-export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, modelUrl, href = "/portfolio" }: Props) {
+export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, modelUrl, href = "/portfolio", favoriteKind, favoriteId }: Props) {
   return (
     <article className="showcase-card glass-panel">
       <div className="showcase-visual">
@@ -21,6 +24,7 @@ export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, mod
           <div className="showcase-orb"><Icon name="spark" /></div>
         )}
         {modelUrl && <span className="media-badge">360°</span>}
+        {favoriteKind && favoriteId && <FavoriteButton kind={favoriteKind} itemId={favoriteId} className="favorite-card-button" />}
       </div>
       <div className="showcase-copy">
         <span className="section-eyebrow">{eyebrow}</span>
