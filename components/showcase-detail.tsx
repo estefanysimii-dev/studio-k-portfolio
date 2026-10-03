@@ -150,6 +150,7 @@ export default function ShowcaseDetail(props: Props) {
           modelUrl={item.modelUrl}
           compareModelUrl={item.compareModelUrl}
           hotspots={item.viewerHotspots}
+          viewerVariants={item.viewerVariants}
           posterUrl={item.coverUrl || item.gifUrl}
           title={item.name}
         />
