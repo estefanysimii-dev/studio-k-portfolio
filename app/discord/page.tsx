@@ -25,7 +25,7 @@ export default function DiscordPage() {
         </div>
 
         <div className="oauth-card glass-panel">
-          <div className="oauth-icon">K</div>
+          <div className="oauth-icon"><img src="/studio-assets/studio-k-logo.webp" alt="Studio K" /></div>
           <span className="section-eyebrow">DISCORD OAUTH2</span>
           <h2>Uma identidade para todo o Studio K</h2>
           <p>O Discord User ID é a chave comum entre site, Central e bot. O login não exige que você digite seu usuário manualmente.</p>
