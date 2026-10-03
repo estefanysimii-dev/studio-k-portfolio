@@ -1,20 +1,51 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
 import FavoriteButton from "@/components/favorite-button";
+import { studioApi } from "@/lib/studio-api";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 export default function ProductsPage() {
   const { state } = useStudio();
+  const [search, setSearch] = useState("");
   const now = Date.now();
   const activeDrops = (state.drops || []).filter((drop) =>
     drop.published !== false &&
     Date.parse(drop.startsAt) <= now &&
     Date.parse(drop.endsAt) > now
   );
+
+  const visibleProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return state.products;
+    return state.products.filter((product) =>
+      [product.name, product.description, product.category, ...(product.tags || [])]
+        .join(" ")
+        .toLowerCase()
+        .includes(query)
+    );
+  }, [search, state.products]);
+
+  useEffect(() => {
+    const query = search.trim();
+    if (query.length < 2) return;
+    const timer = window.setTimeout(() => {
+      let sessionId = `search-${Date.now()}`;
+      try { sessionId = localStorage.getItem("studio-k-visitor-id") || sessionId; } catch {}
+      void studioApi.track({
+        sessionId,
+        event: "search",
+        itemKind: "page",
+        path: "/products",
+        meta: { query: query.slice(0, 80), results: visibleProducts.length }
+      });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [search, visibleProducts.length]);
 
   return (
     <StudioShell eyebrow="PRODUTOS" title="Studio K Store">
@@ -26,8 +57,21 @@ export default function ProductsPage() {
         </div>
       </div>
 
+      <div className="catalog-search glass-panel">
+        <label>
+          <span>Buscar no Studio K</span>
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Nome, categoria, tag ou estilo..."
+          />
+        </label>
+        <small>{visibleProducts.length} produto{visibleProducts.length === 1 ? "" : "s"} encontrado{visibleProducts.length === 1 ? "" : "s"}</small>
+      </div>
+
       <div className="product-grid">
-        {state.products.length ? state.products.map((product) => (
+        {visibleProducts.length ? visibleProducts.map((product) => (
           <article className="product-card glass-panel" key={product.id}>
             <a className="product-thumb" href={`/products/${product.id}`}>
               {product.coverUrl || product.gifUrl
@@ -62,8 +106,8 @@ export default function ProductsPage() {
           </article>
         )) : (
           <div className="empty-state glass-panel">
-            <strong>Catálogo sendo preparado.</strong>
-            <span>Os produtos cadastrados pela Central de Controle aparecerão aqui automaticamente.</span>
+            <strong>{search.trim() ? "Nenhum produto combina com essa busca." : "Catálogo sendo preparado."}</strong>
+            <span>{search.trim() ? "Tente outro nome, categoria ou tag." : "Os produtos cadastrados pela Central de Controle aparecerão aqui automaticamente."}</span>
           </div>
         )}
       </div>
