@@ -4896,3 +4896,99 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .studio-id-equipped-title { font-size: 8px; }
 }
 /* ===== /Studio K ID · progression ===== */
+
+
+/* ===== Studio K ID · Control Center ===== */
+.studio-id-settings {
+  display: grid;
+  gap: 16px;
+}
+.studio-id-settings .control-form {
+  padding: 24px;
+}
+.studio-id-control-switches {
+  display: grid;
+  grid-template-columns: minmax(260px,1.35fr) repeat(3,minmax(150px,.65fr));
+  gap: 10px;
+}
+.compact-toggle {
+  min-height: 76px;
+}
+.studio-id-rank-list {
+  display: grid;
+  gap: 10px;
+}
+.studio-id-rank-editor {
+  display: grid;
+  grid-template-columns: minmax(220px,.72fr) minmax(0,1.28fr);
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border: 1px solid rgba(164,83,255,.14);
+  border-radius: 14px;
+  background: rgba(var(--surface-rgb),.46);
+}
+.studio-id-rank-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.studio-id-rank-preview > i {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font: 800 15px/1 "Sora",Arial,sans-serif;
+  font-style: normal;
+  color: var(--white);
+  background: linear-gradient(145deg,rgba(108,25,255,.34),rgba(171,44,255,.10));
+  border: 1px solid rgba(190,111,255,.24);
+}
+.studio-id-rank-preview > div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.studio-id-rank-preview strong {
+  font: 700 12px/1.15 "Sora",Arial,sans-serif;
+}
+.studio-id-rank-preview span {
+  color: var(--text-2);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+.studio-id-rank-fields {
+  display: grid;
+  grid-template-columns: 1.25fr .45fr .65fr .8fr;
+  gap: 8px;
+}
+.studio-id-rank-fields label,
+.studio-id-role-grid label {
+  min-width: 0;
+}
+.studio-id-xp-grid small,
+.studio-id-role-grid small {
+  line-height: 1.45;
+}
+.studio-id-settings .rarity-rare {
+  background: linear-gradient(120deg,rgba(70,116,230,.06),rgba(var(--surface-rgb),.46));
+}
+.studio-id-settings .rarity-epic {
+  background: linear-gradient(120deg,rgba(145,46,234,.08),rgba(var(--surface-rgb),.46));
+}
+.studio-id-settings .rarity-legendary {
+  background: linear-gradient(120deg,rgba(221,157,47,.07),rgba(var(--surface-rgb),.46));
+}
+@media (max-width: 1180px) {
+  .studio-id-control-switches { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .studio-id-rank-editor { grid-template-columns: 1fr; }
+}
+@media (max-width: 800px) {
+  .studio-id-control-switches,
+  .studio-id-rank-fields { grid-template-columns: 1fr; }
+  .studio-id-settings .control-form { padding: 18px; }
+}
+/* ===== /Studio K ID · Control Center ===== */
