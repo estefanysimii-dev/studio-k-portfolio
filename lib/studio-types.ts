@@ -125,6 +125,7 @@ export type StudioBundle = {
   discountType: "percent" | "fixed";
   discountValue: number;
   tiers?: { minItems: number; discountType: "percent" | "fixed"; discountValue: number }[];
+  giftProductId?: string;
   active: boolean;
   created?: string;
   updated?: string;
@@ -230,15 +231,18 @@ export type StudioCartQuote = {
     quantity: number;
     basePrice: number;
     unitPrice: number;
+    dropDiscount?: number;
+    dropPercent?: number;
     roleDiscount: number;
-    roleBenefit?: { id: string; label: string; discountPercent: number } | null;
+    roleBenefit?: { id: string; label: string; discountPercent: number; stackWithCoupon?: boolean } | null;
     subtotal: number;
+    gift?: boolean;
   }[];
   subtotal: number;
   bundleDiscount: number;
   couponDiscount: number;
   total: number;
-  appliedBundles: { id: string; name: string; discount: number }[];
+  appliedBundles: { id: string; name: string; discount: number; giftProductId?: string; giftName?: string }[];
   coupon?: { code: string; discount: number } | null;
 };
 
