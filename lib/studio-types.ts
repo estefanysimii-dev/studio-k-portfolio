@@ -179,6 +179,28 @@ export type StudioIdRankConfig = {
   minLevel: number;
 };
 
+export type StudioIdBadgeCondition =
+  | "always"
+  | "early-member"
+  | "discord-member"
+  | "supporter"
+  | "purchases"
+  | "neon-lover"
+  | "feedbacks"
+  | "level"
+  | "favorites";
+
+export type StudioIdBadgeConfig = {
+  id: string;
+  label: string;
+  icon: string;
+  rarity: StudioMemberRarity;
+  description: string;
+  condition: StudioIdBadgeCondition;
+  value: number;
+  enabled: boolean;
+};
+
 export type StudioIdConfig = {
   enabled: boolean;
   xp: {
@@ -205,6 +227,7 @@ export type StudioIdConfig = {
     perks: boolean;
   };
   ranks: StudioIdRankConfig[];
+  badges: StudioIdBadgeConfig[];
   discordRankSync: {
     enabled: boolean;
     roleIds: Record<string, string>;
