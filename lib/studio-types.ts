@@ -563,6 +563,11 @@ export type StudioAnalytics = {
   searches: number;
   filters: number;
   checkoutErrors: number;
+  cartUpdates: number;
+  cartCheckouts: number;
+  cartSessions: number;
+  cartCheckoutSessions: number;
+  cartAbandonment: number;
   avgPageSeconds: number;
   avgScrollDepth: number;
   checkoutAbandonment: number;
