@@ -4965,9 +4965,105 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   grid-template-columns: 1.25fr .45fr .65fr .8fr;
   gap: 8px;
 }
+.studio-id-rank-editor-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
 .studio-id-rank-fields label,
 .studio-id-role-grid label {
   min-width: 0;
+  display: grid;
+  gap: 6px;
+  color: var(--text-2);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .035em;
+}
+.studio-id-rank-fields input,
+.studio-id-rank-fields select {
+  width: 100%;
+  min-width: 0;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid rgba(177,96,255,.18);
+  border-radius: 9px;
+  color: var(--white);
+  background: rgba(var(--surface-rgb),.72);
+  outline: none;
+  font: 600 10px/1 "Manrope",Arial,sans-serif;
+}
+.studio-id-rank-fields input:focus,
+.studio-id-rank-fields select:focus {
+  border-color: rgba(198,126,255,.48);
+  box-shadow: 0 0 0 3px rgba(139,44,255,.07);
+}
+.studio-id-rank-preview small {
+  color: rgba(167,165,179,.56);
+  font-size: 6.5px;
+  line-height: 1.2;
+}
+.studio-id-rank-actions {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding-bottom: 1px;
+}
+.studio-id-rank-actions button {
+  min-height: 38px;
+  padding: 0 11px;
+  border-radius: 9px;
+  border: 1px solid rgba(177,96,255,.16);
+  color: var(--text-2);
+  background: rgba(var(--surface-rgb),.58);
+  cursor: pointer;
+  font-size: 8px;
+  font-weight: 800;
+  transition: .18s ease;
+}
+.studio-id-rank-actions button:hover:not(:disabled) {
+  color: var(--white);
+  transform: translateY(-1px);
+  border-color: rgba(199,128,255,.38);
+}
+.studio-id-rank-actions .rank-action-remove {
+  border-color: rgba(255,91,122,.20);
+  color: #ff93aa;
+}
+.studio-id-rank-actions .rank-action-remove:hover:not(:disabled) {
+  border-color: rgba(255,91,122,.45);
+  background: rgba(255,91,122,.08);
+}
+.studio-id-rank-actions button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.studio-id-rank-footnote {
+  margin-top: 12px;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid rgba(164,83,255,.09);
+}
+.studio-id-rank-footnote span {
+  flex: 0 0 auto;
+  color: var(--purple-light);
+  font: 800 8px/1 "Sora",Arial,sans-serif;
+}
+.studio-id-rank-footnote small {
+  color: var(--text-2);
+  font-size: 7.5px;
+  line-height: 1.45;
+  text-align: right;
+}
+.studio-id-rank-heading .btn:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+  transform: none;
 }
 .studio-id-xp-grid small,
 .studio-id-role-grid small {
@@ -4985,11 +5081,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (max-width: 1180px) {
   .studio-id-control-switches { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .studio-id-rank-editor { grid-template-columns: 1fr; }
+  .studio-id-rank-editor-main { grid-template-columns: 1fr; }
+  .studio-id-rank-actions { justify-content: flex-end; }
 }
 @media (max-width: 800px) {
   .studio-id-control-switches,
   .studio-id-rank-fields { grid-template-columns: 1fr; }
   .studio-id-settings .control-form { padding: 18px; }
+  .studio-id-rank-actions { justify-content: stretch; }
+  .studio-id-rank-actions button { flex: 1; }
+  .studio-id-rank-footnote { align-items: flex-start; flex-direction: column; }
+  .studio-id-rank-footnote small { text-align: left; }
 }
 /* ===== /Studio K ID · Control Center ===== */
 
