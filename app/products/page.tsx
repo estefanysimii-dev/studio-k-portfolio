@@ -17,6 +17,8 @@ export default function ProductsPage() {
   const [collectionId, setCollectionId] = useState("");
   const [onlyNeon, setOnlyNeon] = useState(false);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
+  const [onlyPromotion, setOnlyPromotion] = useState(false);
+  const [maxPrice, setMaxPrice] = useState(0);
   const [sort, setSort] = useState("relevance");
   const now = Date.now();
   const activeDrops = (state.drops || []).filter((drop) =>
@@ -38,6 +40,8 @@ export default function ProductsPage() {
       if (gender !== "Todos" && (product.gender || "unisex") !== gender) return false;
       if (onlyNeon && !product.neon && !(product.tags || []).some((tag) => /neon|emissiv/i.test(tag))) return false;
       if (onlyAvailable && product.available === false) return false;
+      if (onlyPromotion && !activeDrops.some((drop) => drop.productId === product.id && Number(drop.discountPercent || 0) > 0)) return false;
+      if (maxPrice > 0 && product.priceCents > maxPrice * 100) return false;
       if (selectedCollection && !selectedCollection.productIds.includes(product.id)) return false;
       return true;
     });
@@ -49,7 +53,7 @@ export default function ProductsPage() {
       if (sort === "popular") return (recommendationScores.get(b.id) || 0) - (recommendationScores.get(a.id) || 0);
       return 0;
     });
-  }, [search, state.products, category, gender, onlyNeon, onlyAvailable, collectionId, collections, sort, recommendationScores]);
+  }, [search, state.products, category, gender, onlyNeon, onlyAvailable, onlyPromotion, maxPrice, collectionId, collections, sort, recommendationScores, activeDrops]);
 
   useEffect(() => {
     const query = search.trim();
@@ -123,6 +127,10 @@ export default function ProductsPage() {
         </label>
         <label className="catalog-filter-check"><input type="checkbox" checked={onlyNeon} onChange={(event) => setOnlyNeon(event.target.checked)} /> Neon / emissivo</label>
         <label className="catalog-filter-check"><input type="checkbox" checked={onlyAvailable} onChange={(event) => setOnlyAvailable(event.target.checked)} /> Disponível agora</label>
+        <label className="catalog-filter-check"><input type="checkbox" checked={onlyPromotion} onChange={(event) => setOnlyPromotion(event.target.checked)} /> Em promoção</label>
+        <label>Preço máximo
+          <input type="number" min={0} step={10} value={maxPrice || ""} onChange={(event) => setMaxPrice(Math.max(0, Number(event.target.value) || 0))} placeholder="Sem limite" />
+        </label>
       </div>
 
       <div className="product-grid">
