@@ -6,6 +6,7 @@ import AnalyticsDashboard from '@/components/analytics-dashboard';
 import StudioIdSettings from '@/components/studio-id-settings';
 import FeedbackSettings from '@/components/feedback-settings';
 import CommerceControl from '@/components/commerce-control';
+import ClothToolControl from '@/components/clothtool-control';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -16,7 +17,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "commerce" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "commerce" | "portfolio" | "products" | "media" | "converter" | "integrations" | "clothtool";
 
 type ItemDraft = {
   name: string;
@@ -187,6 +188,7 @@ const bytes = (value: number) => {
 export default function ControlPage() {
   const [state, setState] = useState<StudioControlState | null>(null);
   const [tab, setTab] = useState<Tab>("overview");
+  useEffect(() => { if (new URLSearchParams(window.location.search).get('tab') === 'clothtool') setTab('clothtool'); }, []);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -541,6 +543,7 @@ export default function ControlPage() {
           ["products", "Produtos"],
           ["media", "Mídia"],
           ["converter", "Conversor 3D"],
+          ["clothtool", "ClothTool"],
           ["integrations", "Integrações"]
         ].map(([key, label]) => (
           <button type="button" key={key} className={tab === key ? "active" : ""} onClick={() => setTab(key as Tab)}>
@@ -548,6 +551,8 @@ export default function ControlPage() {
           </button>
         ))}
       </nav>
+
+      {tab === 'clothtool' && <ClothToolControl />}
 
       {tab === "overview" && (
         <>
@@ -974,10 +979,11 @@ export default function ControlPage() {
             <h2>Preview automático</h2>
             <p>O PSD original permanece privado e uma imagem de preview é gerada para exibição pública.</p>
           </section>
-          <section className="integration-card glass-panel disabled-integration">
+          <section className="integration-card glass-panel">
             <span className="section-eyebrow">CLOTH TOOL STUDIO K</span>
-            <h2>Reservado para a última etapa</h2>
-            <p>A integração direta com o aplicativo continua isolada até o restante do ecossistema estar validado em produção.</p>
+            <h2>Aplicativo da equipe</h2>
+            <p>Autorize o ClothTool Windows pela sua conta da Central e gerencie suas conexões.</p>
+            <button type="button" className="btn btn-primary" onClick={() => setTab('clothtool')}>Conectar ClothTool</button>
           </section>
         </div>
       )}

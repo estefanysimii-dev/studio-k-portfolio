@@ -52,6 +52,11 @@ if ($path === '/api/portfolio/oauth/complete') {
 }
 if ($path === '/api/logout') {
     if ($method !== 'POST') fail(405, 'Método não permitido.');
+    $token = $_COOKIE['studio_web_token'] ?? '';
+    if (is_string($token) && preg_match('/^[a-f0-9]{64}$/', $token)) {
+        [$status] = upstream('/api/portfolio/logout', 'POST', '{}', ['Content-Type: application/json', 'Authorization: Bearer ' . $token, 'Origin: ' . STUDIO_ORIGIN]);
+        if ($status !== 200) fail(502, 'Não foi possível encerrar a sessão no servidor. Tente novamente.');
+    }
     cookie_token('', time() - 3600); header('Cache-Control: no-store'); header('Content-Type: application/json'); echo '{"ok":true}'; exit;
 }
 if (str_starts_with($path, '/api/studio/')) {

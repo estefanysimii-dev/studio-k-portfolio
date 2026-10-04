@@ -6541,3 +6541,12 @@ html.studio-scrollbar-dragging .studio-scrollbar-left {
   .ticket-floating-panel .ticket-account-list{grid-template-columns:1fr;max-height:130px}
 }
 /* ===== /Studio K readability + member UX 2026-10 ===== */
+.clothtool-control{padding:clamp(20px,4vw,36px);max-width:960px}
+.clothtool-control p,.clothtool-control li{color:var(--text-2);line-height:1.65}
+.clothtool-control h3{margin-top:30px}
+.clothtool-pairing{display:grid;gap:10px;margin:24px 0;max-width:440px}
+.clothtool-pairing input{padding:15px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--white);font-size:25px;letter-spacing:.14em;font-family:monospace;width:100%;box-sizing:border-box}
+.clothtool-pairing p{font-size:13px;margin:0}
+.clothtool-session{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid #8f56ba40;padding:18px 0}
+.clothtool-session small{display:block;margin-top:6px}
+@media(max-width:600px){.clothtool-session{align-items:flex-start;flex-direction:column}}
