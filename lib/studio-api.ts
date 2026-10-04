@@ -78,6 +78,11 @@ export const studioApi = {
     request(`control/drops/${encodeURIComponent(id)}`, { method: "DELETE" }),
   syncBotProduct: (id: string) =>
     request<{ ok: boolean; botProductId: string }>(`control/products/${encodeURIComponent(id)}/sync-bot`, { method: "POST", body: "{}" }),
+  addProductStock: (id: string, items: string[]) =>
+    request<{ ok: boolean; added: number; remaining: number | null; available: boolean }>(
+      `control/products/${encodeURIComponent(id)}/stock`,
+      { method: "POST", body: JSON.stringify({ items }) }
+    ),
   announceProduct: (id: string, channelId: string) =>
     request<{ ok: boolean; messageId: string }>(`control/products/${encodeURIComponent(id)}/announce`, {
       method: "POST",
