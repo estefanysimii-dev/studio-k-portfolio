@@ -70,6 +70,156 @@ button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--purple-light); outline-offset: 3px; }
 
+
+/* ===== Studio K · dual themed scrollbars ===== */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.studio-scrollbars {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  pointer-events: none;
+}
+
+.studio-scrollbar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  pointer-events: auto;
+  cursor: pointer;
+  opacity: .84;
+  transition: opacity .2s ease, filter .2s ease;
+  outline: none;
+  touch-action: none;
+}
+.studio-scrollbar-left { left: 0; }
+.studio-scrollbar-right { right: 0; }
+
+.studio-scrollbar-rail {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(180,92,255,.10),
+      rgba(180,92,255,.38) 18%,
+      rgba(108,25,255,.30) 50%,
+      rgba(180,92,255,.38) 82%,
+      rgba(180,92,255,.10)
+    );
+  box-shadow: 0 0 12px rgba(139,44,255,.20);
+}
+
+.studio-scrollbar-thumb {
+  position: absolute;
+  top: var(--studio-scroll-top);
+  left: 2px;
+  width: 8px;
+  height: var(--studio-scroll-height);
+  min-height: 54px;
+  overflow: hidden;
+  border: 1px solid rgba(220,174,255,.58);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg,rgba(205,145,255,.98),rgba(139,44,255,.96) 42%,rgba(93,20,178,.98));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08) inset,
+    0 0 12px rgba(139,44,255,.50),
+    0 0 28px rgba(108,25,255,.28);
+  cursor: grab;
+  transition: width .18s ease, left .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.studio-scrollbar-thumb i {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255,255,255,.58);
+  box-shadow: 0 0 7px rgba(255,255,255,.45);
+}
+
+.studio-scrollbar:hover,
+.studio-scrollbar:focus-visible {
+  opacity: 1;
+  filter: saturate(1.12);
+}
+.studio-scrollbar:hover .studio-scrollbar-thumb,
+.studio-scrollbar:focus-visible .studio-scrollbar-thumb {
+  left: 1px;
+  width: 10px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.12) inset,
+    0 0 16px rgba(172,85,255,.62),
+    0 0 34px rgba(108,25,255,.36);
+}
+
+html.studio-scrollbar-dragging,
+html.studio-scrollbar-dragging * {
+  cursor: grabbing !important;
+  user-select: none !important;
+}
+html.studio-scrollbar-dragging .studio-scrollbar {
+  opacity: 1;
+}
+
+[data-theme="light"] .studio-scrollbar-rail {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(116,38,183,.08),
+      rgba(116,38,183,.28) 20%,
+      rgba(139,44,255,.30) 50%,
+      rgba(116,38,183,.28) 80%,
+      rgba(116,38,183,.08)
+    );
+  box-shadow: 0 0 10px rgba(116,38,183,.12);
+}
+[data-theme="light"] .studio-scrollbar-thumb {
+  border-color: rgba(116,38,183,.32);
+  background:
+    linear-gradient(180deg,rgba(180,105,236,.92),rgba(126,45,192,.94) 48%,rgba(92,27,146,.96));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.35) inset,
+    0 0 10px rgba(116,38,183,.22),
+    0 0 22px rgba(139,44,255,.12);
+}
+[data-theme="light"] .studio-scrollbar-thumb i {
+  background: rgba(255,255,255,.72);
+  box-shadow: 0 0 6px rgba(255,255,255,.42);
+}
+
+@media (max-width: 720px) {
+  .studio-scrollbar { width: 8px; opacity: .72; }
+  .studio-scrollbar-thumb { left: 1px; width: 6px; }
+  .studio-scrollbar:hover .studio-scrollbar-thumb,
+  .studio-scrollbar:focus-visible .studio-scrollbar-thumb { left: 0; width: 8px; }
+  .studio-scrollbar-rail { width: 1px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio-scrollbar,
+  .studio-scrollbar-thumb { transition: none; }
+}
+/* ===== /Studio K · dual themed scrollbars ===== */
+
 .ambient-light {
   position: fixed;
   inset: 0;
