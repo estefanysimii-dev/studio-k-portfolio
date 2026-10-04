@@ -43,6 +43,11 @@ export const studioApi = {
     request("control/site", { method: "PUT", body: JSON.stringify(body) }),
   saveStudioIdConfig: (body: import("./studio-types").StudioIdConfig) =>
     request<import("./studio-types").StudioIdConfig>("control/studio-id", { method: "PUT", body: JSON.stringify(body) }),
+  saveFeedbackModeration: (body: { order: string[]; hidden: string[] }) =>
+    request<{ ok: boolean; moderation: { order: string[]; hidden: string[] }; feedbacks: import("./studio-types").StudioFeedback[] }>(
+      "control/feedbacks",
+      { method: "PUT", body: JSON.stringify(body) }
+    ),
   createItem: (body: unknown) =>
     request("control/items", { method: "POST", body: JSON.stringify(body) }),
   updateItem: (id: string, body: unknown) =>
