@@ -6212,7 +6212,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .community-submit-notice.error{color:#ff9daf}
 
 .ticket-floating-launcher{
-  position:fixed;left:18px;bottom:18px;z-index:70;min-width:170px;padding:12px 14px;
+  position:fixed;left:246px;bottom:18px;z-index:70;min-width:170px;padding:12px 14px;
   display:grid;gap:2px;text-align:left;border:1px solid rgba(194,125,255,.46);border-radius:14px;
   color:var(--white);background:linear-gradient(135deg,rgba(91,17,180,.96),rgba(35,13,55,.97));
   box-shadow:0 18px 60px rgba(56,10,92,.42),0 0 26px rgba(139,44,255,.24);cursor:pointer
@@ -6220,7 +6220,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .ticket-floating-launcher span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#d6b4ff}
 .ticket-floating-launcher strong{font-size:13px}
 .ticket-floating-panel{
-  position:fixed;left:18px;bottom:88px;z-index:69;width:min(860px,calc(100vw - 36px));height:min(660px,calc(100vh - 120px));
+  position:fixed;left:246px;bottom:88px;z-index:69;width:min(860px,calc(100vw - 36px));height:min(660px,calc(100vh - 120px));
   padding:18px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:12px;
   background:linear-gradient(180deg,rgba(13,9,22,.97),rgba(8,6,14,.97));box-shadow:0 30px 100px rgba(0,0,0,.52)
 }
@@ -6256,8 +6256,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .account-activity-list small{font-size:9px}
 .account-activity .muted{font-size:12px;line-height:1.6}
 
+@media(max-width:1100px){
+  .ticket-floating-launcher{left:104px}
+  .ticket-floating-panel{left:104px;}
+}
 @media(max-width:900px){
-  .ticket-floating-panel{left:12px;bottom:78px;width:calc(100vw - 24px);height:calc(100vh - 100px)}
+  .ticket-floating-panel{left:104px;bottom:78px;width:calc(100vw - 24px);height:calc(100vh - 100px)}
   .ticket-floating-body{grid-template-columns:1fr}
   .ticket-floating-panel .ticket-account-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:150px}
 }
