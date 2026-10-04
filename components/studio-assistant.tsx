@@ -259,6 +259,22 @@ export default function StudioAssistant() {
             active: true
           });
         }
+        const recommended = (state.personal?.recommendations || [])
+          .map((entry) => ({ entry, item: state.products.find((candidate) => candidate.id === entry.productId) }))
+          .find(({ item }) => item && item.id !== product.id);
+        if (recommended?.item) {
+          contextual.push({
+            id: `context-recommendation-${product.id}-${recommended.item.id}`,
+            type: "bestseller" as const,
+            title: "Separei outra peça pra você 👀",
+            text: `${recommended.item.name} apareceu nas suas recomendações porque combina com o que você anda explorando no Studio K.`,
+            ctaLabel: "Ver recomendação",
+            href: `/products/${recommended.item.id}`,
+            priceCents: recommended.item.priceCents || 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        }
       }
     } else if (portfolioMatch) {
       const item = state.items.find((entry) => entry.id === decodeURIComponent(portfolioMatch[1]));
@@ -300,7 +316,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [campaignViews, config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.products]);
+  }, [campaignViews, config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.personal?.recommendations, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
