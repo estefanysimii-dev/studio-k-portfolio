@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "./studio-provider";
 
@@ -11,7 +11,8 @@ export default function AccountCommunity(){
   const [imageUrl,setImageUrl]=useState("");
   const [selected,setSelected]=useState<string[]>([]);
   const [notice,setNotice]=useState("");
-  const [ranking,setRanking]=useState(false);
+  const [ranking,setRanking]=useState(state.personal?.leaderboardOptIn === true);
+  useEffect(() => setRanking(state.personal?.leaderboardOptIn === true), [state.personal?.leaderboardOptIn]);
   if(!state.me.authenticated)return null;
   return <section className="account-community glass-panel">
     <div className="section-heading compact-heading"><div><span className="section-eyebrow">COMUNIDADE</span><h2>Participar do Studio K</h2></div><a className="btn btn-outline compact" href="/community">Abrir comunidade</a></div>
