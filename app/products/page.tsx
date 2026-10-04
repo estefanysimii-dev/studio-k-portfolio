@@ -21,6 +21,14 @@ export default function ProductsPage() {
   const [maxPrice, setMaxPrice] = useState(0);
   const [sort, setSort] = useState("relevance");
   const now = Date.now();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialCategory = params.get("category");
+    const tag = params.get("tag");
+    if (initialCategory) setCategory(initialCategory);
+    if (tag) setSearch(tag);
+  }, []);
   const activeDrops = (state.drops || []).filter((drop) =>
     drop.published !== false &&
     Date.parse(drop.startsAt) <= now &&
