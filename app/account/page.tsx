@@ -6,6 +6,7 @@ import FavoriteButton from "@/components/favorite-button";
 import AccountMissions from "@/components/account-missions";
 import AccountTickets from "@/components/account-tickets";
 import AccountCommunity from "@/components/account-community";
+import AccountActivity from "@/components/account-activity";
 import Icon from "@/components/icons";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
@@ -367,6 +368,7 @@ export default function AccountPage() {
       <AccountMissions />
       <AccountTickets />
       <AccountCommunity />
+      <AccountActivity />
 
       <section className="account-orders glass-panel">
         <div className="section-heading compact-heading">
