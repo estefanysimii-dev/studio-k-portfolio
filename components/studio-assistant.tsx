@@ -51,6 +51,7 @@ export default function StudioAssistant() {
   const [revisitCount, setRevisitCount] = useState(0);
   const [levelUp, setLevelUp] = useState<{ from: number; to: number } | null>(null);
   const [newAchievement, setNewAchievement] = useState("");
+  const [campaignViews, setCampaignViews] = useState<Record<string, number>>({});
 
   useEffect(() => {
     setDwellReady(false);
@@ -99,10 +100,39 @@ export default function StudioAssistant() {
     } catch {}
   }, [state.me.authenticated, state.me.profile, state.me.user?.id]);
 
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("studio-k-kiki-impressions") || "{}") as Record<string, number>;
+      setCampaignViews(saved && typeof saved === "object" ? saved : {});
+    } catch {
+      setCampaignViews({});
+    }
+  }, []);
+
   const messages = useMemo(() => {
-    const configured = config.campaigns.filter((campaign) => campaign.active);
-    const contextual = [];
     const now = Date.now();
+    const pageMatches = (pages: string[] = []) => {
+      if (!pages.length) return true;
+      return pages.some((rule) => {
+        if (rule === "*") return true;
+        if (rule.endsWith("*")) return pathname.startsWith(rule.slice(0, -1));
+        return pathname === rule;
+      });
+    };
+    const configured = config.campaigns
+      .filter((campaign) => {
+        if (!campaign.active) return false;
+        if (campaign.startsAt && Date.parse(campaign.startsAt) > now) return false;
+        if (campaign.endsAt && Date.parse(campaign.endsAt) <= now) return false;
+        if (!pageMatches(campaign.pages || [])) return false;
+        if (campaign.audience === "member" && !state.me.authenticated) return false;
+        if (campaign.audience === "guest" && state.me.authenticated) return false;
+        const maxViews = Math.max(0, Number(campaign.maxViews || 0));
+        if (maxViews > 0 && Number(campaignViews[campaign.id] || 0) >= maxViews) return false;
+        return true;
+      })
+      .sort((a, b) => Number(b.priority || 0) - Number(a.priority || 0));
+    const contextual = [];
 
     if (levelUp) {
       contextual.push({
@@ -270,10 +300,19 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.products]);
+  }, [campaignViews, config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
+
+  useEffect(() => {
+    if (!current || !config.campaigns.some((campaign) => campaign.id === current.id)) return;
+    try {
+      const next = { ...campaignViews, [current.id]: Number(campaignViews[current.id] || 0) + 1 };
+      localStorage.setItem("studio-k-kiki-impressions", JSON.stringify(next));
+      setCampaignViews(next);
+    } catch {}
+  }, [current?.id]);
 
   useEffect(() => {
     if (!config.enabled || messages.length === 0) return;
