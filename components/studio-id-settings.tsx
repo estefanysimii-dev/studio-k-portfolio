@@ -62,6 +62,7 @@ const nextRankLevel = (ranks: StudioIdRankConfig[]) => {
 };
 
 export default function StudioIdSettings({ value, roles, onChange, onSave }: Props) {
+  const badges = value.badges || [];
   const patch = (next: Partial<StudioIdConfig>) => onChange({ ...value, ...next });
   const patchXp = (key: keyof StudioIdConfig["xp"], number: number) =>
     patch({ xp: { ...value.xp, [key]: number } });
@@ -143,12 +144,12 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
   const patchBadge = (id: string, next: Partial<StudioIdBadgeConfig>) => {
     onChange({
       ...value,
-      badges: value.badges.map((badge) => badge.id === id ? { ...badge, ...next } : badge)
+      badges: badges.map((badge) => badge.id === id ? { ...badge, ...next } : badge)
     });
   };
 
   const addBadge = () => {
-    if (value.badges.length >= 24) return;
+    if (badges.length >= 24) return;
     const id = badgeId(value.badges);
     const next: StudioIdBadgeConfig = {
       id,
@@ -160,30 +161,30 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       value: 1,
       enabled: true
     };
-    onChange({ ...value, badges: [...value.badges, next] });
+    onChange({ ...value, badges: [...badges, next] });
   };
 
   const duplicateBadge = (badge: StudioIdBadgeConfig) => {
-    if (value.badges.length >= 24) return;
+    if (badges.length >= 24) return;
     const id = badgeId(value.badges);
     onChange({
       ...value,
-      badges: [...value.badges, { ...badge, id, label: `${badge.label} Copia` }]
+      badges: [...badges, { ...badge, id, label: `${badge.label} Copia` }]
     });
   };
 
   const removeBadge = (id: string) => {
-    const badge = value.badges.find((item) => item.id === id);
+    const badge = badges.find((item) => item.id === id);
     if (!badge) return;
     if (!window.confirm(`Remover o badge “${badge.label}”? Usuários deixarão de receber/exibir esse badge após salvar.`)) return;
-    onChange({ ...value, badges: value.badges.filter((item) => item.id !== id) });
+    onChange({ ...value, badges: badges.filter((item) => item.id !== id) });
   };
 
   const moveBadge = (id: string, direction: -1 | 1) => {
-    const index = value.badges.findIndex((badge) => badge.id === id);
+    const index = badges.findIndex((badge) => badge.id === id);
     const target = index + direction;
-    if (index < 0 || target < 0 || target >= value.badges.length) return;
-    const badges = [...value.badges];
+    if (index < 0 || target < 0 || target >= badges.length) return;
+    const badges = [...badges];
     const [badge] = badges.splice(index, 1);
     badges.splice(target, 0, badge);
     onChange({ ...value, badges });
@@ -335,13 +336,13 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
             <h2>Badges do Studio K ID</h2>
             <p>Edite nome, visual e regra de desbloqueio. A ordem abaixo também é a ordem usada no perfil.</p>
           </div>
-          <button className="btn btn-primary compact" type="button" onClick={addBadge} disabled={value.badges.length >= 24}>
+          <button className="btn btn-primary compact" type="button" onClick={addBadge} disabled={badges.length >= 24}>
             + Adicionar badge
           </button>
         </div>
 
         <div className="studio-id-badge-list">
-          {value.badges.map((badge, index) => (
+          {badges.map((badge, index) => (
             <article className={`studio-id-badge-editor rarity-${badge.rarity} ${badge.enabled ? "" : "is-disabled"}`.trim()} key={badge.id}>
               <div className="studio-id-badge-preview">
                 <i>{badge.icon || "✦"}</i>
@@ -391,9 +392,9 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
                   </label>
                   <div className="badge-order-buttons">
                     <button type="button" onClick={() => moveBadge(badge.id, -1)} disabled={index === 0} title="Subir badge">↑</button>
-                    <button type="button" onClick={() => moveBadge(badge.id, 1)} disabled={index === value.badges.length - 1} title="Descer badge">↓</button>
+                    <button type="button" onClick={() => moveBadge(badge.id, 1)} disabled={index === badges.length - 1} title="Descer badge">↓</button>
                   </div>
-                  <button type="button" onClick={() => duplicateBadge(badge)} disabled={value.badges.length >= 24}>Duplicar</button>
+                  <button type="button" onClick={() => duplicateBadge(badge)} disabled={badges.length >= 24}>Duplicar</button>
                   <button type="button" className="rank-action-remove" onClick={() => removeBadge(badge.id)}>Remover</button>
                 </div>
               </div>
@@ -402,7 +403,7 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
         </div>
 
         <div className="studio-id-rank-footnote">
-          <span>{value.badges.length}/24 badges configurados</span>
+          <span>{badges.length}/24 badges configurados</span>
           <small>Badges desativados continuam salvos na Central, mas não são exibidos nem concedidos aos usuários.</small>
         </div>
       </section>
