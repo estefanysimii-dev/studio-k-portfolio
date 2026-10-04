@@ -20,6 +20,10 @@ export default function AccountTickets(){
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
 
+  useEffect(() => {
+    if (categories.length && !categories.includes(newCategory)) setNewCategory(categories[0]);
+  }, [categories, newCategory]);
+
   const load=async()=>{try{const r=await studioApi.myTickets();setTickets(r.tickets);}catch{}};
   const loadMessages=async(id:string)=>{setSelected(id);setTranscript("");setError("");try{const r=await studioApi.ticketMessages(id);setMessages(r.messages);}catch(err){setMessages([]);setError(err instanceof Error?err.message:"Não foi possível carregar as mensagens.");}};
   useEffect(()=>{void load();},[]);
