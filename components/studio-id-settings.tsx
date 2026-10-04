@@ -184,10 +184,10 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
     const index = badges.findIndex((badge) => badge.id === id);
     const target = index + direction;
     if (index < 0 || target < 0 || target >= badges.length) return;
-    const badges = [...badges];
-    const [badge] = badges.splice(index, 1);
-    badges.splice(target, 0, badge);
-    onChange({ ...value, badges });
+    const nextBadges = [...badges];
+    const [badge] = nextBadges.splice(index, 1);
+    nextBadges.splice(target, 0, badge);
+    onChange({ ...value, badges: nextBadges });
   };
 
   const setRankRole = (rankId: string, roleId: string) =>
