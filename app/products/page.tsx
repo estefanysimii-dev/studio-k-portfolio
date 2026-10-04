@@ -158,9 +158,12 @@ export default function ProductsPage() {
                 </div>
               );
             })()}
-            <a className="btn btn-primary" href={`/products/${product.id}`}>
-              Ver produto <Icon name="arrow" />
-            </a>
+            <div className="product-card-actions">
+              <a className="btn btn-primary" href={`/products/${product.id}`}>
+                Ver produto <Icon name="arrow" />
+              </a>
+              <a className="btn btn-outline compact" href={`/compare?a=${product.id}`}>Comparar</a>
+            </div>
           </article>
         )) : (
           <div className="empty-state glass-panel">
