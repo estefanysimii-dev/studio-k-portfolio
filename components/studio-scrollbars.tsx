@@ -68,7 +68,7 @@ export default function StudioScrollbars() {
       mutationObserver.observe(document.body, {
         childList: true,
         subtree: true,
-        attributes: true
+        characterData: true
       });
     }
 
