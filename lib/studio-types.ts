@@ -112,6 +112,8 @@ export type StudioProduct = StudioItem & {
   limitedLabel?: string;
   postPurchaseRoleId?: string;
   soldCount?: number;
+  viewsToday?: number;
+  favoritesTotal?: number;
   remaining?: number | null;
   available?: boolean;
 };
