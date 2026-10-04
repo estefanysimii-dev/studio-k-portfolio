@@ -502,6 +502,7 @@ export type StudioOrder = {
   discount?: number;
   error?: string;
   deliveryType?: "digital" | "service";
+  edition?: { number: number; total: number; label: string } | null;
 };
 
 export type StudioCheckout = {
