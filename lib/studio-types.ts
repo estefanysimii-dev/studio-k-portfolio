@@ -265,6 +265,7 @@ export type StudioCommerceState = {
   gallery: StudioGalleryItem[];
   lookbooks: StudioLookbook[];
   leaderboard: { enabled: boolean } | { userId: string; studioId?: string; score: number }[];
+  feedbackAutomation?: { enabled: boolean; delayHours: number };
   activity?: StudioActivityItem[];
 };
 
