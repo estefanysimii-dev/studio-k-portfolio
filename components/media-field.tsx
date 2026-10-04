@@ -11,16 +11,16 @@ type Props = {
   kind: Kind;
   value: string;
   onChange: (value: string) => void;
-  onConvertObj?: () => void;
+  onConvertFiveM?: () => void;
 };
 
 const accepts: Record<Kind, string> = {
   image: ".png,.jpg,.jpeg,.webp,.gif,.psd",
-  model: ".glb,.gltf,.obj,.fbx,.blend",
+  model: ".glb,.gltf,.fbx,.blend",
   video: ".mp4,.webm"
 };
 
-const sourceFormats = new Set(["psd", "obj", "fbx", "blend"]);
+const sourceFormats = new Set(["psd", "fbx", "blend"]);
 const extension = (name: string) => name.toLowerCase().split(".").pop() || "";
 
 async function uploadAsset(file: File, isPublic: boolean) {
@@ -44,7 +44,7 @@ async function uploadAsset(file: File, isPublic: boolean) {
   return result;
 }
 
-export default function MediaField({ label, kind, value, onChange, onConvertObj }: Props) {
+export default function MediaField({ label, kind, value, onChange, onConvertFiveM }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -87,8 +87,8 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
             {busy ? "Processando..." : "Upload"}
             <input type="file" accept={accepts[kind]} disabled={busy} onChange={(event) => void upload(event)} />
           </label>
-          {kind === "model" && onConvertObj && (
-            <button type="button" onClick={onConvertObj}>OBJ + texturas</button>
+          {kind === "model" && onConvertFiveM && (
+            <button type="button" onClick={onConvertFiveM}>YDD + YTD</button>
           )}
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
           kind === "image"
             ? "PNG/JPG/WebP/GIF ou PSD (preview automático)"
             : kind === "model"
-              ? "GLB/GLTF, OBJ, FBX ou BLEND"
+              ? "GLB/GLTF, FBX ou BLEND"
               : "MP4/WebM ou URL"
         }
       />
@@ -122,7 +122,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertObj 
         <div className="media-preview model-preview">
           <div className="media-preview-title">
             <strong>Prévia 3D</strong>
-            <span>BLEND/FBX/OBJ são convertidos em GLB antes de aparecerem no site.</span>
+            <span>BLEND/FBX são convertidos em GLB. Para arquivos nativos do FiveM, use YDD + YTD.</span>
           </div>
           <ModelStage modelUrl={value} compact />
         </div>
