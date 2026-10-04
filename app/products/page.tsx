@@ -45,6 +45,7 @@ export default function ProductsPage() {
       if (sort === "price-asc") return a.priceCents - b.priceCents;
       if (sort === "price-desc") return b.priceCents - a.priceCents;
       if (sort === "newest") return Date.parse(b.created || b.updated || "") - Date.parse(a.created || a.updated || "");
+      if (sort === "best-selling") return Number(b.soldCount || 0) - Number(a.soldCount || 0);
       if (sort === "popular") return (recommendationScores.get(b.id) || 0) - (recommendationScores.get(a.id) || 0);
       return 0;
     });
@@ -115,6 +116,7 @@ export default function ProductsPage() {
             <option value="relevance">Relevância</option>
             <option value="popular">Popularidade</option>
             <option value="newest">Novidades</option>
+            <option value="best-selling">Mais vendidos</option>
             <option value="price-asc">Menor preço</option>
             <option value="price-desc">Maior preço</option>
           </select>
