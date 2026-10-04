@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
+import StudioScrollbars from "@/components/studio-scrollbars";
 import { StudioProvider } from "@/components/studio-provider";
 import { ThemeProvider } from '@/components/theme-provider';
 import { RadioPlayerProvider } from "@/components/radio-player-provider";
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <RadioPlayerProvider>
             <ThemeProvider>
               <AmbientLight />
+              <StudioScrollbars />
               {children}
             </ThemeProvider>
           </RadioPlayerProvider>
