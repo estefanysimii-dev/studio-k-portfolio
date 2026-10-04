@@ -110,6 +110,9 @@ export type StudioProduct = StudioItem & {
   stockMode?: "unlimited" | "digital" | "limited" | "slots" | "numbered";
   stockLimit?: number;
   limitedLabel?: string;
+  soldCount?: number;
+  remaining?: number | null;
+  available?: boolean;
 };
 
 export type StudioBundle = {
