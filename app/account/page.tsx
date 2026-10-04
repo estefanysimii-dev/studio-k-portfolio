@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import FavoriteButton from "@/components/favorite-button";
 import AccountMissions from "@/components/account-missions";
-import AccountTickets from "@/components/account-tickets";
 import AccountCommunity from "@/components/account-community";
 import AccountActivity from "@/components/account-activity";
 import Icon from "@/components/icons";
@@ -366,7 +365,6 @@ export default function AccountPage() {
       </section>
 
       <AccountMissions />
-      <AccountTickets />
       <AccountCommunity />
       <AccountActivity />
 
