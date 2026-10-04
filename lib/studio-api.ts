@@ -127,6 +127,8 @@ export const studioApi = {
   submitGallery: (body: { name: string; caption: string; imageUrl: string; productIds: string[] }) =>
     request<import("./studio-types").StudioGalleryItem>("me/gallery", { method: "POST", body: JSON.stringify(body) }),
   myTickets: () => request<{ tickets: StudioTicket[] }>("me/tickets"),
+  createTicket: (category: string) =>
+    request<{ ok: boolean; ticket: { id: string; channel_id?: string } }>("me/tickets", { method: "POST", body: JSON.stringify({ category }) }),
   ticketMessages: (id: string) => request<{ messages: StudioTicketMessage[] }>(`me/tickets/${encodeURIComponent(id)}/messages`),
   ticketTranscript: (id: string) => request<{ id: string; transcript: string }>(`me/tickets/${encodeURIComponent(id)}/transcript`),
   replyTicket: (id: string, text: string) =>
