@@ -69,6 +69,7 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         <article><span>Produtos vistos</span><strong>{number.format(data.productViews)}</strong><small>{data.viewToOrder}% viraram pedido</small></article>
         <article><span>Favoritados</span><strong>{number.format(data.favoriteAdds)}</strong><small>ações de favorito</small></article>
         <article><span>Conversão</span><strong>{data.checkoutConversion}%</strong><small>início de compra → pago</small></article>
+        <article><span>Ticket médio</span><strong>{money.format((data.avgTicket || 0) / 100)}</strong><small>{number.format(data.paidOrders)} pedido(s) pago(s)</small></article>
         <article><span>Erros checkout</span><strong>{number.format(data.checkoutErrors)}</strong><small>{number.format(data.checkoutStarts)} compras iniciadas</small></article>
         <article><span>Carrinhos</span><strong>{number.format(data.cartSessions)}</strong><small>{data.cartAbandonment}% de abandono</small></article>
         <article><span>Finalizados</span><strong>{number.format(data.cartCheckoutSessions)}</strong><small>{number.format(data.cartCheckouts)} eventos de checkout</small></article>
@@ -107,6 +108,7 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         <RankedList title="Origens" subtitle="de onde chegaram" rows={data.topSources || []} />
         <RankedList title="Buscas" subtitle={data.searches + " buscas"} rows={data.topSearches || []} />
         <RankedList title="Cliques" subtitle={data.clicks + " interações"} rows={data.topClicks || []} />
+        <RankedList title="Cupons" subtitle="usados em pedidos pagos" rows={data.topCoupons || []} />
         <RankedList title="Páginas de saída" subtitle="onde encerraram" rows={data.exitPages || []} />
       </div>
 
