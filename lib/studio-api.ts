@@ -1,4 +1,4 @@
-import type { StudioCheckout, StudioControlState, StudioOrder, StudioProduct, StudioPublicState } from "./studio-types";
+import type { StudioCartItem, StudioCartQuote, StudioCheckout, StudioControlState, StudioOrder, StudioProduct, StudioPublicState, StudioTicket, StudioTicketMessage } from "./studio-types";
 
 export type StudioProductMutation = StudioProduct & {
   _announcement?: {
@@ -48,6 +48,14 @@ export const studioApi = {
       "control/feedbacks",
       { method: "PUT", body: JSON.stringify(body) }
     ),
+  saveCommerce: <T = unknown>(kind: string, body: unknown) =>
+    request<T>(`control/commerce/${encodeURIComponent(kind)}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteCommerce: (kind: string, id: string) =>
+    request(`control/commerce/${encodeURIComponent(kind)}/${encodeURIComponent(id)}`, { method: "DELETE" }),
+  saveLeaderboardConfig: (enabled: boolean) =>
+    request<{ enabled: boolean }>("control/leaderboard", { method: "PUT", body: JSON.stringify({ enabled }) }),
+  restoreVersion: (id: string) =>
+    request(`control/versions/${encodeURIComponent(id)}/restore`, { method: "POST", body: "{}" }),
   createItem: (body: unknown) =>
     request("control/items", { method: "POST", body: JSON.stringify(body) }),
   updateItem: (id: string, body: unknown) =>
@@ -88,6 +96,29 @@ export const studioApi = {
       method: "POST",
       body: JSON.stringify({ couponCode })
     }),
+  search: (q: string) =>
+    request<{ results: { kind: string; id: string; title: string; subtitle: string; href: string; score: number }[] }>(`search?q=${encodeURIComponent(q)}`),
+  recommendations: (productId: string) =>
+    request<{ recommendations: import("./studio-types").StudioRecommendation[] }>(`products/${encodeURIComponent(productId)}/recommendations`),
+  myCart: (couponCode = "") =>
+    request<{ cart: StudioCartItem[]; quote: StudioCartQuote }>(`me/cart${couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : ""}`),
+  saveCart: (items: StudioCartItem[], couponCode = "") =>
+    request<{ cart: StudioCartItem[]; quote: StudioCartQuote }>("me/cart", { method: "PUT", body: JSON.stringify({ items, couponCode }) }),
+  checkoutCart: (couponCode = "") =>
+    request<{ groupId: string; orderIds: string[]; total: number; quote: StudioCartQuote; payment: StudioCheckout["payment"] }>("me/cart/checkout", { method: "POST", body: JSON.stringify({ couponCode }) }),
+  myNotifications: () => request<{ notifications: import("./studio-types").StudioNotification[] }>("me/notifications"),
+  markNotification: (id: string, read = true) =>
+    request<{ notifications: import("./studio-types").StudioNotification[] }>(`me/notifications/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify({ read }) }),
+  readAllNotifications: () =>
+    request<{ notifications: import("./studio-types").StudioNotification[] }>("me/notifications/read-all", { method: "POST", body: "{}" }),
+  claimMission: (id: string) =>
+    request<{ result: unknown; profile: import("./studio-types").StudioMemberProfile }>(`me/missions/${encodeURIComponent(id)}/claim`, { method: "POST", body: "{}" }),
+  setLeaderboardOptIn: (enabled: boolean) =>
+    request<{ enabled: boolean }>("me/leaderboard", { method: "PUT", body: JSON.stringify({ enabled }) }),
+  myTickets: () => request<{ tickets: StudioTicket[] }>("me/tickets"),
+  ticketMessages: (id: string) => request<{ messages: StudioTicketMessage[] }>(`me/tickets/${encodeURIComponent(id)}/messages`),
+  replyTicket: (id: string, text: string) =>
+    request<{ ok: boolean; id: string; created: string }>(`me/tickets/${encodeURIComponent(id)}/reply`, { method: "POST", body: JSON.stringify({ text }) }),
   myProfile: () => request<{ profile: import("./studio-types").StudioMemberProfile; favorites: { items: string[]; products: string[] } }>("me/profile"),
   setProfileTitle: (titleId: string) =>
     request<{ ok: boolean; equippedTitle: import("./studio-types").StudioMemberProfile["equippedTitle"]; profile: import("./studio-types").StudioMemberProfile }>(
