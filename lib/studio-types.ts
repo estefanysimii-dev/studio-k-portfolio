@@ -474,6 +474,7 @@ export type StudioTicket = {
   created: string;
   updated: string;
   claimed_by?: string;
+  claimedName?: string;
   closed_reason?: string;
   transcriptAvailable?: boolean;
   notes?: { actor: string; note: string; private: number; created: string }[];
