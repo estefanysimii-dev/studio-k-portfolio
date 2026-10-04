@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import { useStudio } from "@/components/studio-provider";
@@ -11,9 +10,14 @@ const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL
 
 export default function ComparePage() {
   const { state } = useStudio();
-  const params = useSearchParams();
-  const [leftId,setLeftId]=useState(params.get("a")||"");
-  const [rightId,setRightId]=useState(params.get("b")||"");
+  const [leftId,setLeftId]=useState("");
+  const [rightId,setRightId]=useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setLeftId(params.get("a") || "");
+    setRightId(params.get("b") || "");
+  }, []);
   const left=state.products.find(p=>p.id===leftId);
   const right=state.products.find(p=>p.id===rightId);
 
