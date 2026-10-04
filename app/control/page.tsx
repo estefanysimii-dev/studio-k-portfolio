@@ -4,6 +4,7 @@ import AssistantSettings from '@/components/assistant-settings';
 import DropSettings from '@/components/drop-settings';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 import StudioIdSettings from '@/components/studio-id-settings';
+import FeedbackSettings from '@/components/feedback-settings';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -14,7 +15,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 type ItemDraft = {
   name: string;
@@ -501,6 +502,7 @@ export default function ControlPage() {
           ["studioId", "Studio K ID"],
           ["assistant", "Assistente"],
           ["drops", "Drops"],
+          ["feedbacks", "Feedbacks"],
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
@@ -623,6 +625,16 @@ export default function ControlPage() {
           onChanged={async () => { await Promise.all([refresh(), refreshPublic()]); }}
           onNotice={flash}
           onError={setError}
+        />
+      )}
+
+      {tab === "feedbacks" && (
+        <FeedbackSettings
+          feedbacks={state.feedbacks || []}
+          onSaved={async () => {
+            flash("Organização dos feedbacks salva.");
+            await Promise.all([refresh(), refreshPublic()]);
+          }}
         />
       )}
 
