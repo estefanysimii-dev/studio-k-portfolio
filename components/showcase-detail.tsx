@@ -10,6 +10,7 @@ import { useStudio } from "@/components/studio-provider";
 import { externalLinkProps } from "@/lib/links";
 import type { StudioCheckout, StudioItem, StudioProduct } from "@/lib/studio-types";
 import FavoriteButton from "@/components/favorite-button";
+import ProductRecommendations from "@/components/product-recommendations";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -42,6 +43,32 @@ export default function ShowcaseDetail(props: Props) {
   const [checkout, setCheckout] = useState<StudioCheckout | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [cartAdded, setCartAdded] = useState(false);
+
+  const addToCart = async () => {
+    if (!product) return;
+    if (!state.me.authenticated) {
+      window.location.href = `/api/oauth/start?next=/products/${product.id}`;
+      return;
+    }
+    setBusy(true);
+    setError("");
+    try {
+      const current = state.personal?.cart || [];
+      const existing = current.find((item) => item.productId === product.id);
+      const next = existing
+        ? current.map((item) => item.productId === product.id ? { ...item, quantity: Math.min(20, item.quantity + 1) } : item)
+        : [...current, { productId: product.id, quantity: 1 }];
+      await studioApi.saveCart(next);
+      setCartAdded(true);
+      window.setTimeout(() => setCartAdded(false), 2200);
+      window.location.hash = "";
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível adicionar ao carrinho.");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const createOrder = async () => {
     if (!product) return;
@@ -97,6 +124,17 @@ export default function ShowcaseDetail(props: Props) {
             <div className="detail-commerce glass-panel">
               <span className="section-eyebrow">STUDIO K STORE</span>
               <div className="detail-price-stack">
+                {product.stockMode && product.stockMode !== "unlimited" && (
+                  <span className={`product-availability ${product.available === false ? "sold-out" : ""}`}>
+                    {product.available === false
+                      ? "ESGOTADO"
+                      : product.stockMode === "slots"
+                        ? `${product.remaining ?? product.stockLimit ?? 0} vaga(s) disponível(is)`
+                        : product.stockMode === "numbered"
+                          ? `Edição limitada · ${product.remaining ?? product.stockLimit ?? 0} restante(s)`
+                          : `${product.remaining ?? product.stockLimit ?? 0} unidade(s) disponível(is)`}
+                  </span>
+                )}
                 {(dropDiscount > 0 || (state.me.authenticated && memberDiscount > 0)) && product.priceCents > 0 ? (
                   <>
                     <span className="detail-price-original">{money.format(product.priceCents / 100)}</span>
@@ -119,9 +157,14 @@ export default function ShowcaseDetail(props: Props) {
                       <span>Cupom (opcional)</span>
                       <input value={coupon} onChange={(event) => setCoupon(event.target.value)} placeholder="STUDIOK" />
                     </label>
-                    <button className="btn btn-primary" type="button" onClick={() => void createOrder()} disabled={busy}>
-                      {busy ? "Criando pedido..." : "Comprar com Pix"} <Icon name="arrow" />
-                    </button>
+                    <div className="detail-commerce-actions">
+                      <button className="btn btn-primary" type="button" onClick={() => void createOrder()} disabled={busy || product.available === false}>
+                        {busy ? "Criando pedido..." : product.available === false ? "Indisponível" : "Comprar com Pix"} <Icon name="arrow" />
+                      </button>
+                      <button className="btn btn-outline" type="button" onClick={() => void addToCart()} disabled={busy || product.available === false}>
+                        {cartAdded ? "Adicionado ✓" : "Adicionar ao carrinho"}
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <a className="btn btn-primary" href={`/api/oauth/start?next=/products/${product.id}`}>
@@ -173,6 +216,8 @@ export default function ShowcaseDetail(props: Props) {
         videoUrl={item.videoUrl}
         galleryUrls={item.galleryUrls}
       />
+
+      {isProduct && product && <ProductRecommendations productId={product.id} />}
 
       {!isProduct && (
         <section className="cta-banner glass-panel detail-cta">
