@@ -1,6 +1,7 @@
 import Icon from "./icons";
 import { externalLinkProps } from "@/lib/links";
 import FavoriteButton from "./favorite-button";
+import ModelStage from "./model-stage";
 
 type Props = {
   eyebrow: string;
@@ -20,6 +21,8 @@ export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, mod
       <div className="showcase-visual">
         {coverUrl ? (
           <img src={coverUrl} alt={title} loading="lazy" />
+        ) : modelUrl ? (
+          <ModelStage modelUrl={modelUrl} title={title} compact previewOnly />
         ) : (
           <div className="showcase-orb"><Icon name="spark" /></div>
         )}

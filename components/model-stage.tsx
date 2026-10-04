@@ -12,6 +12,7 @@ type Props = {
   posterUrl?: string;
   title?: string;
   compact?: boolean;
+  previewOnly?: boolean;
 };
 
 type LightingMode = "studio" | "day" | "night";
@@ -30,7 +31,8 @@ export default function ModelStage({
   viewerVariants = [],
   posterUrl = "",
   title = "Modelo Studio K",
-  compact = false
+  compact = false,
+  previewOnly = false
 }: Props) {
   const wrapper = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<ModelViewerElement | null>(null);
@@ -130,7 +132,7 @@ export default function ModelStage({
   return (
     <div
       ref={wrapper}
-      className={`model-stage glass-panel model-lighting-${lighting} ${compact ? "model-stage-compact" : ""}`}
+      className={`model-stage glass-panel model-lighting-${lighting} ${compact ? "model-stage-compact" : ""} ${previewOnly ? "model-stage-preview" : ""}`}
     >
       <div className="model-orbit orbit-a" />
       <div className="model-orbit orbit-b" />
@@ -142,7 +144,7 @@ export default function ModelStage({
           src={activeModelUrl}
           poster={activePosterUrl || undefined}
           alt={compare ? `${title} · antes` : title}
-          camera-controls=""
+          {...(!previewOnly ? { "camera-controls": "" } : {})}
           {...autoProps}
           rotation-per-second="18deg"
           shadow-intensity={shadow}
@@ -151,7 +153,7 @@ export default function ModelStage({
           interaction-prompt="auto"
           loading={compact ? "lazy" : "eager"}
         >
-          {!compare && hotspots.map((spot, index) => (
+          {!previewOnly && !compare && hotspots.map((spot, index) => (
             <button
               type="button"
               key={spot.id || index}
@@ -175,14 +177,14 @@ export default function ModelStage({
         </div>
       )}
 
-      {!compact && (
+      {!compact && !previewOnly && (
         <div className="model-viewer-mode">
           <span>{compare ? "ANTES" : "STUDIO K"}</span>
           {hotspots.length > 0 && !compare && <small>{hotspots.length} hotspot{hotspots.length === 1 ? "" : "s"}</small>}
         </div>
       )}
 
-      <div className="model-controls">
+      {!previewOnly && <div className="model-controls">
         <button type="button" onClick={() => setOrbitZoom(zoom + 15)} aria-label="Diminuir zoom">−</button>
         <button type="button" onClick={() => setOrbitZoom(zoom - 15)} aria-label="Aumentar zoom">+</button>
         <button type="button" onClick={() => setAutoRotate((value) => !value)}>{autoRotate ? "Pausar" : "Auto 360°"}</button>
@@ -194,9 +196,9 @@ export default function ModelStage({
         )}
         <button type="button" onClick={reset}>Reset</button>
         <button type="button" onClick={fullscreen}>Tela cheia</button>
-      </div>
+      </div>}
 
-      {viewerVariants.length > 0 && !compare && (
+      {!previewOnly && viewerVariants.length > 0 && !compare && (
         <div className="model-catalog-variants" aria-label="Cores e variantes disponíveis">
           <span>CORES / VERSÕES</span>
           <div>
@@ -227,7 +229,7 @@ export default function ModelStage({
         </div>
       )}
 
-      {variants.length > 0 && (
+      {!previewOnly && variants.length > 0 && (
         <label className="model-variant-picker">
           <span>Material interno</span>
           <select value={variant} onChange={(event) => chooseVariant(event.target.value)}>
@@ -237,11 +239,13 @@ export default function ModelStage({
         </label>
       )}
 
-      <div className="model-hint">
-        {activeModelUrl
-          ? "Arraste para girar · scroll/pinch para zoom"
-          : "Viewer 3D pronto para receber um GLB/GLTF"}
-      </div>
+      {!previewOnly && (
+        <div className="model-hint">
+          {activeModelUrl
+            ? "Arraste para girar · scroll/pinch para zoom"
+            : "Viewer 3D pronto para receber um GLB/GLTF"}
+        </div>
+      )}
     </div>
   );
 }

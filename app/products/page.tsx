@@ -5,6 +5,7 @@ import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
 import FavoriteButton from "@/components/favorite-button";
+import ModelStage from "@/components/model-stage";
 import { studioApi } from "@/lib/studio-api";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -147,7 +148,9 @@ export default function ProductsPage() {
             <a className="product-thumb" href={`/products/${product.id}`}>
               {product.coverUrl || product.gifUrl
                 ? <img src={product.coverUrl || product.gifUrl} alt={product.name} loading="lazy" />
-                : <Icon name="cube" />}
+                : product.modelUrl
+                  ? <ModelStage modelUrl={product.modelUrl} title={product.name} compact previewOnly />
+                  : <Icon name="cube" />}
               <div className="media-badges">
                 {product.modelUrl && <span className="media-badge">3D</span>}
                 {product.videoUrl && <span className="media-badge secondary">VÍDEO</span>}
