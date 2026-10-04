@@ -10,6 +10,12 @@ export type AssistantCampaign = {
   priceCents: number;
   oldPriceCents: number;
   active: boolean;
+  priority?: number;
+  startsAt?: string;
+  endsAt?: string;
+  pages?: string[];
+  audience?: "all" | "guest" | "member";
+  maxViews?: number;
 };
 
 export type StudioAssistantConfig = {
@@ -99,6 +105,164 @@ export type StudioItem = {
 export type StudioProduct = StudioItem & {
   priceCents: number;
   botProductId?: string;
+  gender?: "unisex" | "feminino" | "masculino";
+  neon?: boolean;
+  stockMode?: "unlimited" | "digital" | "limited" | "slots" | "numbered";
+  stockLimit?: number;
+  limitedLabel?: string;
+};
+
+export type StudioBundle = {
+  id: string;
+  name: string;
+  description: string;
+  productIds: string[];
+  minItems: number;
+  discountType: "percent" | "fixed";
+  discountValue: number;
+  active: boolean;
+  created?: string;
+  updated?: string;
+};
+
+export type StudioCollection = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  coverUrl: string;
+  productIds: string[];
+  itemIds: string[];
+  active: boolean;
+  startsAt: string;
+  endsAt: string;
+};
+
+export type StudioMission = {
+  id: string;
+  title: string;
+  description: string;
+  type: "view_product" | "favorite_products" | "purchases" | "feedbacks" | "join_discord" | "visit_path";
+  target: number;
+  targetId: string;
+  xp: number;
+  active: boolean;
+  startsAt: string;
+  endsAt: string;
+  progress?: number;
+  complete?: boolean;
+  claimed?: boolean;
+};
+
+export type StudioBanner = {
+  id: string;
+  title: string;
+  text: string;
+  imageUrl: string;
+  href: string;
+  placement: "all" | "home" | "products" | "portfolio" | "popup";
+  active: boolean;
+  startsAt: string;
+  endsAt: string;
+};
+
+export type StudioRoleBenefit = {
+  id: string;
+  roleId: string;
+  label: string;
+  discountPercent: number;
+  stackWithCoupon: boolean;
+  productIds: string[];
+  collectionIds: string[];
+  active: boolean;
+};
+
+export type StudioSchedule = {
+  id: string;
+  kind: "product_publish" | "product_unpublish" | "collection_activate" | "collection_deactivate" | "banner_activate" | "banner_deactivate";
+  targetId: string;
+  runAt: string;
+  status: "scheduled" | "done" | "failed" | "cancelled";
+  error: string;
+};
+
+export type StudioGalleryItem = {
+  id: string;
+  userId: string;
+  name: string;
+  caption: string;
+  imageUrl: string;
+  productIds: string[];
+  status: "pending" | "approved" | "rejected";
+  created?: string;
+};
+
+export type StudioLookbook = {
+  id: string;
+  name: string;
+  description: string;
+  coverUrl: string;
+  productIds: string[];
+  active: boolean;
+};
+
+export type StudioNotification = {
+  id: string;
+  type: string;
+  title: string;
+  text: string;
+  href: string;
+  read: boolean;
+  created: string;
+};
+
+export type StudioCartItem = { productId: string; quantity: number };
+
+export type StudioCartQuote = {
+  items: {
+    productId: string;
+    name: string;
+    quantity: number;
+    basePrice: number;
+    unitPrice: number;
+    roleDiscount: number;
+    roleBenefit?: { id: string; label: string; discountPercent: number } | null;
+    subtotal: number;
+  }[];
+  subtotal: number;
+  bundleDiscount: number;
+  couponDiscount: number;
+  total: number;
+  appliedBundles: { id: string; name: string; discount: number }[];
+  coupon?: { code: string; discount: number } | null;
+};
+
+export type StudioRecommendation = {
+  productId: string;
+  score: number;
+  reason: string;
+};
+
+export type StudioActivityItem = {
+  id: string;
+  type: string;
+  title: string;
+  text: string;
+  href: string;
+  created: string;
+};
+
+export type StudioCommerceState = {
+  bundles: StudioBundle[];
+  collections: StudioCollection[];
+  missions: StudioMission[];
+  banners: StudioBanner[];
+  roleBenefits?: StudioRoleBenefit[];
+  schedules?: StudioSchedule[];
+  gallery: StudioGalleryItem[];
+  lookbooks: StudioLookbook[];
+  leaderboard: { enabled: boolean } | { userId: string; score: number }[];
+  activity?: StudioActivityItem[];
 };
 
 export type StudioDrop = {
@@ -256,6 +420,7 @@ export type StudioMemberProfile = {
     favorites: number;
     tickets: number;
     openTickets: number;
+    bonusXp?: number;
   };
   purchasedProductIds: string[];
 };
@@ -284,6 +449,33 @@ export type StudioStatus = {
   openTickets: number;
   pendingOrders: number;
   updatedAt: string;
+};
+
+export type StudioTicket = {
+  id: string;
+  channel_id: string;
+  category: string;
+  status: string;
+  state: string;
+  priority: string;
+  created: string;
+  updated: string;
+  claimed_by?: string;
+  closed_reason?: string;
+  transcriptAvailable?: boolean;
+  notes?: { actor: string; note: string; private: number; created: string }[];
+};
+
+export type StudioTicketMessage = {
+  id: string;
+  authorId: string;
+  author: string;
+  avatar: string;
+  customer: boolean;
+  bot: boolean;
+  content: string;
+  attachments: { name: string; url: string }[];
+  created: string;
 };
 
 export type StudioOrder = {
@@ -341,6 +533,13 @@ export type StudioPublicState = {
   drops: StudioDrop[];
   feedbacks: StudioFeedback[];
   me: StudioMe;
+  commerce?: StudioCommerceState;
+  personal?: {
+    cart: StudioCartItem[];
+    notifications: StudioNotification[];
+    missions: StudioMission[];
+    recommendations: StudioRecommendation[];
+  };
 };
 
 export type StudioAnalytics = {
@@ -391,6 +590,17 @@ export type StudioControlState = StudioPublicState & {
   authorized: boolean;
   studioIdConfig?: StudioIdConfig;
   analytics?: StudioAnalytics;
+  commerce?: StudioCommerceState;
+  versions?: {
+    id: string;
+    entityType: string;
+    entityId: string;
+    before: unknown;
+    after: unknown;
+    actor: string;
+    action: string;
+    created: string;
+  }[];
   assets: StudioAsset[];
   user?: { name?: string; id?: string };
   discord?: {
