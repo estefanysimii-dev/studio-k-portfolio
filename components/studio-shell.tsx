@@ -10,6 +10,7 @@ import { externalLinkProps } from "@/lib/links";
 import StudioRadio from "./studio-radio";
 import StudioAssistant from "./studio-assistant";
 import BehaviorTracker from "./behavior-tracker";
+import CommerceActions from "./commerce-actions";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -140,6 +141,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
 
           <div className="top-actions">
+            <CommerceActions />
             <ThemeToggle />
             <div className={`status-chip ${status.storeOpen ? "online" : "offline"}`} title="Sincronizado com o status configurado no bot">
               <span className="status-dot" />
