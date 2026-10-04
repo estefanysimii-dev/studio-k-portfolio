@@ -6247,6 +6247,60 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .ticket-floating-panel .ticket-reply textarea{font-size:12px;line-height:1.5}
 .ticket-floating-panel .ticket-thread-empty{font-size:12px}
 
+[data-theme="light"] .ticket-floating-launcher{
+  color:#2b153b;
+  border-color:rgba(116,38,183,.24);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(139,44,255,.11),transparent 48%),
+    linear-gradient(135deg,rgba(255,255,255,.97),rgba(244,236,251,.98));
+  box-shadow:0 16px 42px rgba(68,35,88,.14),0 0 0 1px rgba(255,255,255,.62) inset
+}
+[data-theme="light"] .ticket-floating-launcher span{color:#7a378e}
+[data-theme="light"] .ticket-floating-launcher strong{color:#3a174d}
+
+[data-theme="light"] .ticket-floating-panel{
+  color:var(--white);
+  border-color:rgba(116,38,183,.18);
+  background:
+    radial-gradient(circle at 0 0,rgba(139,44,255,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.985),rgba(246,240,251,.98));
+  box-shadow:0 28px 84px rgba(65,35,82,.18),0 0 0 1px rgba(255,255,255,.72) inset
+}
+[data-theme="light"] .ticket-floating-head>button{
+  color:#4c2c5b;
+  border-color:rgba(116,38,183,.18);
+  background:rgba(255,255,255,.72)
+}
+[data-theme="light"] .ticket-create-row select,
+[data-theme="light"] .ticket-floating-panel .ticket-reply textarea{
+  color:#2b153b;
+  border-color:rgba(116,38,183,.18);
+  background:rgba(255,255,255,.78)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-account-list>button{
+  color:#2b153b;
+  border-color:rgba(116,38,183,.13);
+  background:rgba(255,255,255,.62)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-account-list>button.active{
+  border-color:rgba(116,38,183,.34);
+  background:rgba(139,44,255,.10)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-account-thread{
+  border-color:rgba(116,38,183,.13);
+  background:rgba(255,255,255,.50)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-message-list article{
+  background:rgba(87,59,105,.06)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-message-list article.mine{
+  background:rgba(139,44,255,.10)
+}
+[data-theme="light"] .ticket-floating-panel .ticket-transcript{
+  border-color:rgba(116,38,183,.14);
+  background:rgba(116,38,183,.05)
+}
+
 .account-activity{padding:24px;margin-top:22px}
 .account-activity-list{gap:8px}
 .account-activity-list article{grid-template-columns:10px minmax(0,1fr);gap:12px;padding:13px;border-radius:11px}
