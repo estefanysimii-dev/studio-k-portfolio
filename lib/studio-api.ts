@@ -122,6 +122,8 @@ export const studioApi = {
     request<{ result: unknown; profile: import("./studio-types").StudioMemberProfile }>(`me/missions/${encodeURIComponent(id)}/claim`, { method: "POST", body: "{}" }),
   setLeaderboardOptIn: (enabled: boolean) =>
     request<{ enabled: boolean }>("me/leaderboard", { method: "PUT", body: JSON.stringify({ enabled }) }),
+  setRestockSubscription: (productId: string, enabled: boolean) =>
+    request<{ enabled: boolean; productId: string }>(`me/restock/${encodeURIComponent(productId)}`, { method: "PUT", body: JSON.stringify({ enabled }) }),
   submitGallery: (body: { name: string; caption: string; imageUrl: string; productIds: string[] }) =>
     request<import("./studio-types").StudioGalleryItem>("me/gallery", { method: "POST", body: JSON.stringify(body) }),
   myTickets: () => request<{ tickets: StudioTicket[] }>("me/tickets"),
