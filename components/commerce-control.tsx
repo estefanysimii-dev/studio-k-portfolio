@@ -13,12 +13,13 @@ type Props = {
   items: StudioItem[];
   roles: { id: string; name: string }[];
   versions?: { id: string; entityType: string; entityId: string; actor: string; action: string; created: string; before: unknown; after: unknown }[];
+  cartGroups?: { id:string; userId:string; created:string; total:number; quote?: unknown; orders:{id:string;status:string;price:number;product:string;user_id:string;approved_by?:string;created:string}[] }[];
   onChanged: () => Promise<void> | void;
   onNotice?: (message: string) => void;
   onError?: (message: string) => void;
 };
 
-type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "automation" | "gallery" | "lookbooks" | "history";
+type Section = "orders" | "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "automation" | "gallery" | "lookbooks" | "history";
 
 const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],giftProductId:"",active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
@@ -41,8 +42,8 @@ function MultiProducts({ selected, products, onChange }: { selected:string[]; pr
   return <div className="commerce-check-grid">{products.map((p)=><label key={p.id}><input type="checkbox" checked={selected.includes(p.id)} onChange={(e)=>onChange(e.target.checked?[...selected,p.id]:selected.filter(id=>id!==p.id))}/><span>{p.name}</span></label>)}</div>;
 }
 
-export default function CommerceControl({ commerce, products, items, roles, versions=[], onChanged, onNotice, onError }: Props) {
-  const [section,setSection]=useState<Section>("bundles");
+export default function CommerceControl({ commerce, products, items, roles, versions=[], cartGroups=[], onChanged, onNotice, onError }: Props) {
+  const [section,setSection]=useState<Section>("orders");
   const [busy,setBusy]=useState(false);
   const [bundle,setBundle]=useState<StudioBundle>(emptyBundle);
   const [collection,setCollection]=useState<StudioCollection>(emptyCollection);
@@ -83,11 +84,37 @@ export default function CommerceControl({ commerce, products, items, roles, vers
         <div className="form-heading"><div><span className="section-eyebrow">COMMERCE HUB</span><h2>Loja, retenção e conteúdo</h2><p>Combos, coleções, missões, benefícios, banners, agendamentos, comunidade e histórico num único lugar.</p></div></div>
         <div className="commerce-tabs">
           {([
-            ["bundles","Combos"],["collections","Coleções"],["missions","Missões"],["benefits","Benefícios Discord"],["banners","Banners"],
+            ["orders","Pedidos em grupo"],["bundles","Combos"],["collections","Coleções"],["missions","Missões"],["benefits","Benefícios Discord"],["banners","Banners"],
             ["schedules","Agendador"],["automation","Automação"],["gallery","Galeria"],["lookbooks","Lookbooks"],["history","Histórico"]
           ] as [Section,string][]).map(([key,label])=><button type="button" key={key} className={section===key?"active":""} onClick={()=>setSection(key)}>{label}</button>)}
         </div>
       </section>
+
+      {section==="orders" && <section className="control-form glass-panel commerce-editor">
+        <div className="form-heading">
+          <div><span className="section-eyebrow">CARRINHOS</span><h2>Pedidos em grupo</h2><p>Um pagamento pode conter vários produtos. Aprove todos os itens vinculados ao carrinho em uma única ação.</p></div>
+        </div>
+        <div className="commerce-list cart-group-list">
+          {cartGroups.length ? cartGroups.map((group) => {
+            const pending = group.orders.filter((order) => order.status === "pending");
+            return <article key={group.id}>
+              <div>
+                <strong>#{group.id.slice(0,8)} · {group.orders.length} item(ns)</strong>
+                <span>{new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(group.created))} · {(group.total/100).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</span>
+                <small>{pending.length ? `${pending.length} aguardando pagamento` : "Todos processados"}</small>
+              </div>
+              <div>
+                <button
+                  disabled={busy || !pending.length}
+                  onClick={async()=>{setBusy(true);try{const result=await studioApi.approveCartGroup(group.id);onNotice?.(`${result.approved.length} item(ns) aprovados.`);await onChanged();}catch(err){onError?.(err instanceof Error?err.message:"Não foi possível aprovar o carrinho.");}finally{setBusy(false);}}}
+                >
+                  {pending.length ? "Aprovar pagamento" : "Processado"}
+                </button>
+              </div>
+            </article>;
+          }) : <p className="muted">Nenhum carrinho em grupo foi criado ainda.</p>}
+        </div>
+      </section>}
 
       {section==="bundles" && <section className="control-form glass-panel commerce-editor">
         <div className="form-heading"><div><span className="section-eyebrow">COMBOS</span><h2>Combo Manager</h2><p>Crie desconto automático quando a combinação estiver no carrinho.</p></div></div>
