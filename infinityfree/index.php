@@ -117,6 +117,8 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
         }
         if (!$found) http_response_code(404);
     }
+} elseif (preg_match('~^/collections/[A-Za-z0-9-]+/?$~', $path)) {
+    // Dynamic collection pages are rendered by the Studio K frontend.
 } elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/collections', '/community', '/compare', '/cart', '/account', '/control', '/discord'], true)) http_response_code(404);
 $escape = fn(string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $url = STUDIO_ORIGIN . $path;
