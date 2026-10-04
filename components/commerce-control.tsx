@@ -240,7 +240,21 @@ export default function CommerceControl({ commerce, products, items, roles, vers
 
       {section==="history" && <section className="control-form glass-panel commerce-editor">
         <div className="form-heading"><div><span className="section-eyebrow">AUDITORIA + DESFAZER</span><h2>Histórico da Central</h2><p>Alterações comerciais geram versões restauráveis quando existe um estado anterior.</p></div><label className="check-field"><input type="checkbox" checked={!Array.isArray(commerce.leaderboard)&&commerce.leaderboard.enabled===true} onChange={async e=>{await studioApi.saveLeaderboardConfig(e.target.checked);await onChanged();}}/> Ranking público opt-in</label></div>
-        <div className="version-list">{versions.length?versions.slice(0,100).map(v=><article key={v.id}><div><strong>{v.action} · {v.entityType}</strong><span>{v.entityId.slice(0,10)} · {new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(v.created))}</span></div><button disabled={!v.before} onClick={async()=>{try{await studioApi.restoreVersion(v.id);await onChanged();onNotice?.("Versão restaurada.");}catch(err){onError?.(err instanceof Error?err.message:"Não foi possível restaurar.");}}}>Restaurar</button></article>):<p className="muted">O histórico começa a ser preenchido conforme você altera a Central.</p>}</div>
+        <div className="version-list">{versions.length?versions.slice(0,100).map(v=><article key={v.id}>
+          <div>
+            <strong>{v.action} · {v.entityType}</strong>
+            <span>{v.entityId.slice(0,10)} · {new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(v.created))}</span>
+            <small>Responsável: {v.actor || "sistema"}</small>
+            <details className="version-diff">
+              <summary>Ver antes / depois</summary>
+              <div>
+                <section><b>ANTES</b><pre>{v.before ? JSON.stringify(v.before,null,2) : "Sem versão anterior"}</pre></section>
+                <section><b>DEPOIS</b><pre>{v.after ? JSON.stringify(v.after,null,2) : "Item removido"}</pre></section>
+              </div>
+            </details>
+          </div>
+          <button disabled={!v.before} onClick={async()=>{try{await studioApi.restoreVersion(v.id);await onChanged();onNotice?.("Versão restaurada.");}catch(err){onError?.(err instanceof Error?err.message:"Não foi possível restaurar.");}}}>Restaurar</button>
+        </article>):<p className="muted">O histórico começa a ser preenchido conforme você altera a Central.</p>}</div>
       </section>}
     </div>
   );
