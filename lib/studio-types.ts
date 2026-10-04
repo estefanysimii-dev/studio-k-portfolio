@@ -546,6 +546,7 @@ export type StudioPublicState = {
     missions: StudioMission[];
     recommendations: StudioRecommendation[];
     leaderboardOptIn?: boolean;
+    restockSubscriptions?: string[];
   };
 };
 
