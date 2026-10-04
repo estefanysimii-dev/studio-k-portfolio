@@ -44,6 +44,7 @@ export default function ShowcaseDetail(props: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [cartAdded, setCartAdded] = useState(false);
+  const [restockBusy, setRestockBusy] = useState(false);
 
   const addToCart = async () => {
     if (!product) return;
@@ -151,7 +152,7 @@ export default function ShowcaseDetail(props: Props) {
                 {activeDrop && <small className="detail-drop-expiry">Drop termina {new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(activeDrop.endsAt))}</small>}
               </div>
 
-              {product.priceCents > 0 && product.botProductId ? (
+              {product.priceCents > 0 ? (
                 state.me.authenticated ? (
                   <>
                     <label className="detail-coupon">
@@ -165,6 +166,25 @@ export default function ShowcaseDetail(props: Props) {
                       <button className="btn btn-outline" type="button" onClick={() => void addToCart()} disabled={busy || product.available === false}>
                         {cartAdded ? "Adicionado ✓" : "Adicionar ao carrinho"}
                       </button>
+                      {product.available === false && (
+                        <button
+                          className="btn btn-outline restock-button"
+                          type="button"
+                          disabled={restockBusy}
+                          onClick={async () => {
+                            const subscribed = (state.personal?.restockSubscriptions || []).includes(product.id);
+                            setRestockBusy(true); setError("");
+                            try {
+                              await studioApi.setRestockSubscription(product.id, !subscribed);
+                              await refresh();
+                            } catch (err) {
+                              setError(err instanceof Error ? err.message : "Não foi possível alterar o aviso de reposição.");
+                            } finally { setRestockBusy(false); }
+                          }}
+                        >
+                          {(state.personal?.restockSubscriptions || []).includes(product.id) ? "Aviso de reposição ativado ✓" : "Avise-me quando voltar"}
+                        </button>
+                      )}
                     </div>
                   </>
                 ) : (
