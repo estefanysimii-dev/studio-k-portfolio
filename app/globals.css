@@ -6574,3 +6574,170 @@ html.studio-scrollbar-dragging .studio-scrollbar-left {
 .clothtool-session{display:flex;justify-content:space-between;align-items:center;gap:16px;border-top:1px solid #8f56ba40;padding:18px 0}
 .clothtool-session small{display:block;margin-top:6px}
 @media(max-width:600px){.clothtool-session{align-items:flex-start;flex-direction:column}}
+
+
+/* ===== Studio K · refined product filters ===== */
+.catalog-search label > span {
+  color: var(--lilac);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.catalog-search input {
+  min-height: 46px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  border-color: rgba(188,112,255,.22);
+  background:
+    linear-gradient(180deg,rgba(var(--surface-rgb),.84),rgba(var(--surface-rgb),.68));
+  color: var(--white);
+  font: 12px/1.2 "Manrope",Arial,sans-serif;
+}
+.catalog-search input::placeholder {
+  color: var(--text-2);
+  opacity: .88;
+}
+.catalog-search > small {
+  color: var(--silver);
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.catalog-filters {
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: repeat(4,minmax(150px,1fr));
+  gap: 12px;
+  align-items: end;
+  margin: -4px 0 22px;
+  padding: 18px;
+  border-color: rgba(184,103,255,.24);
+  background:
+    radial-gradient(circle at 8% 0%,rgba(150,62,255,.12),transparent 34%),
+    radial-gradient(circle at 92% 100%,rgba(108,25,255,.08),transparent 38%),
+    rgba(var(--surface-rgb),.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025),
+    0 18px 46px rgba(28,6,48,.16);
+}
+.catalog-filters::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg,rgba(196,126,255,.035),transparent 34%,rgba(108,25,255,.028) 72%,transparent);
+}
+.catalog-filters label {
+  position: relative;
+  z-index: 1;
+  gap: 7px;
+  color: var(--lilac);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: .075em;
+}
+.catalog-filters select,
+.catalog-filters input[type="number"] {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 13px;
+  border: 1px solid rgba(188,112,255,.23);
+  border-radius: 12px;
+  color: var(--white);
+  background:
+    linear-gradient(180deg,rgba(var(--surface-rgb),.84),rgba(var(--surface-rgb),.69));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.025),
+    0 6px 18px rgba(0,0,0,.08);
+  outline: none;
+  font: 650 12px/1.2 "Manrope",Arial,sans-serif;
+  transition:
+    border-color .18s ease,
+    box-shadow .18s ease,
+    background .18s ease,
+    transform .18s ease;
+}
+.catalog-filters select:hover,
+.catalog-filters input[type="number"]:hover {
+  border-color: rgba(201,137,255,.4);
+  background:
+    linear-gradient(180deg,rgba(var(--surface-rgb),.92),rgba(var(--surface-rgb),.74));
+}
+.catalog-filters select:focus,
+.catalog-filters input[type="number"]:focus {
+  border-color: rgba(203,135,255,.66);
+  box-shadow:
+    0 0 0 3px rgba(139,44,255,.11),
+    0 9px 24px rgba(76,18,122,.12);
+}
+.catalog-filters input[type="number"]::placeholder {
+  color: var(--text-2);
+  opacity: .9;
+}
+
+.catalog-filter-check {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid rgba(188,112,255,.18);
+  border-radius: 12px;
+  color: var(--silver) !important;
+  background:
+    linear-gradient(180deg,rgba(108,25,255,.075),rgba(var(--surface-rgb),.53));
+  font-size: 9.5px !important;
+  letter-spacing: .045em !important;
+  cursor: pointer;
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+.catalog-filter-check:hover {
+  color: var(--lilac) !important;
+  border-color: rgba(201,137,255,.38);
+  background:
+    linear-gradient(180deg,rgba(139,44,255,.13),rgba(var(--surface-rgb),.58));
+  transform: translateY(-1px);
+}
+.catalog-filter-check:has(input:checked) {
+  color: var(--lilac) !important;
+  border-color: rgba(197,121,255,.48);
+  background:
+    linear-gradient(120deg,rgba(108,25,255,.20),rgba(171,44,255,.09));
+  box-shadow: 0 0 24px rgba(108,25,255,.08);
+}
+.catalog-filter-check input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 0;
+  accent-color: #a64cff;
+  cursor: pointer;
+  filter: drop-shadow(0 0 6px rgba(156,66,255,.18));
+}
+
+@media (max-width: 1200px) {
+  .catalog-filters {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+@media (max-width: 720px) {
+  .catalog-filters {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 10px;
+  }
+  .catalog-filter-check,
+  .catalog-filters select,
+  .catalog-filters input[type="number"] {
+    min-height: 44px;
+  }
+}
+/* ===== /Studio K · refined product filters ===== */
