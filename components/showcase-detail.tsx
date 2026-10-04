@@ -19,7 +19,7 @@ type Props =
   | { kind: "product"; item: StudioProduct };
 
 export default function ShowcaseDetail(props: Props) {
-  const { state } = useStudio();
+  const { state, refresh } = useStudio();
   const item = props.item;
   const isProduct = props.kind === "product";
   const product = isProduct ? props.item : null;
@@ -60,6 +60,7 @@ export default function ShowcaseDetail(props: Props) {
         ? current.map((item) => item.productId === product.id ? { ...item, quantity: Math.min(20, item.quantity + 1) } : item)
         : [...current, { productId: product.id, quantity: 1 }];
       await studioApi.saveCart(next);
+      await refresh();
       setCartAdded(true);
       window.setTimeout(() => setCartAdded(false), 2200);
       window.location.hash = "";
