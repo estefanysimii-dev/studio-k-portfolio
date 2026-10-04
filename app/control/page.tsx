@@ -200,6 +200,8 @@ export default function ControlPage() {
   const [isPublicUpload, setIsPublicUpload] = useState(true);
   const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
   const [announceChannelId, setAnnounceChannelId] = useState("");
+  const [digitalStockBatch, setDigitalStockBatch] = useState("");
+  const [stockBusy, setStockBusy] = useState(false);
   const { state: publicState, refresh: refreshPublic } = useStudio();
 
   const refresh = async () => {
@@ -779,6 +781,37 @@ export default function ControlPage() {
               <MediaField label="Vídeo" kind="video" value={product.videoUrl} onChange={(value) => setProduct({ ...product, videoUrl: value })} />
               <MediaField label="GIF" kind="image" value={product.gifUrl} onChange={(value) => setProduct({ ...product, gifUrl: value })} />
               <label>ID do produto no bot<input value={product.botProductId} onChange={(e) => setProduct({ ...product, botProductId: e.target.value })} placeholder="Gerado ao sincronizar" /></label>
+              {product.stockMode === "digital" && editingProductId && (
+                <label className="span-2 digital-stock-manager">Estoque digital
+                  <textarea
+                    rows={5}
+                    value={digitalStockBatch}
+                    onChange={(e) => setDigitalStockBatch(e.target.value)}
+                    placeholder={"Uma chave/unidade por linha\nKEY-001\nKEY-002\nKEY-003"}
+                  />
+                  <small>As unidades são criptografadas no backend e só são entregues após pagamento aprovado.</small>
+                  <button
+                    className="btn btn-outline compact"
+                    type="button"
+                    disabled={stockBusy || !digitalStockBatch.trim()}
+                    onClick={async () => {
+                      const items = digitalStockBatch.split("\n").map((item) => item.trim()).filter(Boolean);
+                      if (!items.length) return;
+                      setStockBusy(true); setError("");
+                      try {
+                        const result = await studioApi.addProductStock(editingProductId, items);
+                        setDigitalStockBatch("");
+                        flash(`${result.added} unidade(s) adicionadas ao estoque digital.`);
+                        await Promise.all([refresh(), refreshPublic()]);
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : "Não foi possível adicionar o estoque.");
+                      } finally { setStockBusy(false); }
+                    }}
+                  >
+                    {stockBusy ? "Adicionando..." : "Adicionar lote ao estoque"}
+                  </button>
+                </label>
+              )}
               <label className="span-2">Galeria adicional<textarea rows={3} value={product.galleryUrls} onChange={(e) => setProduct({ ...product, galleryUrls: e.target.value })} /></label>
               <label className="span-2">Descrição<textarea required rows={4} value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} /></label>
               <div className="check-row span-2">
