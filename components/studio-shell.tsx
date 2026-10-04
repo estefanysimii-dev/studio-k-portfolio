@@ -17,6 +17,8 @@ const nav = [
   { href: "/", label: "Início", icon: "home" },
   { href: "/portfolio", label: "Portfólio", icon: "portfolio" },
   { href: "/products", label: "Produtos", icon: "products" },
+  { href: "/collections", label: "Coleções", icon: "portfolio" },
+  { href: "/community", label: "Comunidade", icon: "account" },
   { href: "/discord", label: "Discord", icon: "discord" },
   { href: "/account", label: "Minha Conta", icon: "account" }
 ];
