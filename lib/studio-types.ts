@@ -558,6 +558,15 @@ export type StudioPublicState = {
     leaderboardOptIn?: boolean;
     restockSubscriptions?: string[];
     ticketCategories?: string[];
+    activityHistory?: {
+      event: string;
+      label: string;
+      itemKind: string;
+      itemId: string;
+      path: string;
+      meta: Record<string, unknown>;
+      created: string;
+    }[];
   };
 };
 
