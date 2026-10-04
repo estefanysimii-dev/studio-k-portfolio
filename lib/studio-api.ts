@@ -54,6 +54,8 @@ export const studioApi = {
     request(`control/commerce/${encodeURIComponent(kind)}/${encodeURIComponent(id)}`, { method: "DELETE" }),
   saveLeaderboardConfig: (enabled: boolean) =>
     request<{ enabled: boolean }>("control/leaderboard", { method: "PUT", body: JSON.stringify({ enabled }) }),
+  saveFeedbackAutomation: (body: { enabled: boolean; delayHours: number }) =>
+    request<{ enabled: boolean; delayHours: number }>("control/feedback-automation", { method: "PUT", body: JSON.stringify(body) }),
   restoreVersion: (id: string) =>
     request(`control/versions/${encodeURIComponent(id)}/restore`, { method: "POST", body: "{}" }),
   createItem: (body: unknown) =>
