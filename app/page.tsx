@@ -139,6 +139,7 @@ export default function HomePage() {
           viewerVariants={featured?.viewerVariants}
           posterUrl={featured?.coverUrl || featured?.gifUrl}
           title={featured?.name || "Studio K"}
+          hideControls
         />
       </section>
 

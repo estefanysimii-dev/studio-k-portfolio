@@ -13,6 +13,7 @@ type Props = {
   title?: string;
   compact?: boolean;
   previewOnly?: boolean;
+  hideControls?: boolean;
 };
 
 type LightingMode = "studio" | "day" | "night";
@@ -32,7 +33,8 @@ export default function ModelStage({
   posterUrl = "",
   title = "Modelo Studio K",
   compact = false,
-  previewOnly = false
+  previewOnly = false,
+  hideControls = false
 }: Props) {
   const wrapper = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<ModelViewerElement | null>(null);
@@ -184,7 +186,7 @@ export default function ModelStage({
         </div>
       )}
 
-      {!previewOnly && <div className="model-controls">
+      {!previewOnly && !hideControls && <div className="model-controls">
         <button type="button" onClick={() => setOrbitZoom(zoom + 15)} aria-label="Diminuir zoom">−</button>
         <button type="button" onClick={() => setOrbitZoom(zoom - 15)} aria-label="Aumentar zoom">+</button>
         <button type="button" onClick={() => setAutoRotate((value) => !value)}>{autoRotate ? "Pausar" : "Auto 360°"}</button>
