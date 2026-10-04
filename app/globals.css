@@ -6134,3 +6134,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .order-edition{display:block!important;width:max-content;margin-top:4px;padding:4px 7px;border:1px solid rgba(255,207,104,.18);border-radius:999px;color:#f4d79b!important;background:rgba(255,194,70,.05);font-size:6.5px!important;font-weight:800}
 @media(max-width:720px){.ticket-account-head-actions{width:100%}.ticket-account-head-actions select{flex:1}.digital-stock-manager .btn{width:100%}}
 /* ===== /Studio K Commerce Suite · final controls ===== */
+
+
+/* ===== Studio K Commerce Suite · audit + activity ===== */
+.account-activity{padding:18px;margin-top:18px}.account-activity-list{display:grid;gap:5px}.account-activity-list article{display:grid;grid-template-columns:8px minmax(0,1fr);gap:9px;padding:9px;border-radius:9px;background:rgba(var(--surface-rgb),.3)}.account-activity-list article>i{width:8px;height:8px;margin-top:3px;border-radius:50%;background:#9f41ff;box-shadow:0 0 10px rgba(159,65,255,.42)}.account-activity-list article>div{display:grid;gap:2px}.account-activity-list strong{font-size:8px}.account-activity-list span{color:var(--text-2);font-size:7px}.account-activity-list small{color:rgba(185,175,200,.5);font-size:6.5px}
+.version-list article>div:first-child>small{color:var(--purple-light);font-size:6.5px}.version-diff{margin-top:6px}.version-diff summary{width:max-content;color:var(--purple-light);cursor:pointer;font-size:7px;font-weight:800}.version-diff>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}.version-diff section{min-width:0;padding:8px;border:1px solid rgba(177,96,255,.09);border-radius:8px;background:rgba(0,0,0,.14)}.version-diff b{display:block;margin-bottom:5px;color:var(--text-2);font-size:6px}.version-diff pre{max-height:220px;overflow:auto;margin:0;white-space:pre-wrap;word-break:break-word;color:var(--silver);font-size:6.5px;line-height:1.4}
+@media(max-width:720px){.version-diff>div{grid-template-columns:1fr}}
+/* ===== /Studio K Commerce Suite · audit + activity ===== */
