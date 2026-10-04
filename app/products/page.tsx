@@ -58,7 +58,7 @@ export default function ProductsPage() {
       if (sort === "price-desc") return b.priceCents - a.priceCents;
       if (sort === "newest") return Date.parse(b.created || b.updated || "") - Date.parse(a.created || a.updated || "");
       if (sort === "best-selling") return Number(b.soldCount || 0) - Number(a.soldCount || 0);
-      if (sort === "popular") return (recommendationScores.get(b.id) || 0) - (recommendationScores.get(a.id) || 0);
+      if (sort === "popular") return Number(b.viewsToday || 0) - Number(a.viewsToday || 0) || (recommendationScores.get(b.id) || 0) - (recommendationScores.get(a.id) || 0);
       return 0;
     });
   }, [search, state.products, category, gender, onlyNeon, onlyAvailable, onlyPromotion, maxPrice, collectionId, collections, sort, recommendationScores, activeDrops]);
