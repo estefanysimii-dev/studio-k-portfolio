@@ -227,6 +227,7 @@ export default function ShowcaseDetail(props: Props) {
           viewerVariants={item.viewerVariants}
           posterUrl={item.coverUrl || item.gifUrl}
           title={item.name}
+          hideControls={!isProduct}
         />
       </section>
 

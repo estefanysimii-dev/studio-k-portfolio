@@ -71,6 +71,7 @@ export default function PortfolioPage() {
             posterUrl={selected.coverUrl || selected.gifUrl}
             title={selected.name}
             compact
+            hideControls
           />
         </section>
       )}
