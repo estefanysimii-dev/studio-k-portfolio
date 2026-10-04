@@ -556,6 +556,7 @@ export type StudioPublicState = {
     recommendations: StudioRecommendation[];
     leaderboardOptIn?: boolean;
     restockSubscriptions?: string[];
+    ticketCategories?: string[];
   };
 };
 
