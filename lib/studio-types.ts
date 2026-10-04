@@ -301,6 +301,8 @@ export type StudioFeedback = {
   name: string;
   avatar: string;
   submittedAt: string;
+  visible?: boolean;
+  order?: number;
   meta?: {
     service?: number | null;
     speed?: number | null;
