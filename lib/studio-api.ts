@@ -95,6 +95,11 @@ export const studioApi = {
       method: "POST",
       body: JSON.stringify({ name, public: isPublic })
     }),
+  memberUploadTicket: (name: string) =>
+    request<{ uploadUrl: string; expiresIn: number }>("me/upload-ticket", {
+      method: "POST",
+      body: JSON.stringify({ name })
+    }),
   processAsset: (id: string) =>
     request<{ publicUrl: string; kind: "model" | "preview" }>(`control/assets/${encodeURIComponent(id)}/process`, {
       method: "POST",
