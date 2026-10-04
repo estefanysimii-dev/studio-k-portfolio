@@ -5,6 +5,7 @@ import DropSettings from '@/components/drop-settings';
 import AnalyticsDashboard from '@/components/analytics-dashboard';
 import StudioIdSettings from '@/components/studio-id-settings';
 import FeedbackSettings from '@/components/feedback-settings';
+import CommerceControl from '@/components/commerce-control';
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -15,7 +16,7 @@ import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
 import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
 
-type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "portfolio" | "products" | "media" | "converter" | "integrations";
+type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "commerce" | "portfolio" | "products" | "media" | "converter" | "integrations";
 
 type ItemDraft = {
   name: string;
@@ -37,6 +38,11 @@ type ItemDraft = {
 type ProductDraft = ItemDraft & {
   price: string;
   botProductId: string;
+  gender: "unisex" | "feminino" | "masculino";
+  neon: boolean;
+  stockMode: "unlimited" | "digital" | "limited" | "slots" | "numbered";
+  stockLimit: number;
+  limitedLabel: string;
 };
 
 const emptyProject: ItemDraft = {
@@ -59,7 +65,12 @@ const emptyProject: ItemDraft = {
 const emptyProduct: ProductDraft = {
   ...emptyProject,
   price: "",
-  botProductId: ""
+  botProductId: "",
+  gender: "unisex",
+  neon: false,
+  stockMode: "unlimited",
+  stockLimit: 0,
+  limitedLabel: ""
 };
 
 const list = (value: string) => value.split(/[\n,]/).map((entry) => entry.trim()).filter(Boolean);
@@ -154,7 +165,12 @@ function productPayload(item: StudioProduct) {
   return {
     ...itemPayload(item),
     priceCents: Number(item.priceCents || 0),
-    botProductId: item.botProductId || ""
+    botProductId: item.botProductId || "",
+    gender: item.gender || "unisex",
+    neon: !!item.neon,
+    stockMode: item.stockMode || "unlimited",
+    stockLimit: Number(item.stockLimit || 0),
+    limitedLabel: item.limitedLabel || ""
   };
 }
 
@@ -301,7 +317,12 @@ export default function ControlPage() {
       const body = {
         ...draftPayload(product),
         priceCents: normalized ? Math.round(Number(normalized) * 100) : 0,
-        botProductId: product.botProductId || ""
+        botProductId: product.botProductId || "",
+        gender: product.gender,
+        neon: product.neon,
+        stockMode: product.stockMode,
+        stockLimit: product.stockLimit,
+        limitedLabel: product.limitedLabel
       };
       const result = editingProductId
         ? await studioApi.updateProduct(editingProductId, body)
@@ -333,7 +354,12 @@ export default function ControlPage() {
     setProduct({
       ...itemDraft(item),
       price: (Number(item.priceCents || 0) / 100).toFixed(2).replace(".", ","),
-      botProductId: item.botProductId || ""
+      botProductId: item.botProductId || "",
+      gender: item.gender || "unisex",
+      neon: !!item.neon,
+      stockMode: item.stockMode || "unlimited",
+      stockLimit: Number(item.stockLimit || 0),
+      limitedLabel: item.limitedLabel || ""
     });
     setEditingProductId(item.id);
     setTab("products");
@@ -503,6 +529,7 @@ export default function ControlPage() {
           ["assistant", "Assistente"],
           ["drops", "Drops"],
           ["feedbacks", "Feedbacks"],
+          ["commerce", "Commerce Hub"],
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
@@ -638,6 +665,19 @@ export default function ControlPage() {
         />
       )}
 
+      {tab === "commerce" && state.commerce && (
+        <CommerceControl
+          commerce={state.commerce}
+          products={state.products}
+          items={state.items}
+          roles={state.discord?.roles || []}
+          versions={state.versions || []}
+          onChanged={async () => { await Promise.all([refresh(), refreshPublic()]); }}
+          onNotice={flash}
+          onError={setError}
+        />
+      )}
+
       {tab === "portfolio" && (
         <div className="control-split">
           <form className="control-form glass-panel" onSubmit={saveProject}>
@@ -702,6 +742,18 @@ export default function ControlPage() {
               <label>Preço em R$<input value={product.price} onChange={(e) => setProduct({ ...product, price: e.target.value })} placeholder="49,90" /></label>
               <label>Categoria<input value={product.category} onChange={(e) => setProduct({ ...product, category: e.target.value })} /></label>
               <label>Tags<input value={product.tags} onChange={(e) => setProduct({ ...product, tags: e.target.value })} /></label>
+              <label>Modelo / público
+                <select value={product.gender} onChange={(e) => setProduct({ ...product, gender: e.target.value as ProductDraft["gender"] })}>
+                  <option value="unisex">Unissex</option><option value="feminino">Feminino</option><option value="masculino">Masculino</option>
+                </select>
+              </label>
+              <label>Disponibilidade
+                <select value={product.stockMode} onChange={(e) => setProduct({ ...product, stockMode: e.target.value as ProductDraft["stockMode"] })}>
+                  <option value="unlimited">Ilimitado</option><option value="digital">Estoque digital do bot</option><option value="limited">Quantidade limitada</option><option value="slots">Vagas de encomenda</option><option value="numbered">Edição numerada</option>
+                </select>
+              </label>
+              {product.stockMode !== "unlimited" && product.stockMode !== "digital" && <label>Limite total<input type="number" min={0} value={product.stockLimit} onChange={(e) => setProduct({ ...product, stockLimit: Number(e.target.value) || 0 })} /></label>}
+              <label>Rótulo de edição<input value={product.limitedLabel} onChange={(e) => setProduct({ ...product, limitedLabel: e.target.value })} placeholder="Ex.: Edição Halloween 2026" /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
               <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertObj={() => { setConverterTarget("product"); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
@@ -721,6 +773,7 @@ export default function ControlPage() {
               <div className="check-row span-2">
                 <label><input type="checkbox" checked={product.featured} onChange={(e) => setProduct({ ...product, featured: e.target.checked })} /> Destaque</label>
                 <label><input type="checkbox" checked={product.published} onChange={(e) => setProduct({ ...product, published: e.target.checked })} /> Publicado</label>
+                <label><input type="checkbox" checked={product.neon} onChange={(e) => setProduct({ ...product, neon: e.target.checked })} /> Neon / emissivo</label>
               </div>
             </div>
             <button className="btn btn-primary" type="submit">{editingProductId ? "Salvar produto" : "Publicar produto"}</button>
