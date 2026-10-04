@@ -618,6 +618,14 @@ export type StudioControlState = StudioPublicState & {
   studioIdConfig?: StudioIdConfig;
   analytics?: StudioAnalytics;
   commerce?: StudioCommerceState;
+  cartGroups?: {
+    id: string;
+    userId: string;
+    created: string;
+    total: number;
+    quote?: StudioCartQuote | null;
+    orders: { id: string; status: string; price: number; product: string; user_id: string; approved_by?: string; created: string }[];
+  }[];
   versions?: {
     id: string;
     entityType: string;
