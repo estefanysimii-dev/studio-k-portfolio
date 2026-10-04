@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import type { StudioAnalytics } from "@/lib/studio-types";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -22,6 +23,10 @@ function RankedList({ title, subtitle, rows }: { title: string; subtitle: string
 }
 
 export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics }) {
+  const paths = useMemo(() => Array.from(new Set((data?.clickPoints || []).map((point) => point.path))), [data?.clickPoints]);
+  const [heatmapPath, setHeatmapPath] = useState("");
+  const selectedPath = heatmapPath || paths[0] || "";
+  const heatmapPoints = (data?.clickPoints || []).filter((point) => !selectedPath || point.path === selectedPath);
   if (!data) {
     return (
       <section className="analytics-dashboard glass-panel">
@@ -99,6 +104,33 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         <RankedList title="Buscas" subtitle={data.searches + " buscas"} rows={data.topSearches || []} />
         <RankedList title="Cliques" subtitle={data.clicks + " interações"} rows={data.topClicks || []} />
         <RankedList title="Páginas de saída" subtitle="onde encerraram" rows={data.exitPages || []} />
+      </div>
+
+      <div className="analytics-heatmap">
+        <div className="analytics-subhead">
+          <strong>Mapa de cliques</strong>
+          <label>
+            <span>Página</span>
+            <select value={selectedPath} onChange={(event) => setHeatmapPath(event.target.value)}>
+              {paths.map((path) => <option value={path} key={path}>{path}</option>)}
+            </select>
+          </label>
+        </div>
+        <div className="click-heatmap-canvas">
+          <div className="heatmap-browser-bar"><i /><i /><i /><span>{selectedPath || "Sem dados"}</span></div>
+          <div className="heatmap-surface">
+            {heatmapPoints.slice(0, 400).map((point, index) => (
+              <i
+                key={`${point.created}-${index}`}
+                className="heatmap-point"
+                style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                title={point.label}
+              />
+            ))}
+            {!heatmapPoints.length && <span className="heatmap-empty">Os cliques começarão a aparecer aqui conforme o site for usado.</span>}
+          </div>
+        </div>
+        <small className="analytics-heatmap-note">As posições são normalizadas pelo tamanho da tela do visitante e não registram conteúdo digitado.</small>
       </div>
 
       <div className="analytics-daily">
