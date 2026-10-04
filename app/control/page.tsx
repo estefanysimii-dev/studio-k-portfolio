@@ -11,7 +11,7 @@ import ClothToolControl from '@/components/clothtool-control';
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
-import ObjConverter from "@/components/obj-converter";
+import FiveMConverter from "@/components/fivem-converter";
 import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
@@ -499,7 +499,7 @@ export default function ControlPage() {
     );
   }
 
-  const sourceAsset = (asset: StudioAsset) => ["blend", "obj", "fbx", "psd"].includes(asset.ext.toLowerCase());
+  const sourceAsset = (asset: StudioAsset) => ["blend", "fbx", "psd"].includes(asset.ext.toLowerCase());
 
   return (
     <StudioShell eyebrow="CENTRAL" title="Controle Studio K" variant="control">
@@ -542,7 +542,7 @@ export default function ControlPage() {
           ["portfolio", "Portfólio"],
           ["products", "Produtos"],
           ["media", "Mídia"],
-          ["converter", "Conversor 3D"],
+          ["converter", "FiveM 3D"],
           ["clothtool", "ClothTool"],
           ["integrations", "Integrações"]
         ].map(([key, label]) => (
@@ -568,7 +568,7 @@ export default function ControlPage() {
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">PUBLICAÇÃO</span>
               <h2>Fluxo unificado</h2>
-              <p>Projetos e produtos cadastrados aqui alimentam o site público. BLEND/FBX/OBJ podem virar GLB e PSD pode gerar preview sem expor o arquivo-fonte.</p>
+              <p>Projetos e produtos cadastrados aqui alimentam o site público. YDD + YTD geram uma prévia 3D inspirada no FiveM; BLEND/FBX também podem virar GLB e PSD pode gerar preview sem expor o arquivo-fonte.</p>
             </section>
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">STATUS</span>
@@ -703,7 +703,7 @@ export default function ControlPage() {
               <label>Categoria<input value={project.category} onChange={(e) => setProject({ ...project, category: e.target.value })} /></label>
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={project.coverUrl} onChange={(value) => setProject({ ...project, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertObj={() => { setConverterTarget("project"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("project"); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={project.compareModelUrl} onChange={(value) => setProject({ ...project, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={project.viewerHotspots} onChange={(e) => setProject({ ...project, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Manga emissiva | 0.12 0.84 0.05 | 0 1 0"} />
@@ -774,7 +774,7 @@ export default function ControlPage() {
                 </select>
               </label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertObj={() => { setConverterTarget("product"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("product"); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={product.viewerHotspots} onChange={(e) => setProduct({ ...product, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Material neon | 0.15 0.90 0.04 | 0 1 0"} />
@@ -915,7 +915,7 @@ export default function ControlPage() {
           <section className="upload-zone glass-panel">
             <span className="section-eyebrow">BIBLIOTECA</span>
             <h2>Mídia e arquivos-fonte</h2>
-            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. BLEND, OBJ, FBX e PSD ficam privados; a Central pode gerar GLB/preview público sem expor o original.</p>
+            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. YDD, YTD, BLEND, FBX e PSD ficam privados; a Central gera apenas a prévia pública sem expor os arquivos-fonte.</p>
             <div className="upload-actions">
               <label className="btn btn-primary file-button">
                 {uploading ? "Enviando..." : "Selecionar arquivo"}
@@ -940,17 +940,17 @@ export default function ControlPage() {
       )}
 
       {tab === "converter" && (
-        <ObjConverter
+        <FiveMConverter
           onChanged={refresh}
           onUse={(url) => {
             if (converterTarget === "product") {
               setProduct((current) => ({ ...current, modelUrl: url }));
               setTab("products");
-              flash("GLB inserido automaticamente no produto.");
+              flash("Prévia FiveM inserida automaticamente no produto.");
             } else {
               setProject((current) => ({ ...current, modelUrl: url }));
               setTab("portfolio");
-              flash("GLB inserido automaticamente no projeto.");
+              flash("Prévia FiveM inserida automaticamente no projeto.");
             }
           }}
         />
