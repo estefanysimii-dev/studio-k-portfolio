@@ -108,6 +108,15 @@ export const studioApi = {
       method: "POST",
       body: "{}"
     }),
+  processFiveMPreview: (yddAssetId: string, ytdAssetId: string) =>
+    request<{
+      publicUrl: string;
+      kind: "model";
+      stats: { drawables: number; drawableName: string; lod: string; meshes: number; vertices: number; triangles: number; textures: number; materials: number };
+    }>("control/fivem-preview", {
+      method: "POST",
+      body: JSON.stringify({ yddAssetId, ytdAssetId })
+    }),
   createOrder: (productId: string, couponCode = "") =>
     request<StudioCheckout>(`products/${encodeURIComponent(productId)}/order`, {
       method: "POST",
