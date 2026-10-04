@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import FavoriteButton from "@/components/favorite-button";
+import AccountMissions from "@/components/account-missions";
+import AccountTickets from "@/components/account-tickets";
+import AccountCommunity from "@/components/account-community";
 import Icon from "@/components/icons";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
@@ -360,6 +363,10 @@ export default function AccountPage() {
           </div>
         )}
       </section>
+
+      <AccountMissions />
+      <AccountTickets />
+      <AccountCommunity />
 
       <section className="account-orders glass-panel">
         <div className="section-heading compact-heading">
