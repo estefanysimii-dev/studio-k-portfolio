@@ -5,6 +5,13 @@ export function discordInviteHref(configured?: string) {
   return value || DEFAULT_DISCORD_INVITE;
 }
 
+export function discordAppInviteHref(configured?: string) {
+  const webInvite = discordInviteHref(configured);
+  const match = webInvite.match(/(?:discord\.gg\/|discord\.com\/invite\/)([A-Za-z0-9_-]+)/i);
+  const code = match?.[1] || "";
+  return code ? `discord://-/invite/${code}` : "discord://-/";
+}
+
 export function isExternalHref(href?: string) {
   return /^https?:\/\//i.test(String(href || "").trim());
 }

@@ -6,12 +6,13 @@ import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
-import { discordInviteHref, externalLinkProps } from "@/lib/links";
+import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
 
 export default function HomePage() {
   const { state } = useStudio();
   const { site, items } = state;
   const invite = discordInviteHref(site.discordInviteUrl);
+  const appInvite = discordAppInviteHref(invite);
   const featured = items.find((item) => item.featured) || items[0];
   const selected = items.slice(0, 4);
   const [feedbackFilter, setFeedbackFilter] = useState(0);
@@ -126,7 +127,7 @@ export default function HomePage() {
             <a className="btn btn-primary" href="/portfolio">
               {site.primaryCtaLabel || "Explorar Portfólio"} <Icon name="arrow" />
             </a>
-            <a className="btn btn-outline" href={invite} {...externalLinkProps(invite)}>
+            <a className="btn btn-outline" href={appInvite}>
               {site.secondaryCtaLabel || "Entrar no Discord"}
             </a>
           </div>
@@ -181,7 +182,7 @@ export default function HomePage() {
           <span className="section-eyebrow">COMUNIDADE STUDIO K</span>
           <h2>Entre no Discord e acompanhe drops, projetos e novidades.</h2>
         </div>
-        <a className="btn btn-primary" href={invite} {...externalLinkProps(invite)}>Entrar no Discord <Icon name="arrow" /></a>
+        <a className="btn btn-primary" href={appInvite}>Entrar no Discord <Icon name="arrow" /></a>
       </section>
 
       <section className="ticket-home-cta">
@@ -189,9 +190,7 @@ export default function HomePage() {
         <h2>Se interessou? Abra um ticket!</h2>
         <a
           className="btn btn-primary ticket-home-button"
-          href="https://discord.gg/YPShX4FQCE"
-          target="_blank"
-          rel="noopener noreferrer"
+          href={appInvite}
         >
           Abrir Ticket <Icon name="arrow" />
         </a>

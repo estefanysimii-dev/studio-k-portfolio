@@ -6,7 +6,7 @@ import { CSSProperties, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
-import { discordInviteHref, externalLinkProps } from "@/lib/links";
+import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
 import StudioRadio from "./studio-radio";
 import StudioAssistant from "./studio-assistant";
 import BehaviorTracker from "./behavior-tracker";
@@ -48,6 +48,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const { site, me, status } = state;
 
   const invite = discordInviteHref(site.discordInviteUrl);
+  const appInvite = discordAppInviteHref(invite);
   const logoSrc = site.logoUrl && !site.logoUrl.startsWith("/media/")
     ? site.logoUrl
     : "/studio-assets/studio-k-logo.webp";
@@ -151,7 +152,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
               <span className="status-dot" />
               {status.storeOpen ? "Loja Online" : "Loja Offline"}
             </div>
-            <a className="btn btn-outline compact" href={invite} {...externalLinkProps(invite)}>
+            <a className="btn btn-outline compact" href={appInvite}>
               Entrar no Discord
               <Icon name="arrow" />
             </a>

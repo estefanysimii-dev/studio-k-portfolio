@@ -3,7 +3,7 @@
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
-import { discordInviteHref, externalLinkProps } from "@/lib/links";
+import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
 
 function money(cents: number) {
   if (!cents) return "";
@@ -16,6 +16,7 @@ function money(cents: number) {
 export default function DiscordPage() {
   const { state } = useStudio();
   const invite = discordInviteHref(state.site.discordInviteUrl);
+  const appInvite = discordAppInviteHref(invite);
   const me = state.me;
   const assistantCampaigns = (state.site.assistant?.campaigns || []).filter((campaign) => campaign.active);
   const promotion = assistantCampaigns.find((campaign) => campaign.type === "promotion" || campaign.type === "combo");
@@ -55,7 +56,7 @@ export default function DiscordPage() {
                 Minha conta <Icon name="arrow" />
               </a>
             )}
-            <a className="btn btn-outline" href={invite} {...externalLinkProps(invite)}>
+            <a className="btn btn-outline" href={appInvite}>
               Entrar no servidor
             </a>
           </div>
@@ -156,7 +157,7 @@ export default function DiscordPage() {
 
               <div className="access-actions">
                 <a className="btn btn-primary" href="/account">Ver meus benefícios</a>
-                <a className="btn btn-outline" href={invite} {...externalLinkProps(invite)}>Abrir ticket</a>
+                <a className="btn btn-outline" href={appInvite}>Abrir ticket</a>
               </div>
             </>
           )}
