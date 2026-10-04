@@ -20,7 +20,7 @@ type Props = {
 
 type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "automation" | "gallery" | "lookbooks" | "history";
 
-const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,active:true });
+const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
 const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",xp:50,active:true,startsAt:"",endsAt:"" });
 const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],collectionIds:[],active:true });
@@ -97,6 +97,20 @@ export default function CommerceControl({ commerce, products, items, roles, vers
           <label>Tipo<select value={bundle.discountType} onChange={e=>setBundle({...bundle,discountType:e.target.value as "percent"|"fixed"})}><option value="percent">Percentual</option><option value="fixed">Valor fixo (centavos)</option></select></label>
           <label>Desconto<input type="number" min={0} value={bundle.discountValue} onChange={e=>setBundle({...bundle,discountValue:Number(e.target.value)||0})}/></label>
           <label className="span-2">Descrição<textarea rows={2} value={bundle.description} onChange={e=>setBundle({...bundle,description:e.target.value})}/></label>
+          <label className="span-2">Faixas progressivas
+            <textarea
+              rows={4}
+              value={(bundle.tiers || []).map((tier) => `${tier.minItems} | ${tier.discountType} | ${tier.discountValue}`).join("\n")}
+              onChange={(e)=>setBundle({...bundle,tiers:e.target.value.split("\n").map((line)=>{
+                const [minItemsRaw,typeRaw,valueRaw]=line.split("|").map(part=>part.trim());
+                const minItems=Number(minItemsRaw),discountValue=Number(valueRaw);
+                if(!Number.isFinite(minItems)||minItems<2||!Number.isFinite(discountValue))return null;
+                return{minItems:Math.round(minItems),discountType:typeRaw==="fixed"?"fixed" as const:"percent" as const,discountValue:Math.max(0,Math.round(discountValue))};
+              }).filter((tier):tier is NonNullable<typeof tier>=>Boolean(tier))})}
+              placeholder={"2 | percent | 5\n3 | percent | 10\n4 | percent | 15"}
+            />
+            <small>Formato: quantidade | percent/fixed | valor. Se houver faixas, a melhor alcançada substitui o desconto simples.</small>
+          </label>
         </div>
         <span className="section-eyebrow">PRODUTOS DO COMBO</span><MultiProducts selected={bundle.productIds} products={products} onChange={productIds=>setBundle({...bundle,productIds})}/>
         <button className="btn btn-primary" disabled={busy||bundle.productIds.length<2||!bundle.name} onClick={()=>void save("bundles",bundle,()=>setBundle(emptyBundle()))}>{bundle.id?"Salvar combo":"Criar combo"}</button>
