@@ -28,7 +28,13 @@ function newCampaign(): AssistantCampaign {
     href: "/products",
     priceCents: 0,
     oldPriceCents: 0,
-    active: true
+    active: true,
+    priority: 100,
+    startsAt: "",
+    endsAt: "",
+    pages: [],
+    audience: "all",
+    maxViews: 0
   };
 }
 
@@ -41,6 +47,16 @@ function cents(value: string) {
 function reais(value: number) {
   return value ? (value / 100).toFixed(2).replace(".", ",") : "";
 }
+
+const localValue = (iso?: string) => {
+  if (!iso) return "";
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return "";
+  const pad = (value: number) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+const toIso = (value: string) => value ? new Date(value).toISOString() : "";
 
 export default function AssistantSettings({ value, onChange, onSave }: Props) {
   const config = normalizeAssistantConfig(value);
@@ -230,6 +246,60 @@ export default function AssistantSettings({ value, onChange, onSave }: Props) {
                       onChange={(event) => patchCampaign(campaign.id, { href: event.target.value })}
                       placeholder="/products ou link externo"
                     />
+                  </label>
+                  <label>Prioridade
+                    <input
+                      type="number"
+                      min={0}
+                      max={1000}
+                      value={campaign.priority ?? 100}
+                      onChange={(event) => patchCampaign(campaign.id, { priority: Math.max(0, Math.min(1000, Number(event.target.value) || 0)) })}
+                    />
+                    <small>Maior prioridade aparece antes.</small>
+                  </label>
+                  <label>Público
+                    <select
+                      value={campaign.audience || "all"}
+                      onChange={(event) => patchCampaign(campaign.id, { audience: event.target.value as "all" | "guest" | "member" })}
+                    >
+                      <option value="all">Todos</option>
+                      <option value="guest">Somente visitantes</option>
+                      <option value="member">Somente membros conectados</option>
+                    </select>
+                  </label>
+                  <label>Começa em
+                    <input
+                      type="datetime-local"
+                      value={localValue(campaign.startsAt)}
+                      onChange={(event) => patchCampaign(campaign.id, { startsAt: toIso(event.target.value) })}
+                    />
+                  </label>
+                  <label>Termina em
+                    <input
+                      type="datetime-local"
+                      value={localValue(campaign.endsAt)}
+                      onChange={(event) => patchCampaign(campaign.id, { endsAt: toIso(event.target.value) })}
+                    />
+                  </label>
+                  <label>Limite por visitante
+                    <input
+                      type="number"
+                      min={0}
+                      max={100000}
+                      value={campaign.maxViews ?? 0}
+                      onChange={(event) => patchCampaign(campaign.id, { maxViews: Math.max(0, Number(event.target.value) || 0) })}
+                    />
+                    <small>0 = sem limite.</small>
+                  </label>
+                  <label className="span-2">Páginas onde pode aparecer
+                    <input
+                      value={(campaign.pages || []).join(", ")}
+                      onChange={(event) => patchCampaign(campaign.id, {
+                        pages: event.target.value.split(",").map((entry) => entry.trim()).filter(Boolean)
+                      })}
+                      placeholder="/products, /products/*, /account"
+                    />
+                    <small>Deixe vazio para todo o site. Use * no final para aceitar páginas filhas.</small>
                   </label>
                 </div>
 
