@@ -2,12 +2,16 @@
 
 import { useEffect,useState } from "react";
 import { studioApi } from "@/lib/studio-api";
+import { useStudio } from "./studio-provider";
 import type { StudioTicket, StudioTicketMessage } from "@/lib/studio-types";
 
 const statusLabel:Record<string,string>={open:"Aberto",closed:"Finalizado"};
 const stateLabel:Record<string,string>={waiting_staff:"Aguardando equipe",in_progress:"Em atendimento",waiting_customer:"Aguardando você",escalated:"Escalado",closed:"Finalizado"};
 
 export default function AccountTickets(){
+  const { state, refresh } = useStudio();
+  const categories = state.personal?.ticketCategories || ["Suporte"];
+  const [newCategory,setNewCategory]=useState(categories[0] || "Suporte");
   const [tickets,setTickets]=useState<StudioTicket[]>([]);
   const [selected,setSelected]=useState("");
   const [messages,setMessages]=useState<StudioTicketMessage[]>([]);
@@ -22,7 +26,14 @@ export default function AccountTickets(){
 
   const current=tickets.find(t=>t.id===selected);
   return <section className="account-tickets glass-panel">
-    <div className="section-heading compact-heading"><div><span className="section-eyebrow">ATENDIMENTOS</span><h2>Central de tickets</h2></div><button className="btn btn-outline compact" onClick={()=>void load()}>Atualizar</button></div>
+    <div className="section-heading compact-heading">
+      <div><span className="section-eyebrow">ATENDIMENTOS</span><h2>Central de tickets</h2></div>
+      <div className="ticket-account-head-actions">
+        <select value={newCategory} onChange={e=>setNewCategory(e.target.value)}>{categories.map(category=><option value={category} key={category}>{category}</option>)}</select>
+        <button className="btn btn-primary compact" disabled={busy} onClick={async()=>{setBusy(true);setError("");try{await studioApi.createTicket(newCategory);await load();await refresh();}catch(err){setError(err instanceof Error?err.message:"Não foi possível abrir o ticket.");}finally{setBusy(false);}}}>+ Novo ticket</button>
+        <button className="btn btn-outline compact" onClick={()=>void load()}>Atualizar</button>
+      </div>
+    </div>
     <div className="ticket-account-layout">
       <div className="ticket-account-list">{tickets.length?tickets.map(ticket=><button key={ticket.id} type="button" className={selected===ticket.id?"active":""} onClick={()=>void loadMessages(ticket.id)}>
         <div><strong>{ticket.category}</strong><span>#{ticket.id.slice(0,8)}</span></div>
