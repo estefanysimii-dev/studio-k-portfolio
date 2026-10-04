@@ -679,6 +679,7 @@ export default function ControlPage() {
           items={state.items}
           roles={state.discord?.roles || []}
           versions={state.versions || []}
+          cartGroups={state.cartGroups || []}
           onChanged={async () => { await Promise.all([refresh(), refreshPublic()]); }}
           onNotice={flash}
           onError={setError}
