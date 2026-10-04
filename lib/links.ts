@@ -1,3 +1,10 @@
+export const DEFAULT_DISCORD_INVITE = "https://discord.gg/YPShX4FQCE";
+
+export function discordInviteHref(configured?: string) {
+  const value = String(configured || "").trim();
+  return value || DEFAULT_DISCORD_INVITE;
+}
+
 export function isExternalHref(href?: string) {
   return /^https?:\/\//i.test(String(href || "").trim());
 }

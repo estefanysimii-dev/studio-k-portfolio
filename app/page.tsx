@@ -6,11 +6,12 @@ import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
-import { externalLinkProps } from "@/lib/links";
+import { discordInviteHref, externalLinkProps } from "@/lib/links";
 
 export default function HomePage() {
   const { state } = useStudio();
   const { site, items } = state;
+  const invite = discordInviteHref(site.discordInviteUrl);
   const featured = items.find((item) => item.featured) || items[0];
   const selected = items.slice(0, 4);
   const [feedbackFilter, setFeedbackFilter] = useState(0);
@@ -125,7 +126,7 @@ export default function HomePage() {
             <a className="btn btn-primary" href="/portfolio">
               {site.primaryCtaLabel || "Explorar Portfólio"} <Icon name="arrow" />
             </a>
-            <a className="btn btn-outline" href={site.discordInviteUrl || "/discord"} {...externalLinkProps(site.discordInviteUrl || "/discord")}>
+            <a className="btn btn-outline" href={invite} {...externalLinkProps(invite)}>
               {site.secondaryCtaLabel || "Entrar no Discord"}
             </a>
           </div>
@@ -180,7 +181,7 @@ export default function HomePage() {
           <span className="section-eyebrow">COMUNIDADE STUDIO K</span>
           <h2>Entre no Discord e acompanhe drops, projetos e novidades.</h2>
         </div>
-        <a className="btn btn-primary" href={site.discordInviteUrl || "/discord"} {...externalLinkProps(site.discordInviteUrl || "/discord")}>Entrar no Discord <Icon name="arrow" /></a>
+        <a className="btn btn-primary" href={invite} {...externalLinkProps(invite)}>Entrar no Discord <Icon name="arrow" /></a>
       </section>
 
       <section className="ticket-home-cta">

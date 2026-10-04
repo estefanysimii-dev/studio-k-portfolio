@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import type { StudioPublicState } from "@/lib/studio-types";
+import { DEFAULT_DISCORD_INVITE } from "@/lib/links";
 
 const fallback: StudioPublicState = {
   site: {
@@ -17,7 +18,7 @@ const fallback: StudioPublicState = {
     heroSubtitle: "Roupas, texturas e experiências visuais criadas para transformar personagens e projetos no GTA V / FiveM.",
     primaryCtaLabel: "Explorar Portfólio",
     secondaryCtaLabel: "Entrar no Discord",
-    discordInviteUrl: "",
+    discordInviteUrl: DEFAULT_DISCORD_INVITE,
     defaultAnnouncementChannelId: "",
     autoAnnounceProducts: false,
     adminRoleIds: [],

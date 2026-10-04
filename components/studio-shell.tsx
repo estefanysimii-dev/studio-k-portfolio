@@ -6,7 +6,7 @@ import { CSSProperties, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
-import { externalLinkProps } from "@/lib/links";
+import { discordInviteHref, externalLinkProps } from "@/lib/links";
 import StudioRadio from "./studio-radio";
 import StudioAssistant from "./studio-assistant";
 import BehaviorTracker from "./behavior-tracker";
@@ -47,7 +47,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const { state, loading } = useStudio();
   const { site, me, status } = state;
 
-  const invite = site.discordInviteUrl || "/discord";
+  const invite = discordInviteHref(site.discordInviteUrl);
   const logoSrc = site.logoUrl && !site.logoUrl.startsWith("/media/")
     ? site.logoUrl
     : "/studio-assets/studio-k-logo.webp";
