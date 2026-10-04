@@ -1,6 +1,6 @@
 "use client";
 
-import type { StudioIdConfig, StudioIdRankConfig, StudioMemberRarity } from "@/lib/studio-types";
+import type { StudioIdBadgeCondition, StudioIdBadgeConfig, StudioIdConfig, StudioIdRankConfig, StudioMemberRarity } from "@/lib/studio-types";
 
 type Props = {
   value: StudioIdConfig;
@@ -16,6 +16,21 @@ const rarityLabels: Record<StudioMemberRarity, string> = {
   legendary: "Lendário"
 };
 
+const badgeConditionLabels: Record<StudioIdBadgeCondition, string> = {
+  always: "Sempre",
+  "early-member": "Entre os primeiros IDs",
+  "discord-member": "Membro do Discord",
+  supporter: "Cargo Supporter/VIP",
+  purchases: "Quantidade de compras",
+  "neon-lover": "Compra Neon/emissiva",
+  feedbacks: "Quantidade de feedbacks",
+  level: "Level mínimo",
+  favorites: "Quantidade de favoritos"
+};
+
+const badgeConditionUsesValue = (condition: StudioIdBadgeCondition) =>
+  ["early-member", "purchases", "feedbacks", "level", "favorites"].includes(condition);
+
 const clampInt = (value: string, min = 0, max = 100000) =>
   Math.min(max, Math.max(min, Math.round(Number(value) || 0)));
 
@@ -26,6 +41,17 @@ const rankId = (ranks: StudioIdRankConfig[]) => {
   while (taken.has(id)) {
     index += 1;
     id = `rank-${index}`;
+  }
+  return id;
+};
+
+const badgeId = (badges: StudioIdBadgeConfig[]) => {
+  const taken = new Set(badges.map((badge) => badge.id));
+  let index = badges.length + 1;
+  let id = `badge-${index}`;
+  while (taken.has(id)) {
+    index += 1;
+    id = `badge-${index}`;
   }
   return id;
 };
@@ -112,6 +138,55 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       ranks,
       discordRankSync: { ...value.discordRankSync, roleIds }
     });
+  };
+
+  const patchBadge = (id: string, next: Partial<StudioIdBadgeConfig>) => {
+    onChange({
+      ...value,
+      badges: value.badges.map((badge) => badge.id === id ? { ...badge, ...next } : badge)
+    });
+  };
+
+  const addBadge = () => {
+    if (value.badges.length >= 24) return;
+    const id = badgeId(value.badges);
+    const next: StudioIdBadgeConfig = {
+      id,
+      label: "Novo Badge",
+      icon: "✦",
+      rarity: "common",
+      description: "Novo badge do Studio K.",
+      condition: "always",
+      value: 1,
+      enabled: true
+    };
+    onChange({ ...value, badges: [...value.badges, next] });
+  };
+
+  const duplicateBadge = (badge: StudioIdBadgeConfig) => {
+    if (value.badges.length >= 24) return;
+    const id = badgeId(value.badges);
+    onChange({
+      ...value,
+      badges: [...value.badges, { ...badge, id, label: `${badge.label} Copia` }]
+    });
+  };
+
+  const removeBadge = (id: string) => {
+    const badge = value.badges.find((item) => item.id === id);
+    if (!badge) return;
+    if (!window.confirm(`Remover o badge “${badge.label}”? Usuários deixarão de receber/exibir esse badge após salvar.`)) return;
+    onChange({ ...value, badges: value.badges.filter((item) => item.id !== id) });
+  };
+
+  const moveBadge = (id: string, direction: -1 | 1) => {
+    const index = value.badges.findIndex((badge) => badge.id === id);
+    const target = index + direction;
+    if (index < 0 || target < 0 || target >= value.badges.length) return;
+    const badges = [...value.badges];
+    const [badge] = badges.splice(index, 1);
+    badges.splice(target, 0, badge);
+    onChange({ ...value, badges });
   };
 
   const setRankRole = (rankId: string, roleId: string) =>
@@ -250,6 +325,85 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
         <div className="studio-id-rank-footnote">
           <span>{value.ranks.length}/12 ranks configurados</span>
           <small>Precisa existir pelo menos um rank. Se o rank de nível 1 for removido, o rank restante de menor nível assume o nível 1 automaticamente.</small>
+        </div>
+      </section>
+
+      <section className="control-form glass-panel">
+        <div className="form-heading studio-id-badge-heading">
+          <div>
+            <span className="section-eyebrow">BADGES</span>
+            <h2>Badges do Studio K ID</h2>
+            <p>Edite nome, visual e regra de desbloqueio. A ordem abaixo também é a ordem usada no perfil.</p>
+          </div>
+          <button className="btn btn-primary compact" type="button" onClick={addBadge} disabled={value.badges.length >= 24}>
+            + Adicionar badge
+          </button>
+        </div>
+
+        <div className="studio-id-badge-list">
+          {value.badges.map((badge, index) => (
+            <article className={`studio-id-badge-editor rarity-${badge.rarity} ${badge.enabled ? "" : "is-disabled"}`.trim()} key={badge.id}>
+              <div className="studio-id-badge-preview">
+                <i>{badge.icon || "✦"}</i>
+                <div>
+                  <strong>{badge.label || "Badge sem nome"}</strong>
+                  <span>{rarityLabels[badge.rarity]} · {badge.enabled ? "Ativo" : "Desativado"}</span>
+                  <small>{badgeConditionLabels[badge.condition]}{badgeConditionUsesValue(badge.condition) ? ` · ${badge.value}` : ""}</small>
+                </div>
+              </div>
+
+              <div className="studio-id-badge-editor-main">
+                <div className="studio-id-badge-fields">
+                  <label>Nome
+                    <input value={badge.label} onChange={(e) => patchBadge(badge.id, { label: e.target.value })} />
+                  </label>
+                  <label>Ícone
+                    <input maxLength={12} value={badge.icon} onChange={(e) => patchBadge(badge.id, { icon: e.target.value })} />
+                  </label>
+                  <label>Raridade
+                    <select value={badge.rarity} onChange={(e) => patchBadge(badge.id, { rarity: e.target.value as StudioMemberRarity })}>
+                      {Object.entries(rarityLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                    </select>
+                  </label>
+                  <label>Desbloqueio
+                    <select value={badge.condition} onChange={(e) => patchBadge(badge.id, { condition: e.target.value as StudioIdBadgeCondition })}>
+                      {Object.entries(badgeConditionLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                    </select>
+                  </label>
+                  <label>Valor
+                    <input
+                      type="number"
+                      min={0}
+                      disabled={!badgeConditionUsesValue(badge.condition)}
+                      value={badge.value}
+                      onChange={(e) => patchBadge(badge.id, { value: clampInt(e.target.value, 0, 1000000) })}
+                    />
+                  </label>
+                  <label className="studio-id-badge-description">Descrição
+                    <input value={badge.description} onChange={(e) => patchBadge(badge.id, { description: e.target.value })} />
+                  </label>
+                </div>
+
+                <div className="studio-id-badge-actions">
+                  <label className="badge-enabled-toggle">
+                    <input type="checkbox" checked={badge.enabled} onChange={(e) => patchBadge(badge.id, { enabled: e.target.checked })} />
+                    <span>{badge.enabled ? "Ativo" : "Desativado"}</span>
+                  </label>
+                  <div className="badge-order-buttons">
+                    <button type="button" onClick={() => moveBadge(badge.id, -1)} disabled={index === 0} title="Subir badge">↑</button>
+                    <button type="button" onClick={() => moveBadge(badge.id, 1)} disabled={index === value.badges.length - 1} title="Descer badge">↓</button>
+                  </div>
+                  <button type="button" onClick={() => duplicateBadge(badge)} disabled={value.badges.length >= 24}>Duplicar</button>
+                  <button type="button" className="rank-action-remove" onClick={() => removeBadge(badge.id)}>Remover</button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="studio-id-rank-footnote">
+          <span>{value.badges.length}/24 badges configurados</span>
+          <small>Badges desativados continuam salvos na Central, mas não são exibidos nem concedidos aos usuários.</small>
         </div>
       </section>
 
