@@ -927,7 +927,7 @@ export default function ControlPage() {
 
           <div className="asset-grid">
             {(state.assets || []).map((asset) => (
-              <article className="asset-card glass-panel" key={asset.id}>
+              <article className={`asset-card glass-panel ${asset.generated ? "asset-generated" : ""}`} key={asset.id}>
                 <div className="asset-icon">{asset.ext.toUpperCase()}</div>
                 <strong>{asset.originalName}</strong>
                 <span>{asset.visibility === "public" ? "Público" : "Privado"} · {bytes(asset.size)}{asset.generated ? " · Gerado" : ""}</span>
