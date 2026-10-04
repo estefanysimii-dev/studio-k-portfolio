@@ -7,13 +7,14 @@ type Metrics = {
   top: number;
   height: number;
   maxScroll: number;
+  currentScroll: number;
 };
 
 const TRACK_INSET = 10;
 const MIN_THUMB = 54;
 
 export default function StudioScrollbars() {
-  const [metrics, setMetrics] = useState<Metrics>({ visible: false, top: TRACK_INSET, height: MIN_THUMB, maxScroll: 0 });
+  const [metrics, setMetrics] = useState<Metrics>({ visible: false, top: TRACK_INSET, height: MIN_THUMB, maxScroll: 0, currentScroll: 0 });
   const frame = useRef<number | null>(null);
 
   const measure = useCallback(() => {
@@ -41,7 +42,8 @@ export default function StudioScrollbars() {
       visible: maxScroll > 2 && trackHeight > MIN_THUMB,
       top: TRACK_INSET + travel * progress,
       height: thumbHeight,
-      maxScroll
+      maxScroll,
+      currentScroll: Math.min(maxScroll, Math.max(0, window.scrollY))
     });
   }, []);
 
@@ -154,7 +156,7 @@ export default function StudioScrollbars() {
       aria-orientation="vertical"
       aria-valuemin={0}
       aria-valuemax={Math.round(metrics.maxScroll)}
-      aria-valuenow={Math.round(window.scrollY)}
+      aria-valuenow={Math.round(metrics.currentScroll)}
       tabIndex={0}
       style={style}
       onKeyDown={handleKey}
