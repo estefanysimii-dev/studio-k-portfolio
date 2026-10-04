@@ -151,7 +151,19 @@ export default function CartPage() {
 
           {!!quote?.appliedBundles.length && (
             <div className="cart-bundles">
-              {quote.appliedBundles.map((bundle) => <span key={bundle.id}>✦ {bundle.name} · −{money.format(bundle.discount / 100)}</span>)}
+              {quote.appliedBundles.map((bundle) => (
+                <span key={bundle.id}>
+                  ✦ {bundle.name}
+                  {bundle.discount > 0 ? ` · −${money.format(bundle.discount / 100)}` : ""}
+                  {bundle.giftName ? ` · brinde: ${bundle.giftName}` : ""}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {!!quote?.items.some((line) => line.gift) && (
+            <div className="cart-gifts">
+              {quote.items.filter((line) => line.gift).map((line) => <span key={line.productId}>🎁 {line.name} · GRÁTIS</span>)}
             </div>
           )}
 
