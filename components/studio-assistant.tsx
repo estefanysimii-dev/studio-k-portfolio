@@ -192,6 +192,24 @@ export default function StudioAssistant() {
       const product = state.products.find((entry) => entry.id === decodeURIComponent(productMatch[1]));
       if (product) {
         const alreadyFavorite = (state.me.favorites?.products || state.me.profile?.favorites?.products || []).includes(product.id);
+        const trendingToday = [...state.products]
+          .filter((entry) => Number(entry.viewsToday || 0) > 0)
+          .sort((a, b) => Number(b.viewsToday || 0) - Number(a.viewsToday || 0))
+          .slice(0, 3)
+          .some((entry) => entry.id === product.id);
+        if (trendingToday) {
+          contextual.push({
+            id: `context-trending-${product.id}`,
+            type: "bestseller" as const,
+            title: "Esse está entre os mais vistos hoje 👀",
+            text: `${product.name} entrou no Top 3 de atenção do Studio K nas últimas 24 horas.`,
+            ctaLabel: "",
+            href: "",
+            priceCents: 0,
+            oldPriceCents: 0,
+            active: true
+          });
+        }
         if (revisitCount >= 3) {
           contextual.push({
             id: `context-revisit-${product.id}`,
