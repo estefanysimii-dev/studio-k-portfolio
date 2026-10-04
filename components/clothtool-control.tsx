@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { studioApi } from '@/lib/studio-api';
 
+const CLOTH_TOOL_DESKTOP_URI = 'studiok-clothtool://authorized';
+
 export default function ClothToolControl() {
   const [code, setCode] = useState('');
   const [sessions, setSessions] = useState<Awaited<ReturnType<typeof studioApi.clothToolSessions>>['sessions']>([]);
@@ -16,12 +18,18 @@ export default function ClothToolControl() {
     finally { setLoading(false); }
   }, []);
   useEffect(() => { void refresh(); const timer = setInterval(() => void refresh(), 15000); return () => clearInterval(timer); }, [refresh]);
+  function openDesktop() {
+    window.location.href = CLOTH_TOOL_DESKTOP_URI;
+  }
+
   async function approve(event: FormEvent) {
     event.preventDefault(); setBusy(true); setError(''); setNotice('');
     try {
       const result = await studioApi.approveClothTool(code);
-      setCode(''); setNotice(`${result.label} autorizado. Volte ao aplicativo para continuar.`);
+      setCode('');
+      setNotice(`${result.label} autorizado. Abrindo o ClothTool Studio K…`);
       await refresh();
+      window.setTimeout(openDesktop, 180);
     } catch (err) { setError(err instanceof Error ? err.message : 'Não foi possível autorizar.'); }
     finally { setBusy(false); }
   }
@@ -44,7 +52,15 @@ export default function ClothToolControl() {
       <button className="btn btn-primary" disabled={busy || !/^[A-F0-9]{4}-?[A-F0-9]{4}$/.test(code)}>Autorizar aplicativo</button>
     </form>
     {error && <p className="control-notice error" role="alert">{error}</p>}
-    {notice && <p className="control-notice success" role="status">{notice}</p>}
+    {notice && (
+      <div className="clothtool-return">
+        <p className="control-notice success" role="status">{notice}</p>
+        <button type="button" className="btn btn-primary compact" onClick={openDesktop}>
+          Abrir ClothTool Studio K
+        </button>
+        <small>Se o navegador pedir confirmação, permita abrir o aplicativo Studio K.</small>
+      </div>
+    )}
     <h3>Suas conexões</h3>
     <p>As sessões duram até 12 horas. Sair da conta do site também invalida a conexão vinculada.</p>
     {loading ? <p>Consultando conexões…</p> : !sessions.length && !error ? <p>Nenhum aplicativo conectado.</p> : null}
