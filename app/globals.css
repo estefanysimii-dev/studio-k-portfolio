@@ -243,6 +243,20 @@ html.studio-scrollbar-dragging .studio-scrollbar {
   .studio-scrollbar,
   .studio-scrollbar-thumb { transition: none; }
 }
+
+/* Left sidebar scrollbar: keep the interactive rail mounted, but visually hidden. */
+.studio-scrollbar-left,
+.studio-scrollbar-left:hover,
+.studio-scrollbar-left:focus-visible,
+html.studio-scrollbar-dragging .studio-scrollbar-left {
+  opacity: 0 !important;
+  filter: none !important;
+}
+.studio-scrollbar-left .studio-scrollbar-rail,
+.studio-scrollbar-left .studio-scrollbar-thumb {
+  opacity: 0 !important;
+}
+
 /* ===== /Studio K · dual themed scrollbars ===== */
 
 .ambient-light {
