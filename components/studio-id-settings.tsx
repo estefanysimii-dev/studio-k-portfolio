@@ -19,6 +19,22 @@ const rarityLabels: Record<StudioMemberRarity, string> = {
 const clampInt = (value: string, min = 0, max = 100000) =>
   Math.min(max, Math.max(min, Math.round(Number(value) || 0)));
 
+const rankId = (ranks: StudioIdRankConfig[]) => {
+  const taken = new Set(ranks.map((rank) => rank.id));
+  let index = ranks.length + 1;
+  let id = `rank-${index}`;
+  while (taken.has(id)) {
+    index += 1;
+    id = `rank-${index}`;
+  }
+  return id;
+};
+
+const nextRankLevel = (ranks: StudioIdRankConfig[]) => {
+  const highest = ranks.reduce((max, rank) => Math.max(max, Number(rank.minLevel || 1)), 0);
+  return Math.min(1000, Math.max(1, highest + 2));
+};
+
 export default function StudioIdSettings({ value, roles, onChange, onSave }: Props) {
   const patch = (next: Partial<StudioIdConfig>) => onChange({ ...value, ...next });
   const patchXp = (key: keyof StudioIdConfig["xp"], number: number) =>
@@ -36,6 +52,66 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       if (id === "icon") thresholds = { ...thresholds, iconLevel: updated.minLevel };
     }
     onChange({ ...value, ranks, thresholds });
+  };
+
+  const addRank = () => {
+    if (value.ranks.length >= 12) return;
+    const id = rankId(value.ranks);
+    const next: StudioIdRankConfig = {
+      id,
+      label: "Novo Rank",
+      icon: "✦",
+      rarity: "common",
+      minLevel: nextRankLevel(value.ranks)
+    };
+    onChange({
+      ...value,
+      ranks: [...value.ranks, next],
+      discordRankSync: {
+        ...value.discordRankSync,
+        roleIds: { ...value.discordRankSync.roleIds, [id]: "" }
+      }
+    });
+  };
+
+  const duplicateRank = (rank: StudioIdRankConfig) => {
+    if (value.ranks.length >= 12) return;
+    const id = rankId(value.ranks);
+    const copy: StudioIdRankConfig = {
+      ...rank,
+      id,
+      label: `${rank.label} Copia`,
+      minLevel: Math.min(1000, rank.minLevel + 1)
+    };
+    onChange({
+      ...value,
+      ranks: [...value.ranks, copy],
+      discordRankSync: {
+        ...value.discordRankSync,
+        roleIds: { ...value.discordRankSync.roleIds, [id]: "" }
+      }
+    });
+  };
+
+  const removeRank = (id: string) => {
+    if (value.ranks.length <= 1) return;
+    const rank = value.ranks.find((item) => item.id === id);
+    if (!rank) return;
+    if (!window.confirm(`Remover o rank “${rank.label}”? Usuários que estiverem nele serão recalculados para o rank disponível correspondente ao nível.`)) return;
+
+    let ranks = value.ranks.filter((item) => item.id !== id);
+    if (!ranks.some((item) => item.minLevel === 1)) {
+      const lowest = [...ranks].sort((a, b) => a.minLevel - b.minLevel)[0];
+      ranks = ranks.map((item) => item.id === lowest.id ? { ...item, minLevel: 1 } : item);
+    }
+
+    const roleIds = { ...value.discordRankSync.roleIds };
+    delete roleIds[id];
+    onChange({
+      ...value,
+      ranks,
+      discordRankSync: { ...value.discordRankSync, roleIds }
+    });
   };
 
   const setRankRole = (rankId: string, roleId: string) =>
@@ -114,38 +190,66 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       </section>
 
       <section className="control-form glass-panel">
-        <div className="form-heading">
+        <div className="form-heading studio-id-rank-heading">
           <div>
             <span className="section-eyebrow">RANKS</span>
             <h2>Escada de identidade</h2>
-            <p>O rank de maior nível já alcançado é aplicado automaticamente ao Studio K ID.</p>
+            <p>Edite livremente os ranks, adicione novos ou remova os que não fazem mais sentido. O maior nível alcançado continua sendo aplicado automaticamente.</p>
           </div>
+          <button
+            className="btn btn-primary compact"
+            type="button"
+            onClick={addRank}
+            disabled={value.ranks.length >= 12}
+          >
+            + Adicionar rank
+          </button>
         </div>
         <div className="studio-id-rank-list">
           {value.ranks.map((rank) => (
             <article className={`studio-id-rank-editor rarity-${rank.rarity}`} key={rank.id}>
               <div className="studio-id-rank-preview">
                 <i>{rank.icon || "•"}</i>
-                <div><strong>{rank.label}</strong><span>LEVEL {rank.minLevel}+ · {rarityLabels[rank.rarity]}</span></div>
+                <div>
+                  <strong>{rank.label || "Rank sem nome"}</strong>
+                  <span>LEVEL {rank.minLevel}+ · {rarityLabels[rank.rarity]}</span>
+                  <small>ID interno: {rank.id}</small>
+                </div>
               </div>
-              <div className="studio-id-rank-fields">
-                <label>Nome
-                  <input value={rank.label} onChange={(e) => patchRank(rank.id, { label: e.target.value })} />
-                </label>
-                <label>Ícone
-                  <input maxLength={12} value={rank.icon} onChange={(e) => patchRank(rank.id, { icon: e.target.value })} />
-                </label>
-                <label>Nível mínimo
-                  <input type="number" min={1} value={rank.minLevel} onChange={(e) => patchRank(rank.id, { minLevel: clampInt(e.target.value, 1, 1000) })} />
-                </label>
-                <label>Raridade
-                  <select value={rank.rarity} onChange={(e) => patchRank(rank.id, { rarity: e.target.value as StudioMemberRarity })}>
-                    {Object.entries(rarityLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
-                  </select>
-                </label>
+
+              <div className="studio-id-rank-editor-main">
+                <div className="studio-id-rank-fields">
+                  <label>Nome
+                    <input value={rank.label} onChange={(e) => patchRank(rank.id, { label: e.target.value })} />
+                  </label>
+                  <label>Ícone
+                    <input maxLength={12} value={rank.icon} onChange={(e) => patchRank(rank.id, { icon: e.target.value })} />
+                  </label>
+                  <label>Nível mínimo
+                    <input type="number" min={1} value={rank.minLevel} onChange={(e) => patchRank(rank.id, { minLevel: clampInt(e.target.value, 1, 1000) })} />
+                  </label>
+                  <label>Raridade
+                    <select value={rank.rarity} onChange={(e) => patchRank(rank.id, { rarity: e.target.value as StudioMemberRarity })}>
+                      {Object.entries(rarityLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+                    </select>
+                  </label>
+                </div>
+
+                <div className="studio-id-rank-actions">
+                  <button type="button" className="rank-action-copy" onClick={() => duplicateRank(rank)} disabled={value.ranks.length >= 12}>
+                    Duplicar
+                  </button>
+                  <button type="button" className="rank-action-remove" onClick={() => removeRank(rank.id)} disabled={value.ranks.length <= 1}>
+                    Remover
+                  </button>
+                </div>
               </div>
             </article>
           ))}
+        </div>
+        <div className="studio-id-rank-footnote">
+          <span>{value.ranks.length}/12 ranks configurados</span>
+          <small>Precisa existir pelo menos um rank. Se o rank de nível 1 for removido, o rank restante de menor nível assume o nível 1 automaticamente.</small>
         </div>
       </section>
 
