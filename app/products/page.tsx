@@ -12,6 +12,12 @@ const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL
 export default function ProductsPage() {
   const { state } = useStudio();
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Todos");
+  const [gender, setGender] = useState("Todos");
+  const [collectionId, setCollectionId] = useState("");
+  const [onlyNeon, setOnlyNeon] = useState(false);
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
+  const [sort, setSort] = useState("relevance");
   const now = Date.now();
   const activeDrops = (state.drops || []).filter((drop) =>
     drop.published !== false &&
@@ -19,16 +25,30 @@ export default function ProductsPage() {
     Date.parse(drop.endsAt) > now
   );
 
+  const categories = useMemo(() => ["Todos", ...Array.from(new Set(state.products.map((product) => product.category).filter(Boolean)))], [state.products]);
+  const collections = state.commerce?.collections || [];
+  const recommendationScores = new Map((state.personal?.recommendations || []).map((entry) => [entry.productId, entry.score]));
+
   const visibleProducts = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return state.products;
-    return state.products.filter((product) =>
-      [product.name, product.description, product.category, ...(product.tags || [])]
-        .join(" ")
-        .toLowerCase()
-        .includes(query)
-    );
-  }, [search, state.products]);
+    const selectedCollection = collections.find((entry) => entry.id === collectionId);
+    const filtered = state.products.filter((product) => {
+      if (query && ![product.name, product.description, product.category, ...(product.tags || [])].join(" ").toLowerCase().includes(query)) return false;
+      if (category !== "Todos" && product.category !== category) return false;
+      if (gender !== "Todos" && (product.gender || "unisex") !== gender) return false;
+      if (onlyNeon && !product.neon && !(product.tags || []).some((tag) => /neon|emissiv/i.test(tag))) return false;
+      if (onlyAvailable && product.available === false) return false;
+      if (selectedCollection && !selectedCollection.productIds.includes(product.id)) return false;
+      return true;
+    });
+    return [...filtered].sort((a, b) => {
+      if (sort === "price-asc") return a.priceCents - b.priceCents;
+      if (sort === "price-desc") return b.priceCents - a.priceCents;
+      if (sort === "newest") return Date.parse(b.created || b.updated || "") - Date.parse(a.created || a.updated || "");
+      if (sort === "popular") return (recommendationScores.get(b.id) || 0) - (recommendationScores.get(a.id) || 0);
+      return 0;
+    });
+  }, [search, state.products, category, gender, onlyNeon, onlyAvailable, collectionId, collections, sort, recommendationScores]);
 
   useEffect(() => {
     const query = search.trim();
@@ -70,6 +90,39 @@ export default function ProductsPage() {
         <small>{visibleProducts.length} produto{visibleProducts.length === 1 ? "" : "s"} encontrado{visibleProducts.length === 1 ? "" : "s"}</small>
       </div>
 
+      <div className="catalog-filters glass-panel">
+        <label>Categoria
+          <select value={category} onChange={(event) => setCategory(event.target.value)}>
+            {categories.map((entry) => <option value={entry} key={entry}>{entry}</option>)}
+          </select>
+        </label>
+        <label>Modelo
+          <select value={gender} onChange={(event) => setGender(event.target.value)}>
+            <option value="Todos">Todos</option>
+            <option value="feminino">Feminino</option>
+            <option value="masculino">Masculino</option>
+            <option value="unisex">Unissex</option>
+          </select>
+        </label>
+        <label>Coleção
+          <select value={collectionId} onChange={(event) => setCollectionId(event.target.value)}>
+            <option value="">Todas</option>
+            {collections.map((entry) => <option value={entry.id} key={entry.id}>{entry.name}</option>)}
+          </select>
+        </label>
+        <label>Ordenar
+          <select value={sort} onChange={(event) => setSort(event.target.value)}>
+            <option value="relevance">Relevância</option>
+            <option value="popular">Popularidade</option>
+            <option value="newest">Novidades</option>
+            <option value="price-asc">Menor preço</option>
+            <option value="price-desc">Maior preço</option>
+          </select>
+        </label>
+        <label className="catalog-filter-check"><input type="checkbox" checked={onlyNeon} onChange={(event) => setOnlyNeon(event.target.checked)} /> Neon / emissivo</label>
+        <label className="catalog-filter-check"><input type="checkbox" checked={onlyAvailable} onChange={(event) => setOnlyAvailable(event.target.checked)} /> Disponível agora</label>
+      </div>
+
       <div className="product-grid">
         {visibleProducts.length ? visibleProducts.map((product) => (
           <article className="product-card glass-panel" key={product.id}>
@@ -94,6 +147,11 @@ export default function ProductsPage() {
                 : product.priceCents;
               return (
                 <div className="product-price-stack">
+                  {product.stockMode && product.stockMode !== "unlimited" && (
+                    <span className={`product-stock-badge ${product.available === false ? "sold-out" : ""}`}>
+                      {product.available === false ? "ESGOTADO" : product.remaining != null ? `${product.remaining} restante(s)` : product.limitedLabel || "LIMITADO"}
+                    </span>
+                  )}
                   {drop && drop.discountPercent > 0 && <span className="product-drop-badge">DROP · {drop.discountPercent}% OFF</span>}
                   {drop && drop.discountPercent > 0 && <small>{money.format(product.priceCents / 100)}</small>}
                   <strong>{product.priceCents > 0 ? money.format(dropPrice / 100) : "Sob consulta"}</strong>
