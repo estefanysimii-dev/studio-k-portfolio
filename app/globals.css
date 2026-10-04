@@ -6763,3 +6763,71 @@ html.studio-scrollbar-dragging .studio-scrollbar-left {
   line-height: 1.45;
 }
 /* ===== /ClothTool desktop return ===== */
+
+
+/* ===== Studio K · compact generated assets ===== */
+.asset-grid {
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 10px;
+}
+.asset-card.asset-generated {
+  display: grid;
+  grid-template-columns: 34px minmax(0,1fr);
+  grid-template-areas:
+    "icon name"
+    "icon meta"
+    "url url";
+  column-gap: 10px;
+  row-gap: 2px;
+  align-items: center;
+  padding: 11px 12px;
+  min-height: 0;
+  border-radius: 12px;
+}
+.asset-card.asset-generated .asset-icon {
+  grid-area: icon;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  font-size: 7.5px;
+}
+.asset-card.asset-generated > strong {
+  grid-area: name;
+  margin: 0;
+  min-width: 0;
+  font-size: 10px;
+  line-height: 1.25;
+}
+.asset-card.asset-generated > span {
+  grid-area: meta;
+  min-width: 0;
+  font-size: 7.5px;
+  line-height: 1.25;
+}
+.asset-card.asset-generated > code {
+  grid-area: url;
+  margin-top: 6px;
+  padding: 6px 7px;
+  border-radius: 7px;
+  font-size: 7.5px;
+  line-height: 1.15;
+}
+.asset-card.asset-generated .asset-process {
+  grid-column: 1 / -1;
+  margin-top: 5px;
+  min-height: 30px;
+}
+@media (min-width: 1500px) {
+  .asset-grid {
+    grid-template-columns: repeat(auto-fit,minmax(230px,1fr));
+  }
+}
+@media (max-width: 720px) {
+  .asset-grid {
+    grid-template-columns: 1fr;
+  }
+  .asset-card.asset-generated {
+    padding: 10px;
+  }
+}
+/* ===== /Studio K · compact generated assets ===== */
