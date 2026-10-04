@@ -128,12 +128,21 @@ export default function BehaviorTracker() {
       const label = (target.textContent || target.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim().slice(0, 100);
       const href = target instanceof HTMLAnchorElement ? target.getAttribute("href") || "" : "";
       if (!label && !href) return;
+      const xPct = window.innerWidth ? Math.max(0, Math.min(100, event.clientX / window.innerWidth * 100)) : 0;
+      const yPct = window.innerHeight ? Math.max(0, Math.min(100, event.clientY / window.innerHeight * 100)) : 0;
       void studioApi.track({
         sessionId: visitorId(),
         event: "click",
         itemKind: "page",
         path: pathname,
-        meta: { label, href: href.slice(0, 180) }
+        meta: {
+          label,
+          href: href.slice(0, 180),
+          xPct: Math.round(xPct * 10) / 10,
+          yPct: Math.round(yPct * 10) / 10,
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight
+        }
       });
     };
     document.addEventListener("click", handleClick, true);
