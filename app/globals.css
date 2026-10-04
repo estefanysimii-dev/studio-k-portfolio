@@ -86,15 +86,16 @@ body::-webkit-scrollbar {
 .studio-scrollbars {
   position: fixed;
   inset: 0;
-  z-index: 140;
+  z-index: 1000;
   pointer-events: none;
+  isolation: isolate;
 }
 
 .studio-scrollbar {
   position: fixed;
   top: 0;
   bottom: 0;
-  width: 12px;
+  width: 16px;
   pointer-events: auto;
   cursor: pointer;
   opacity: .84;
@@ -102,15 +103,21 @@ body::-webkit-scrollbar {
   outline: none;
   touch-action: none;
 }
-.studio-scrollbar-left { left: 0; }
-.studio-scrollbar-right { right: 0; }
+.studio-scrollbar-left {
+  left: 4px;
+  background: linear-gradient(90deg,rgba(139,44,255,.10),rgba(139,44,255,.025),transparent);
+}
+.studio-scrollbar-right {
+  right: 4px;
+  background: linear-gradient(270deg,rgba(139,44,255,.10),rgba(139,44,255,.025),transparent);
+}
 
 .studio-scrollbar-rail {
   position: absolute;
   top: 10px;
   bottom: 10px;
   left: 50%;
-  width: 2px;
+  width: 3px;
   transform: translateX(-50%);
   border-radius: 999px;
   background:
@@ -128,8 +135,8 @@ body::-webkit-scrollbar {
 .studio-scrollbar-thumb {
   position: absolute;
   top: var(--studio-scroll-top);
-  left: 2px;
-  width: 8px;
+  left: 3px;
+  width: 10px;
   height: var(--studio-scroll-height);
   min-height: 54px;
   overflow: hidden;
@@ -163,8 +170,8 @@ body::-webkit-scrollbar {
 }
 .studio-scrollbar:hover .studio-scrollbar-thumb,
 .studio-scrollbar:focus-visible .studio-scrollbar-thumb {
-  left: 1px;
-  width: 10px;
+  left: 2px;
+  width: 12px;
   box-shadow:
     0 0 0 1px rgba(255,255,255,.12) inset,
     0 0 16px rgba(172,85,255,.62),
@@ -207,11 +214,13 @@ html.studio-scrollbar-dragging .studio-scrollbar {
 }
 
 @media (max-width: 720px) {
-  .studio-scrollbar { width: 8px; opacity: .72; }
-  .studio-scrollbar-thumb { left: 1px; width: 6px; }
+  .studio-scrollbar { width: 10px; opacity: .78; }
+  .studio-scrollbar-left { left: 2px; }
+  .studio-scrollbar-right { right: 2px; }
+  .studio-scrollbar-thumb { left: 1px; width: 8px; }
   .studio-scrollbar:hover .studio-scrollbar-thumb,
-  .studio-scrollbar:focus-visible .studio-scrollbar-thumb { left: 0; width: 8px; }
-  .studio-scrollbar-rail { width: 1px; }
+  .studio-scrollbar:focus-visible .studio-scrollbar-thumb { left: 0; width: 10px; }
+  .studio-scrollbar-rail { width: 2px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
