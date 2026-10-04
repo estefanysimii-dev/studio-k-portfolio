@@ -19,6 +19,24 @@ def require_env(name: str) -> str:
     return value
 
 
+def connection_hosts(configured_host: str) -> list[str]:
+    # InfinityFree normally exposes the same FTP service through more than one
+    # hostname. GitHub-hosted runners can occasionally fail DNS resolution for
+    # one name while another alias (or the service IP) remains reachable.
+    candidates = [
+        configured_host,
+        "ftp.infinityfree.com",
+        "ftpupload.net",
+        "185.27.134.11",
+    ]
+    unique: list[str] = []
+    for host in candidates:
+        host = host.strip()
+        if host and host not in unique:
+            unique.append(host)
+    return unique
+
+
 def connect(host: str, user: str, password: str) -> ftplib.FTP:
     ftp = ftplib.FTP()
     ftp.connect(host=host, port=21, timeout=35)
@@ -26,6 +44,32 @@ def connect(host: str, user: str, password: str) -> ftplib.FTP:
     ftp.set_pasv(True)
     ftp.cwd(REMOTE_ROOT)
     return ftp
+
+
+def connect_with_fallback(configured_host: str, user: str, password: str) -> tuple[ftplib.FTP, str]:
+    last_error: Exception | None = None
+    transient_errors = (socket.gaierror, socket.timeout, TimeoutError, ConnectionError, OSError, EOFError, ftplib.error_temp)
+
+    for host in connection_hosts(configured_host):
+        for attempt in range(1, 4):
+            try:
+                print(f"Conectando ao FTP InfinityFree via {host} (tentativa {attempt}/3)...")
+                return connect(host, user, password), host
+            except ftplib.error_perm:
+                # Authentication/permission errors are not DNS/network failures;
+                # changing endpoint will not fix bad credentials.
+                raise
+            except transient_errors as exc:
+                last_error = exc
+                print(f"Falha de conexão via {host}, tentativa {attempt}: {exc}", file=sys.stderr)
+                if attempt < 3:
+                    time.sleep(attempt * 3)
+
+        print(f"Endpoint {host} indisponível; tentando próximo fallback.", file=sys.stderr)
+
+    if last_error is None:
+        raise RuntimeError("Nenhum endpoint FTP disponível.")
+    raise last_error
 
 
 def ensure_dir(ftp: ftplib.FTP, relative_dir: str) -> None:
@@ -106,33 +150,28 @@ def main() -> int:
     user = require_env("INFINITYFREE_FTP_USER")
     password = require_env("INFINITYFREE_FTP_PASSWORD")
 
-    last_error: Exception | None = None
-    ftp_errors = ftplib.all_errors + (OSError, socket.timeout)
-    for attempt in range(1, 4):
-        ftp: ftplib.FTP | None = None
+    ftp: ftplib.FTP | None = None
+    try:
+        ftp, endpoint = connect_with_fallback(host, user, password)
+        print(f"FTP conectado com sucesso via {endpoint}.")
+        count, total = upload_tree(ftp)
         try:
-            print(f"Conectando ao InfinityFree (tentativa {attempt}/3)...")
-            ftp = connect(host, user, password)
-            count, total = upload_tree(ftp)
-            try:
-                ftp.quit()
-            except Exception:
+            ftp.quit()
+        except Exception:
+            ftp.close()
+        print(f"Deploy concluído: {count} arquivos, {total} bytes enviados para {REMOTE_ROOT}.")
+        return 0
+    except ftplib.error_perm as exc:
+        print(f"Deploy FTP recusado por autenticação/permissão: {exc}", file=sys.stderr)
+        return 1
+    except (ftplib.all_errors + (OSError, socket.timeout, TimeoutError, ConnectionError)) as exc:
+        print(f"Deploy FTP falhou em todos os endpoints configurados: {exc}", file=sys.stderr)
+        try:
+            if ftp is not None:
                 ftp.close()
-            print(f"Deploy concluído: {count} arquivos, {total} bytes enviados para {REMOTE_ROOT}.")
-            return 0
-        except ftp_errors as exc:
-            last_error = exc
-            print(f"Falha na tentativa {attempt}: {exc}", file=sys.stderr)
-            try:
-                if ftp is not None:
-                    ftp.close()
-            except Exception:
-                pass
-            if attempt < 3:
-                time.sleep(attempt * 3)
-
-    print(f"Deploy FTP falhou após 3 tentativas: {last_error}", file=sys.stderr)
-    return 1
+        except Exception:
+            pass
+        return 1
 
 
 if __name__ == "__main__":
