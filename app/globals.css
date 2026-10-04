@@ -1689,6 +1689,18 @@ html.studio-scrollbar-dragging .studio-scrollbar {
   .sidebar > * {
     direction: ltr;
   }
+  .sidebar > .brand-block,
+  .sidebar > .side-nav,
+  .sidebar > .sidebar-live,
+  .sidebar > .studio-radio,
+  .sidebar > .control-link,
+  .sidebar > .sidebar-foot {
+    flex-shrink: 0;
+  }
+  .sidebar > .sidebar-spacer {
+    flex: 0 0 12px;
+    min-height: 12px;
+  }
   .sidebar::-webkit-scrollbar {
     width: 11px;
     height: 11px;
