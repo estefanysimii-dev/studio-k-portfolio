@@ -20,9 +20,10 @@ export default function CommerceBanners() {
 
   const pagePlacement = pathname === "/" ? "home" : pathname.startsWith("/products") ? "products" : pathname.startsWith("/portfolio") ? "portfolio" : "";
   const banners = state.commerce?.banners || [];
+  const pageMatches = (pages: string[] = []) => pages.some((rule) => rule === "*" || (rule.endsWith("*") ? pathname.startsWith(rule.slice(0, -1)) : pathname === rule));
   const inline = useMemo(
-    () => banners.filter((banner) => banner.placement === "all" || banner.placement === pagePlacement),
-    [banners, pagePlacement]
+    () => banners.filter((banner) => banner.placement === "all" || banner.placement === pagePlacement || (banner.placement === "specific" && pageMatches(banner.pages || []))),
+    [banners, pagePlacement, pathname]
   );
   const popup = banners.find((banner) => banner.placement === "popup" && !dismissed.has(banner.id));
 
