@@ -18,7 +18,7 @@ type Props = {
   onError?: (message: string) => void;
 };
 
-type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "gallery" | "lookbooks" | "history";
+type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "automation" | "gallery" | "lookbooks" | "history";
 
 const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
@@ -51,6 +51,7 @@ export default function CommerceControl({ commerce, products, items, roles, vers
   const [banner,setBanner]=useState<StudioBanner>(emptyBanner);
   const [schedule,setSchedule]=useState<StudioSchedule>(emptySchedule);
   const [lookbook,setLookbook]=useState<StudioLookbook>(emptyLookbook);
+  const [feedbackAutomation,setFeedbackAutomation]=useState(commerce.feedbackAutomation || { enabled:true,delayHours:24 });
 
   const save = async (kind:string, body:unknown, reset:()=>void) => {
     setBusy(true);
@@ -83,7 +84,7 @@ export default function CommerceControl({ commerce, products, items, roles, vers
         <div className="commerce-tabs">
           {([
             ["bundles","Combos"],["collections","Coleções"],["missions","Missões"],["benefits","Benefícios Discord"],["banners","Banners"],
-            ["schedules","Agendador"],["gallery","Galeria"],["lookbooks","Lookbooks"],["history","Histórico"]
+            ["schedules","Agendador"],["automation","Automação"],["gallery","Galeria"],["lookbooks","Lookbooks"],["history","Histórico"]
           ] as [Section,string][]).map(([key,label])=><button type="button" key={key} className={section===key?"active":""} onClick={()=>setSection(key)}>{label}</button>)}
         </div>
       </section>
@@ -169,6 +170,27 @@ export default function CommerceControl({ commerce, products, items, roles, vers
         </div>
         <button className="btn btn-primary" disabled={busy||!schedule.targetId||!schedule.runAt} onClick={()=>void save("schedules",schedule,()=>setSchedule(emptySchedule()))}>Agendar</button>
         <div className="commerce-list">{(commerce.schedules||[]).map(x=><article key={x.id}><div><strong>{x.kind.replaceAll("_"," ")}</strong><span>{new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(x.runAt))} · {x.status}</span></div><div><button className="danger" onClick={()=>void remove("schedules",x.id)}>Excluir</button></div></article>)}</div>
+      </section>}
+
+      {section==="automation" && <section className="control-form glass-panel commerce-editor">
+        <div className="form-heading">
+          <div>
+            <span className="section-eyebrow">AUTOMAÇÃO</span>
+            <h2>Pós-compra e retenção</h2>
+            <p>Defina quando o bot pede feedback depois de uma entrega digital.</p>
+          </div>
+        </div>
+        <div className="form-grid two">
+          <label className="check-field">
+            <input type="checkbox" checked={feedbackAutomation.enabled} onChange={e=>setFeedbackAutomation({...feedbackAutomation,enabled:e.target.checked})}/>
+            Solicitar feedback automaticamente
+          </label>
+          <label>Aguardar após a entrega (horas)
+            <input type="number" min={0} max={720} value={feedbackAutomation.delayHours} onChange={e=>setFeedbackAutomation({...feedbackAutomation,delayHours:Math.max(0,Math.min(720,Number(e.target.value)||0))})}/>
+            <small>0 = o botão de avaliação acompanha a entrega. Ex.: 24 = pedir no dia seguinte.</small>
+          </label>
+        </div>
+        <button className="btn btn-primary" type="button" onClick={async()=>{try{const saved=await studioApi.saveFeedbackAutomation(feedbackAutomation);setFeedbackAutomation(saved);onNotice?.("Automação de feedback salva.");await onChanged();}catch(err){onError?.(err instanceof Error?err.message:"Não foi possível salvar.");}}}>Salvar automação</button>
       </section>}
 
       {section==="gallery" && <section className="control-form glass-panel commerce-editor">
