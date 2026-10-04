@@ -9,3 +9,10 @@ export function navigate(href: string) {
   window.dispatchEvent(new PopStateEvent('popstate'));
   window.scrollTo(0, 0);
 }
+
+export function useParams<T extends Record<string,string> = Record<string,string>>(): T {
+  const pathname = usePathname();
+  const parts = pathname.split('/').filter(Boolean);
+  const last = decodeURIComponent(parts.at(-1) || '');
+  return { id: last, slug: last } as unknown as T;
+}
