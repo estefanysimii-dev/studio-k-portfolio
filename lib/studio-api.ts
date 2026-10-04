@@ -58,6 +58,8 @@ export const studioApi = {
     request<{ enabled: boolean; delayHours: number }>("control/feedback-automation", { method: "PUT", body: JSON.stringify(body) }),
   restoreVersion: (id: string) =>
     request(`control/versions/${encodeURIComponent(id)}/restore`, { method: "POST", body: "{}" }),
+  approveCartGroup: (id: string) =>
+    request<{ ok: boolean; approved: string[] }>(`control/cart-groups/${encodeURIComponent(id)}/approve`, { method: "POST", body: "{}" }),
   createItem: (body: unknown) =>
     request("control/items", { method: "POST", body: JSON.stringify(body) }),
   updateItem: (id: string, body: unknown) =>
