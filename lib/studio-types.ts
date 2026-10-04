@@ -181,6 +181,7 @@ export type StudioRoleBenefit = {
   discountPercent: number;
   stackWithCoupon: boolean;
   productIds: string[];
+  excludedProductIds?: string[];
   collectionIds: string[];
   active: boolean;
 };
