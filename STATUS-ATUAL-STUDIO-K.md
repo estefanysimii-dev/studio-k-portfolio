@@ -191,6 +191,80 @@ A assistente agora pode reagir a:
 - rank e título equipado;
 - produto relacionado a compras anteriores.
 
+## Commerce Suite — outubro/2026
+
+Implementado nesta rodada:
+
+### Loja e conversão
+- carrinho persistente ligado ao Studio K ID;
+- compra de múltiplos produtos em um único carrinho;
+- aprovação de carrinhos em grupo pela Central;
+- Combo Manager com desconto percentual, valor fixo e faixas progressivas;
+- brinde automático de produto em combos elegíveis;
+- preço de Drop aplicado também dentro do carrinho;
+- cupom, desconto Studio K ID e benefício de cargo Discord combinados com regras de acumulação;
+- matriz de benefícios por cargo com produtos incluídos, produtos excluídos e coleções válidas;
+- cargo Discord pós-compra configurável por produto;
+- estoque ilimitado, digital, limitado, vagas e edição numerada;
+- lotes de estoque digital adicionados pela Central;
+- edição numerada real (#XX/Total) registrada no pedido;
+- aviso “Avise-me quando voltar” com watcher de reposição automático;
+- filtros avançados por categoria, gênero, coleção, Neon, disponibilidade, promoção, preço, novidade, popularidade e mais vendidos.
+
+### Descoberta e personalização
+- recomendações comportamentais por visualizações individuais, favoritos, compras, categorias, tags e produtos comprados juntos;
+- sinal de “em alta hoje” usando visualizações reais das últimas 24 horas;
+- Kiki usa recomendações e reconhece produtos no Top 3 diário;
+- busca global com autocomplete para produtos, portfólio, coleções, categorias, tags e recursos do Studio K;
+- comparador de produtos com dois viewers 3D e tabela de atributos;
+- páginas públicas de Coleções.
+
+### Retenção e comunidade
+- sininho de notificações internas no header;
+- notificações de produto novo, Drop, pedido, ticket, feedback, level, rank, conquista, perk e reposição;
+- Missões Studio K com progresso real e resgate de XP;
+- ranking da comunidade opt-in;
+- feed público de atividade sem expor dados privados;
+- galeria da comunidade com envio pelo usuário e aprovação/rejeição na Central;
+- lookbooks administráveis e links para produtos;
+- página pública Comunidade;
+- histórico de atividade do usuário em Minha Conta.
+
+### Atendimento
+- tickets listados em Minha Conta com status, prioridade e responsável;
+- criação de novo ticket pelo site usando o mesmo sistema/canal do Discord;
+- leitura de mensagens recentes do ticket;
+- resposta pelo site enviada ao mesmo canal do Discord;
+- transcript autenticado disponível após encerramento;
+- notificações internas de novas respostas e encerramento.
+
+### Central / automação
+- Commerce Hub com abas de pedidos em grupo, combos, coleções, missões, benefícios Discord, banners, agendador, automação, galeria, lookbooks e histórico;
+- Banner Manager com períodos, pop-ups, placements e páginas específicas;
+- Agendador universal para publicar/ocultar produtos e ativar/desativar coleções/banners;
+- publicação agendada de produto sincroniza anúncio no Discord e notificações internas;
+- Kiki Campaign Manager com prioridade, período, público, páginas e limite de exibições;
+- feedback pós-compra automático com atraso configurável;
+- histórico/versionamento com responsável, antes/depois e restauração;
+- auditoria para Site, Produtos, Portfólio, Studio K ID, Drops, Feedbacks e Commerce Hub.
+
+### Analytics comercial
+- carrinho iniciado/finalizado e abandono de carrinho;
+- funil comercial;
+- ticket médio;
+- cupons convertidos;
+- origem, buscas, filtros, cliques, páginas de saída;
+- mapa visual de cliques com coordenadas normalizadas;
+- produtos mais observados e tempo médio de permanência.
+
+### Bot / Discord
+- entrega e DMs continuam integradas;
+- rank do Studio K ID pode sincronizar cargo e enviar DM ao evoluir;
+- cargo pós-compra configurável por produto;
+- feedback pós-compra pode ser solicitado imediatamente ou depois de X horas;
+- respostas de ticket geram notificação interna no site;
+- eventos agendados de publicação integram site, bot e notificações.
+
 ## Pontos que ainda precisam de atenção
 
 1. Spotify playlist permanece fora do escopo por decisão atual; não alterar até nova solicitação.
@@ -198,7 +272,7 @@ A assistente agora pode reagir a:
 3. Atualizar o README raiz: ele ainda descreve partes antigas como starter/placeholder e não representa o estado atual.
 4. Definir oficialmente um único domínio público/canônico; o código Next ainda possui fallbacks/metadados apontando para Netlify, enquanto a publicação atual foi adaptada para InfinityFree.
 5. Validar OpenGraph/preview do Discord no domínio InfinityFree; a própria hospedagem pode bloquear crawlers.
-6. Fazer QA visual completo em desktop/mobile para tema claro, rádio, viewer 3D, checkout, OAuth e Central.
+6. Fazer QA visual completo em desktop/mobile para tema claro, rádio, viewer 3D, carrinho/checkout, OAuth e Central.
 7. ClothToolStudioK continua propositalmente reservado e não deve ser alterado nesta fase.
 
 ## Regra de continuidade
