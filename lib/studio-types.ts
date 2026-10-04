@@ -542,6 +542,7 @@ export type StudioPublicState = {
     notifications: StudioNotification[];
     missions: StudioMission[];
     recommendations: StudioRecommendation[];
+    leaderboardOptIn?: boolean;
   };
 };
 
