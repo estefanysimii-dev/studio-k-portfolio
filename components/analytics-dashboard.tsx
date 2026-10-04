@@ -40,8 +40,10 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
   const maxDaily = Math.max(1, ...data.daily.map((day) => day.pageViews));
   const funnel = [
     { label: "Visualizações de produtos", value: data.productViews, base: data.productViews || 1 },
-    { label: "Inícios de compra", value: data.checkoutStarts, base: data.productViews || 1 },
-    { label: "Pedidos criados", value: data.ordersCreated, base: data.productViews || 1 },
+    { label: "Carrinhos iniciados", value: data.cartSessions, base: data.productViews || 1 },
+    { label: "Carrinhos finalizados", value: data.cartCheckoutSessions, base: data.productViews || 1 },
+    { label: "Checkouts diretos", value: data.checkoutStarts, base: data.productViews || 1 },
+    { label: "Pedidos criados", value: data.ordersCreated + data.cartCheckouts, base: data.productViews || 1 },
     { label: "Pedidos pagos", value: data.paidOrders, base: data.productViews || 1 }
   ];
 
@@ -68,11 +70,13 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
         <article><span>Favoritados</span><strong>{number.format(data.favoriteAdds)}</strong><small>ações de favorito</small></article>
         <article><span>Conversão</span><strong>{data.checkoutConversion}%</strong><small>início de compra → pago</small></article>
         <article><span>Erros checkout</span><strong>{number.format(data.checkoutErrors)}</strong><small>{number.format(data.checkoutStarts)} compras iniciadas</small></article>
+        <article><span>Carrinhos</span><strong>{number.format(data.cartSessions)}</strong><small>{data.cartAbandonment}% de abandono</small></article>
+        <article><span>Finalizados</span><strong>{number.format(data.cartCheckoutSessions)}</strong><small>{number.format(data.cartCheckouts)} eventos de checkout</small></article>
       </div>
 
       <div className="analytics-panels">
         <div className="analytics-funnel">
-          <div className="analytics-subhead"><strong>Funil de compra</strong><span>{data.checkoutAbandonment}% de abandono</span></div>
+          <div className="analytics-subhead"><strong>Funil comercial</strong><span>{data.cartAbandonment}% abandono de carrinho · {data.checkoutAbandonment}% checkout direto</span></div>
           {funnel.map((item, index) => {
             const width = index === 0 ? 100 : Math.max(4, Math.min(100, item.value / item.base * 100));
             return (
