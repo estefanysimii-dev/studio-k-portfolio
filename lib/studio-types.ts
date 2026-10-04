@@ -581,6 +581,7 @@ export type StudioAnalytics = {
   topClicks: { label: string; value: number }[];
   topSearches: { label: string; value: number }[];
   exitPages: { label: string; value: number }[];
+  clickPoints: { path: string; label: string; x: number; y: number; created: string }[];
   daily: {
     day: string;
     pageViews: number;
