@@ -123,6 +123,7 @@ export type StudioBundle = {
   minItems: number;
   discountType: "percent" | "fixed";
   discountValue: number;
+  tiers?: { minItems: number; discountType: "percent" | "fixed"; discountValue: number }[];
   active: boolean;
   created?: string;
   updated?: string;
