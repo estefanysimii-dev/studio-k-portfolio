@@ -57,7 +57,7 @@ if ($path === '/api/logout') {
 if (str_starts_with($path, '/api/studio/')) {
     $endpoint = substr($path, strlen('/api/studio/'));
     // Only the existing website API is available. OAuth exchange stays server-side.
-    if (!preg_match('~^(?:public-state|radio|feedbacks|logout|analytics/event|me/profile(?:/title)?|me/ecosystem|me/favorites/(?:items|products)/[A-Za-z0-9_-]+|me/orders(?:/[A-Za-z0-9_-]+/delivery)?|products/[A-Za-z0-9_-]+/order|control(?:/[A-Za-z0-9_/-]+)?)$~', $endpoint)
+    if (!preg_match('~^(?:public-state|radio|feedbacks|logout|search|analytics/event|me/profile(?:/title)?|me/ecosystem|me/favorites/(?:items|products)/[A-Za-z0-9_-]+|me/orders(?:/[A-Za-z0-9_-]+/delivery)?|me/cart(?:/checkout)?|me/notifications(?:/read-all|/[A-Za-z0-9_-]+)?|me/missions/[A-Za-z0-9_-]+/claim|me/leaderboard|me/gallery|me/tickets(?:/[A-Za-z0-9_-]+/(?:messages|reply|transcript))?|products/[A-Za-z0-9_-]+/(?:order|recommendations)|control(?:/[A-Za-z0-9_/-]+)?)$~', $endpoint)
         || str_contains($endpoint, '..')) fail(404, 'Rota não encontrada.');
     $headers = ['Accept: application/json'];
     $token = $_COOKIE['studio_web_token'] ?? '';
@@ -117,7 +117,7 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
         }
         if (!$found) http_response_code(404);
     }
-} elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/account', '/control', '/discord'], true)) http_response_code(404);
+} elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/collections', '/community', '/compare', '/cart', '/account', '/control', '/discord'], true)) http_response_code(404);
 $escape = fn(string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $url = STUDIO_ORIGIN . $path;
 $tags = '<title>' . $escape($title) . '</title><meta name="description" content="' . $escape($description) . '">';
