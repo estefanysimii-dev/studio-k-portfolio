@@ -322,18 +322,16 @@ export default function StudioAssistant() {
   const current = messages[index % Math.max(messages.length, 1)];
 
   useEffect(() => {
-    if (!current || !config.campaigns.some((campaign) => campaign.id === current.id)) return;
-    try {
-      const next = { ...campaignViews, [current.id]: Number(campaignViews[current.id] || 0) + 1 };
-      localStorage.setItem("studio-k-kiki-impressions", JSON.stringify(next));
-      setCampaignViews(next);
-    } catch {}
-  }, [current?.id]);
-
-  useEffect(() => {
     if (!config.enabled || messages.length === 0) return;
     const hideAt = window.setTimeout(() => setVisible(false), Math.max(1000, intervalMs - 450));
     const nextAt = window.setTimeout(() => {
+      if (current && config.campaigns.some((campaign) => campaign.id === current.id)) {
+        try {
+          const nextViews = { ...campaignViews, [current.id]: Number(campaignViews[current.id] || 0) + 1 };
+          localStorage.setItem("studio-k-kiki-impressions", JSON.stringify(nextViews));
+          setCampaignViews(nextViews);
+        } catch {}
+      }
       setIndex((value) => (value + 1) % messages.length);
       setVisible(true);
     }, intervalMs);
@@ -341,7 +339,7 @@ export default function StudioAssistant() {
       window.clearTimeout(hideAt);
       window.clearTimeout(nextAt);
     };
-  }, [config.enabled, index, intervalMs, messages.length]);
+  }, [campaignViews, config.campaigns, config.enabled, current?.id, index, intervalMs, messages.length]);
 
   useEffect(() => {
     if (index >= messages.length) setIndex(0);
