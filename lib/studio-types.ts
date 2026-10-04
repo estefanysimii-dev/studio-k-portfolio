@@ -570,6 +570,8 @@ export type StudioAnalytics = {
   ordersCreated: number;
   paidOrders: number;
   revenue: number;
+  avgTicket: number;
+  topCoupons: { label: string; value: number }[];
   clicks: number;
   searches: number;
   filters: number;
