@@ -41,3 +41,21 @@ test('InfinityFree gateway exposes Studio K ID ecosystem routes', () => {
   }
   assert.match(gateway, /me\/profile\(\?:\/title\)\?/);
 });
+
+
+test('InfinityFree gateway exposes Studio K commerce routes', () => {
+  const gateway = readFileSync(resolve('dist-infinityfree/index.php'), 'utf8');
+  for (const route of [
+    'search',
+    'me/cart',
+    'me/notifications',
+    'me/missions/',
+    'me/leaderboard',
+    'me/gallery',
+    'me/tickets',
+    'recommendations'
+  ]) {
+    assert.match(gateway, new RegExp(route.replace('/', '\\/')));
+  }
+  assert.match(gateway, /collections\/\[A-Za-z0-9-\]/);
+});
