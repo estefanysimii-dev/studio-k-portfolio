@@ -11,6 +11,7 @@ import StudioRadio from "./studio-radio";
 import StudioAssistant from "./studio-assistant";
 import BehaviorTracker from "./behavior-tracker";
 import CommerceActions from "./commerce-actions";
+import CommerceBanners from "./commerce-banners";
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -154,7 +155,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
         </header>
 
-        <section className="page-content">{children}</section>
+        <section className="page-content"><CommerceBanners />{children}</section>
       </main>
 
       {variant !== "control" && <StudioAssistant />}
