@@ -168,7 +168,8 @@ export type StudioBanner = {
   text: string;
   imageUrl: string;
   href: string;
-  placement: "all" | "home" | "products" | "portfolio" | "popup";
+  placement: "all" | "home" | "products" | "portfolio" | "popup" | "specific";
+  pages?: string[];
   active: boolean;
   startsAt: string;
   endsAt: string;
