@@ -119,6 +119,7 @@ export const studioApi = {
     request<import("./studio-types").StudioGalleryItem>("me/gallery", { method: "POST", body: JSON.stringify(body) }),
   myTickets: () => request<{ tickets: StudioTicket[] }>("me/tickets"),
   ticketMessages: (id: string) => request<{ messages: StudioTicketMessage[] }>(`me/tickets/${encodeURIComponent(id)}/messages`),
+  ticketTranscript: (id: string) => request<{ id: string; transcript: string }>(`me/tickets/${encodeURIComponent(id)}/transcript`),
   replyTicket: (id: string, text: string) =>
     request<{ ok: boolean; id: string; created: string }>(`me/tickets/${encodeURIComponent(id)}/reply`, { method: "POST", body: JSON.stringify({ text }) }),
   myProfile: () => request<{ profile: import("./studio-types").StudioMemberProfile; favorites: { items: string[]; products: string[] } }>("me/profile"),
