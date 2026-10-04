@@ -24,7 +24,7 @@ const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productI
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
 const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",xp:50,active:true,startsAt:"",endsAt:"" });
 const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],excludedProductIds:[],collectionIds:[],active:true });
-const emptyBanner = (): StudioBanner => ({ id:"",title:"",text:"",imageUrl:"",href:"",placement:"all",active:true,startsAt:"",endsAt:"" });
+const emptyBanner = (): StudioBanner => ({ id:"",title:"",text:"",imageUrl:"",href:"",placement:"all",pages:[],active:true,startsAt:"",endsAt:"" });
 const emptySchedule = (): StudioSchedule => ({ id:"",kind:"product_publish",targetId:"",runAt:new Date(Date.now()+3600000).toISOString(),status:"scheduled",error:"" });
 const emptyLookbook = (): StudioLookbook => ({ id:"",name:"",description:"",coverUrl:"",productIds:[],active:true });
 
@@ -182,10 +182,14 @@ export default function CommerceControl({ commerce, products, items, roles, vers
         <div className="form-heading"><div><span className="section-eyebrow">BANNERS</span><h2>Banner Manager</h2></div></div>
         <div className="form-grid two">
           <label>Título<input value={banner.title} onChange={e=>setBanner({...banner,title:e.target.value})}/></label>
-          <label>Local<select value={banner.placement} onChange={e=>setBanner({...banner,placement:e.target.value as StudioBanner["placement"]})}><option value="all">Site inteiro</option><option value="home">Home</option><option value="products">Produtos</option><option value="portfolio">Portfólio</option><option value="popup">Pop-up</option></select></label>
+          <label>Local<select value={banner.placement} onChange={e=>setBanner({...banner,placement:e.target.value as StudioBanner["placement"]})}><option value="all">Site inteiro</option><option value="home">Home</option><option value="products">Produtos</option><option value="portfolio">Portfólio</option><option value="popup">Pop-up</option><option value="specific">Páginas específicas</option></select></label>
           <label className="span-2">Texto<textarea rows={2} value={banner.text} onChange={e=>setBanner({...banner,text:e.target.value})}/></label>
           <label>Imagem<input value={banner.imageUrl} onChange={e=>setBanner({...banner,imageUrl:e.target.value})}/></label>
           <label>Destino<input value={banner.href} onChange={e=>setBanner({...banner,href:e.target.value})}/></label>
+          {banner.placement === "specific" && <label className="span-2">Páginas específicas
+            <input value={(banner.pages || []).join(", ")} onChange={(e)=>setBanner({...banner,pages:e.target.value.split(",").map(item=>item.trim()).filter(Boolean)})} placeholder="/account, /products/*, /collections/neon"/>
+            <small>Separe por vírgula. Use * no final para incluir páginas filhas.</small>
+          </label>}
           <label>Começa<input type="datetime-local" value={localValue(banner.startsAt)} onChange={e=>setBanner({...banner,startsAt:isoValue(e.target.value)})}/></label>
           <label>Termina<input type="datetime-local" value={localValue(banner.endsAt)} onChange={e=>setBanner({...banner,endsAt:isoValue(e.target.value)})}/></label>
         </div>
