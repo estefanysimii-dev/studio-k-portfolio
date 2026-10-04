@@ -23,7 +23,7 @@ type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" |
 const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],giftProductId:"",active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
 const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",xp:50,active:true,startsAt:"",endsAt:"" });
-const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],collectionIds:[],active:true });
+const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],excludedProductIds:[],collectionIds:[],active:true });
 const emptyBanner = (): StudioBanner => ({ id:"",title:"",text:"",imageUrl:"",href:"",placement:"all",active:true,startsAt:"",endsAt:"" });
 const emptySchedule = (): StudioSchedule => ({ id:"",kind:"product_publish",targetId:"",runAt:new Date(Date.now()+3600000).toISOString(),status:"scheduled",error:"" });
 const emptyLookbook = (): StudioLookbook => ({ id:"",name:"",description:"",coverUrl:"",productIds:[],active:true });
@@ -162,7 +162,18 @@ export default function CommerceControl({ commerce, products, items, roles, vers
           <label>Desconto (%)<input type="number" min={0} max={100} value={benefit.discountPercent} onChange={e=>setBenefit({...benefit,discountPercent:Number(e.target.value)||0})}/></label>
           <label className="check-field"><input type="checkbox" checked={benefit.stackWithCoupon} onChange={e=>setBenefit({...benefit,stackWithCoupon:e.target.checked})}/> Pode acumular com cupom</label>
         </div>
-        <span className="section-eyebrow">RESTRINGIR A PRODUTOS (VAZIO = TODOS)</span><MultiProducts selected={benefit.productIds} products={products} onChange={productIds=>setBenefit({...benefit,productIds})}/>
+        <span className="section-eyebrow">APLICAR SOMENTE A PRODUTOS (VAZIO = QUALQUER PRODUTO)</span>
+        <MultiProducts selected={benefit.productIds} products={products} onChange={productIds=>setBenefit({...benefit,productIds})}/>
+
+        <span className="section-eyebrow">COLEÇÕES VÁLIDAS</span>
+        <div className="commerce-check-grid">
+          {commerce.collections.map((collection)=><label key={collection.id}><input type="checkbox" checked={benefit.collectionIds.includes(collection.id)} onChange={(e)=>setBenefit({...benefit,collectionIds:e.target.checked?[...benefit.collectionIds,collection.id]:benefit.collectionIds.filter(id=>id!==collection.id)})}/><span>{collection.name}</span></label>)}
+          {!commerce.collections.length && <span className="muted">Crie uma coleção para restringir o benefício por coleção.</span>}
+        </div>
+
+        <span className="section-eyebrow">PRODUTOS EXCLUÍDOS</span>
+        <MultiProducts selected={benefit.excludedProductIds || []} products={products} onChange={excludedProductIds=>setBenefit({...benefit,excludedProductIds})}/>
+
         <button className="btn btn-primary" disabled={busy||!benefit.roleId||!benefit.label} onClick={()=>void save("roleBenefits",benefit,()=>setBenefit(emptyBenefit()))}>{benefit.id?"Salvar benefício":"Criar benefício"}</button>
         <div className="commerce-list">{(commerce.roleBenefits||[]).map(x=><article key={x.id}><div><strong>{x.label}</strong><span>{x.discountPercent}% · {roles.find(r=>r.id===x.roleId)?.name||x.roleId}</span></div><div><button onClick={()=>setBenefit(x)}>Editar</button><button className="danger" onClick={()=>void remove("roleBenefits",x.id)}>Excluir</button></div></article>)}</div>
       </section>}
