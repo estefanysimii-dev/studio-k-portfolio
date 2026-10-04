@@ -389,6 +389,7 @@ export default function AccountPage() {
                   <span className="meta-line">#{order.id.slice(0, 8)}</span>
                   <strong>{order.productName}</strong>
                   <small>{statusLabel[order.status] || order.status} · {money.format(order.price / 100)}</small>
+                  {order.edition && <small className="order-edition">{order.edition.label} · #{String(order.edition.number).padStart(2, "0")}/{order.edition.total}</small>}
                 </div>
                 {order.deliveryType === "digital" && ["paid", "delivered"].includes(order.status) && (
                   <button className="btn btn-outline compact" type="button" onClick={() => void recoverDelivery(order)}>Ver entrega</button>
