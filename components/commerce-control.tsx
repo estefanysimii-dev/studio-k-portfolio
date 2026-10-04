@@ -20,7 +20,7 @@ type Props = {
 
 type Section = "bundles" | "collections" | "missions" | "benefits" | "banners" | "schedules" | "automation" | "gallery" | "lookbooks" | "history";
 
-const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],active:true });
+const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],giftProductId:"",active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
 const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",xp:50,active:true,startsAt:"",endsAt:"" });
 const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],collectionIds:[],active:true });
@@ -110,6 +110,13 @@ export default function CommerceControl({ commerce, products, items, roles, vers
               placeholder={"2 | percent | 5\n3 | percent | 10\n4 | percent | 15"}
             />
             <small>Formato: quantidade | percent/fixed | valor. Se houver faixas, a melhor alcançada substitui o desconto simples.</small>
+          </label>
+          <label className="span-2">Produto grátis ao atingir o combo
+            <select value={bundle.giftProductId || ""} onChange={(e)=>setBundle({...bundle,giftProductId:e.target.value})}>
+              <option value="">Sem brinde automático</option>
+              {products.map((product)=><option value={product.id} key={product.id}>{product.name}</option>)}
+            </select>
+            <small>Quando a meta mínima do combo for atingida, este produto entra no pedido com valor R$ 0,00.</small>
           </label>
         </div>
         <span className="section-eyebrow">PRODUTOS DO COMBO</span><MultiProducts selected={bundle.productIds} products={products} onChange={productIds=>setBundle({...bundle,productIds})}/>
