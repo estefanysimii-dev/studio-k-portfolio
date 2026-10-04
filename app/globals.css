@@ -6141,3 +6141,132 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .version-list article>div:first-child>small{color:var(--purple-light);font-size:6.5px}.version-diff{margin-top:6px}.version-diff summary{width:max-content;color:var(--purple-light);cursor:pointer;font-size:7px;font-weight:800}.version-diff>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:7px}.version-diff section{min-width:0;padding:8px;border:1px solid rgba(177,96,255,.09);border-radius:8px;background:rgba(0,0,0,.14)}.version-diff b{display:block;margin-bottom:5px;color:var(--text-2);font-size:6px}.version-diff pre{max-height:220px;overflow:auto;margin:0;white-space:pre-wrap;word-break:break-word;color:var(--silver);font-size:6.5px;line-height:1.4}
 @media(max-width:720px){.version-diff>div{grid-template-columns:1fr}}
 /* ===== /Studio K Commerce Suite · audit + activity ===== */
+
+
+/* ===== Studio K readability + member UX 2026-10 ===== */
+.community-columns{gap:22px;margin-top:28px}
+.community-gallery,.activity-feed,.community-ranking{padding:24px}
+.community-gallery-grid{gap:14px}
+.community-gallery-grid article>div{padding:13px}
+.community-gallery-grid strong{font-size:13px;line-height:1.35}
+.community-gallery-grid p{margin:6px 0 0;font-size:11px;line-height:1.55}
+.activity-feed{gap:8px}
+.activity-feed>a{grid-template-columns:9px 1fr;gap:11px;padding:12px;border-radius:11px}
+.activity-feed>a>i{width:9px;height:9px;margin-top:5px}
+.activity-feed strong{font-size:12px;line-height:1.35}
+.activity-feed span{font-size:10px;line-height:1.45}
+.community-ranking>div:not(.section-heading){padding:12px 0}
+.community-ranking>div span,.community-ranking>div strong{font-size:12px}
+.community-gallery .muted,.activity-feed .muted,.community-ranking .muted{font-size:12px;line-height:1.6}
+.compact-heading h2{font-size:clamp(26px,3vw,42px)}
+.compact-heading .section-eyebrow{font-size:11px}
+.account-community{padding:24px;margin-top:22px}
+.account-community-grid{gap:18px}
+.account-community-grid>div{padding:18px}
+.account-community-grid>div>strong{font-size:15px}
+.account-community-grid>div>p{font-size:12px;line-height:1.6}
+.account-community-grid label{font-size:11px;gap:7px;margin-top:11px}
+.account-community-grid input,.account-community-grid textarea{padding:11px;font-size:12px}
+.community-product-picks{gap:7px;margin:12px 0}
+.community-product-picks label{font-size:11px}
+.ranking-optin span{font-size:12px;line-height:1.55}
+
+.community-dropzone{
+  margin-top:14px!important;
+  min-height:170px;
+  padding:22px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center;
+  text-align:center;
+  border:1px dashed rgba(190,120,255,.44)!important;
+  border-radius:16px!important;
+  background:linear-gradient(180deg,rgba(108,25,255,.08),rgba(var(--surface-rgb),.32))!important;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.community-dropzone:hover,.community-dropzone.dragging{
+  border-color:rgba(210,164,255,.8)!important;
+  background:rgba(108,25,255,.13)!important;
+  transform:translateY(-1px)
+}
+.community-file-input{display:none!important}
+.community-drop-icon{
+  width:42px;height:42px;display:grid;place-items:center;
+  border:1px solid rgba(190,120,255,.32);border-radius:12px;
+  color:var(--purple-light);font-size:24px;background:rgba(108,25,255,.09)
+}
+.community-dropzone strong{font-size:14px;color:var(--white)}
+.community-dropzone span,.community-dropzone small{font-size:11px;color:var(--text-2);line-height:1.5}
+.community-media-preview{
+  position:relative;margin-top:12px;padding:10px;border:1px solid rgba(177,96,255,.14);
+  border-radius:14px;background:rgba(var(--surface-rgb),.36)
+}
+.community-media-preview img,.community-media-preview video{display:block;width:100%;max-height:360px;object-fit:contain;border-radius:10px;background:#07050a}
+.community-media-preview button{
+  position:absolute;top:18px;right:18px;min-height:34px;padding:0 10px;border:1px solid rgba(255,130,160,.25);
+  border-radius:9px;color:#ffb3c2;background:rgba(25,5,12,.84);cursor:pointer;font-size:11px;font-weight:800
+}
+.community-submit-notice{display:block;margin-top:10px;font-size:11px}
+.community-submit-notice.success{color:#8eedb5}
+.community-submit-notice.error{color:#ff9daf}
+
+.ticket-floating-launcher{
+  position:fixed;left:18px;bottom:18px;z-index:70;min-width:170px;padding:12px 14px;
+  display:grid;gap:2px;text-align:left;border:1px solid rgba(194,125,255,.46);border-radius:14px;
+  color:var(--white);background:linear-gradient(135deg,rgba(91,17,180,.96),rgba(35,13,55,.97));
+  box-shadow:0 18px 60px rgba(56,10,92,.42),0 0 26px rgba(139,44,255,.24);cursor:pointer
+}
+.ticket-floating-launcher span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#d6b4ff}
+.ticket-floating-launcher strong{font-size:13px}
+.ticket-floating-panel{
+  position:fixed;left:18px;bottom:88px;z-index:69;width:min(860px,calc(100vw - 36px));height:min(660px,calc(100vh - 120px));
+  padding:18px;display:grid;grid-template-rows:auto auto minmax(0,1fr);gap:12px;
+  background:linear-gradient(180deg,rgba(13,9,22,.97),rgba(8,6,14,.97));box-shadow:0 30px 100px rgba(0,0,0,.52)
+}
+.ticket-floating-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.ticket-floating-head h2{margin:0;font:700 24px/1.1 "Sora",sans-serif}
+.ticket-floating-head .section-eyebrow{margin-bottom:6px}
+.ticket-floating-head>button{width:36px;height:36px;border:1px solid rgba(177,96,255,.18);border-radius:10px;color:var(--white);background:rgba(255,255,255,.035);cursor:pointer;font-size:18px}
+.ticket-create-row{display:flex;gap:8px;align-items:center}
+.ticket-create-row select{min-height:40px;min-width:180px;padding:8px 10px;border:1px solid rgba(177,96,255,.18);border-radius:10px;color:var(--white);background:rgba(var(--surface-rgb),.7);font-size:12px}
+.ticket-floating-body{min-height:0;display:grid;grid-template-columns:240px minmax(0,1fr);gap:10px}
+.ticket-floating-panel .ticket-account-list{max-height:none;min-height:0}
+.ticket-floating-panel .ticket-account-list>button{padding:12px}
+.ticket-floating-panel .ticket-account-list strong{font-size:12px}
+.ticket-floating-panel .ticket-account-list span,.ticket-floating-panel .ticket-account-list small,.ticket-floating-panel .ticket-account-list em{font-size:10px}
+.ticket-floating-panel .ticket-account-thread{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.ticket-floating-panel .ticket-thread-head strong{font-size:14px}
+.ticket-floating-panel .ticket-thread-head span{font-size:10px}
+.ticket-floating-panel .ticket-message-list{max-height:none;min-height:0}
+.ticket-floating-panel .ticket-message-list article{padding:11px}
+.ticket-floating-panel .ticket-message-list strong{font-size:11px}
+.ticket-floating-panel .ticket-message-list p{font-size:11px;line-height:1.55}
+.ticket-floating-panel .ticket-message-list a{font-size:10px}
+.ticket-floating-panel .ticket-message-list small{font-size:9px}
+.ticket-floating-panel .ticket-reply textarea{font-size:12px;line-height:1.5}
+.ticket-floating-panel .ticket-thread-empty{font-size:12px}
+
+.account-activity{padding:24px;margin-top:22px}
+.account-activity-list{gap:8px}
+.account-activity-list article{grid-template-columns:10px minmax(0,1fr);gap:12px;padding:13px;border-radius:11px}
+.account-activity-list article>i{width:10px;height:10px;margin-top:4px}
+.account-activity-list strong{font-size:12px}
+.account-activity-list span{font-size:11px;line-height:1.45}
+.account-activity-list small{font-size:9px}
+.account-activity .muted{font-size:12px;line-height:1.6}
+
+@media(max-width:900px){
+  .ticket-floating-panel{left:12px;bottom:78px;width:calc(100vw - 24px);height:calc(100vh - 100px)}
+  .ticket-floating-body{grid-template-columns:1fr}
+  .ticket-floating-panel .ticket-account-list{grid-template-columns:repeat(2,minmax(0,1fr));max-height:150px}
+}
+@media(max-width:720px){
+  .community-gallery,.activity-feed,.community-ranking,.account-community,.account-activity{padding:18px}
+  .activity-feed strong{font-size:12px}.activity-feed span{font-size:10px}
+  .ticket-floating-launcher{left:10px;right:10px;bottom:10px;width:auto}
+  .ticket-floating-panel{left:8px;bottom:76px;width:calc(100vw - 16px);height:calc(100vh - 90px);padding:12px}
+  .ticket-create-row{align-items:stretch;flex-direction:column}.ticket-create-row select{width:100%}
+  .ticket-floating-panel .ticket-account-list{grid-template-columns:1fr;max-height:130px}
+}
+/* ===== /Studio K readability + member UX 2026-10 ===== */
