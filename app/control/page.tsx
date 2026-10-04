@@ -43,6 +43,7 @@ type ProductDraft = ItemDraft & {
   stockMode: "unlimited" | "digital" | "limited" | "slots" | "numbered";
   stockLimit: number;
   limitedLabel: string;
+  postPurchaseRoleId: string;
 };
 
 const emptyProject: ItemDraft = {
@@ -70,7 +71,8 @@ const emptyProduct: ProductDraft = {
   neon: false,
   stockMode: "unlimited",
   stockLimit: 0,
-  limitedLabel: ""
+  limitedLabel: "",
+  postPurchaseRoleId: ""
 };
 
 const list = (value: string) => value.split(/[\n,]/).map((entry) => entry.trim()).filter(Boolean);
@@ -170,7 +172,8 @@ function productPayload(item: StudioProduct) {
     neon: !!item.neon,
     stockMode: item.stockMode || "unlimited",
     stockLimit: Number(item.stockLimit || 0),
-    limitedLabel: item.limitedLabel || ""
+    limitedLabel: item.limitedLabel || "",
+    postPurchaseRoleId: item.postPurchaseRoleId || ""
   };
 }
 
@@ -322,7 +325,8 @@ export default function ControlPage() {
         neon: product.neon,
         stockMode: product.stockMode,
         stockLimit: product.stockLimit,
-        limitedLabel: product.limitedLabel
+        limitedLabel: product.limitedLabel,
+        postPurchaseRoleId: product.postPurchaseRoleId
       };
       const result = editingProductId
         ? await studioApi.updateProduct(editingProductId, body)
@@ -359,7 +363,8 @@ export default function ControlPage() {
       neon: !!item.neon,
       stockMode: item.stockMode || "unlimited",
       stockLimit: Number(item.stockLimit || 0),
-      limitedLabel: item.limitedLabel || ""
+      limitedLabel: item.limitedLabel || "",
+      postPurchaseRoleId: item.postPurchaseRoleId || ""
     });
     setEditingProductId(item.id);
     setTab("products");
@@ -754,6 +759,12 @@ export default function ControlPage() {
               </label>
               {product.stockMode !== "unlimited" && product.stockMode !== "digital" && <label>Limite total<input type="number" min={0} value={product.stockLimit} onChange={(e) => setProduct({ ...product, stockLimit: Number(e.target.value) || 0 })} /></label>}
               <label>Rótulo de edição<input value={product.limitedLabel} onChange={(e) => setProduct({ ...product, limitedLabel: e.target.value })} placeholder="Ex.: Edição Halloween 2026" /></label>
+              <label>Cargo pós-compra
+                <select value={product.postPurchaseRoleId} onChange={(e) => setProduct({ ...product, postPurchaseRoleId: e.target.value })}>
+                  <option value="">Nenhum cargo automático</option>
+                  {(state.discord?.roles || []).map((role) => <option value={role.id} key={role.id}>{role.name}</option>)}
+                </select>
+              </label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
               <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertObj={() => { setConverterTarget("product"); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
