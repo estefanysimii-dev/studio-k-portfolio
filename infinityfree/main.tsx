@@ -12,6 +12,11 @@ import Products from '@/app/products/page';
 import Account from '@/app/account/page';
 import Discord from '@/app/discord/page';
 import Control from '@/app/control/page';
+import Cart from '@/app/cart/page';
+import Collections from '@/app/collections/page';
+import CollectionDetail from '@/app/collections/[slug]/page';
+import Community from '@/app/community/page';
+import Compare from '@/app/compare/page';
 import { navigate, usePathname } from './navigation';
 import '@/app/globals.css';
 
@@ -23,7 +28,7 @@ function Routes() {
       const target = event.target instanceof Element ? event.target.closest('a') : null;
       if (!target || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || target.target || target.hasAttribute('download')) return;
       const url = new URL(target.href);
-      if (url.origin !== location.origin || !/^\/(?:$|portfolio(?:\/[^/]+)?\/?$|products(?:\/[^/]+)?\/?$|account\/?$|control\/?$|discord\/?$)/.test(url.pathname) || url.hash) return;
+      if (url.origin !== location.origin || !/^\/(?:$|portfolio(?:\/[^/]+)?\/?$|products(?:\/[^/]+)?\/?$|collections(?:\/[^/]+)?\/?$|community\/?$|compare\/?$|cart\/?$|account\/?$|control\/?$|discord\/?$)/.test(url.pathname) || url.hash) return;
       event.preventDefault(); navigate(url.pathname + url.search);
     };
     document.addEventListener('click', route);
@@ -40,10 +45,17 @@ function Routes() {
       ? <ShowcaseDetail key={path} kind="product" item={item as typeof state.products[number]} />
       : <ShowcaseDetail key={path} kind="portfolio" item={item} />;
   }
+  const collectionMatch = path.match(/^\/collections\/([^/]+)$/);
+  if (collectionMatch) return <CollectionDetail />;
+
   switch (path) {
     case '/': return <Home />;
     case '/portfolio': return <Portfolio />;
     case '/products': return <Products />;
+    case '/collections': return <Collections />;
+    case '/community': return <Community />;
+    case '/compare': return <Compare />;
+    case '/cart': return <Cart />;
     case '/account': return <Account />;
     case '/discord': return <Discord />;
     case '/control': return <Control />;
