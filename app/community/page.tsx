@@ -48,7 +48,7 @@ export default function CommunityPage() {
 
       {!!ranking.length && <section className="glass-panel community-ranking">
         <div className="section-heading compact-heading"><div><span className="section-eyebrow">RANKING OPCIONAL</span><h2>Studio K Community</h2></div></div>
-        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "Studio K Member"}</span><strong>{entry.score} XP</strong></div>)}
+        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "Studio K Member"}</span><strong>{entry.score} pontos</strong></div>)}
         <p className="muted">Somente membros que optaram por aparecer entram neste ranking.</p>
       </section>}
     </StudioShell>
