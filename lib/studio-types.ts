@@ -168,7 +168,6 @@ export type StudioMission = {
   type: "view_product" | "favorite_products" | "purchases" | "feedbacks" | "join_discord" | "visit_path";
   target: number;
   targetId: string;
-  xp: number;
   active: boolean;
   startsAt: string;
   endsAt: string;
@@ -396,14 +395,6 @@ export type StudioIdBadgeConfig = {
 
 export type StudioIdConfig = {
   enabled: boolean;
-  xp: {
-    base: number;
-    discordMember: number;
-    purchase: number;
-    feedback: number;
-    favorite: number;
-  };
-  levelStep: number;
   earlyMemberLimit: number;
   thresholds: {
     collectorPurchases: number;
@@ -430,10 +421,6 @@ export type StudioIdConfig = {
 export type StudioMemberProfile = {
   studioId: string;
   joinedAt: string;
-  level: number;
-  xp: number;
-  levelFloor: number;
-  nextLevelXp: number;
   rank: { id: string; label: string; icon: string; rarity: StudioMemberRarity };
   equippedTitle: { id: string; label: string; rarity: StudioMemberRarity };
   titles: StudioMemberTitle[];
@@ -449,7 +436,6 @@ export type StudioMemberProfile = {
     favorites: number;
     tickets: number;
     openTickets: number;
-    bonusXp?: number;
   };
   purchasedProductIds: string[];
 };
