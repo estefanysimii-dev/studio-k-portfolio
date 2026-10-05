@@ -68,6 +68,10 @@ export default function PortfolioPage() {
             compareModelUrl={selected.compareModelUrl}
             hotspots={selected.viewerHotspots}
             viewerVariants={selected.viewerVariants}
+            viewerModes={selected.viewerModes}
+            outfitModelUrl={selected.outfitModelUrl}
+            outfitPosterUrl={selected.outfitPosterUrl}
+            viewerPieces={selected.viewerPieces}
             posterUrl={selected.coverUrl || selected.gifUrl}
             title={selected.name}
             compact
@@ -86,6 +90,10 @@ export default function PortfolioPage() {
               meta={(item.tags || []).join(" · ")}
               coverUrl={item.coverUrl || item.gifUrl}
               modelUrl={item.modelUrl}
+              viewerModes={item.viewerModes}
+              outfitModelUrl={item.outfitModelUrl}
+              outfitPosterUrl={item.outfitPosterUrl}
+              viewerPieces={item.viewerPieces}
               href={`/portfolio/${item.id}`}
               favoriteKind="items"
               favoriteId={item.id}
