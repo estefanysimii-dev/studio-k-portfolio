@@ -19,12 +19,6 @@ const statusLabel: Record<string, string> = {
   cancelled: "Cancelado",
   expired: "Expirado"
 };
-const rarityLabel: Record<string, string> = {
-  common: "Comum",
-  rare: "Raro",
-  epic: "Épico",
-  legendary: "Lendário"
-};
 
 export default function AccountPage() {
   const { state, refresh } = useStudio();
@@ -148,7 +142,7 @@ export default function AccountPage() {
             <div>
               <h1>{me.user?.name || me.user?.username || "Membro Studio K"}</h1>
               <span>@{me.user?.username || "studio-k"}</span>
-              <small className={`studio-id-equipped-title rarity-text-${profile?.equippedTitle?.rarity || "common"}`}>
+              <small className="studio-id-equipped-title">
                 {profile?.equippedTitle?.label || "Studio K Member"}
               </small>
             </div>
@@ -203,10 +197,12 @@ export default function AccountPage() {
       <section className="account-evolution-grid account-title-grid">
         <article className="account-evolution-panel glass-panel">
           <div className="section-mini-head">
-            <span>TÍTULOS EQUIPÁVEIS</span>
-            <small>{profile?.titles?.filter((title) => title.unlocked).length || 0} desbloqueados</small>
+            <span>TÍTULOS DO PERFIL</span>
+            <small>{profile?.titles?.length || 0} disponíveis</small>
           </div>
-          <p className="account-evolution-copy">Escolha o título que aparece junto ao seu Studio K ID.</p>
+          <p className="account-evolution-copy">
+            Seus títulos são definidos pelos cargos que você possui no Discord. Escolha qual deles quer exibir no Studio K ID.
+          </p>
           <div className="account-title-list">
             {profile?.titles?.map((title) => {
               const active = profile?.equippedTitle?.id === title.id;
@@ -214,19 +210,26 @@ export default function AccountPage() {
                 <button
                   type="button"
                   key={title.id}
-                  disabled={!title.unlocked || !!titleBusy}
-                  className={`account-title-option rarity-${title.rarity} ${active ? "active" : ""} ${title.unlocked ? "" : "locked"}`.trim()}
+                  disabled={!!titleBusy}
+                  className={`account-title-option ${active ? "active" : ""}`.trim()}
                   onClick={() => void equipTitle(title.id)}
                   title={title.description}
                 >
                   <span>{title.label}</span>
-                  <small>{active ? "Equipado" : title.unlocked ? (titleBusy === title.id ? "Equipando..." : rarityLabel[title.rarity]) : "Bloqueado"}</small>
+                  <small>
+                    {active
+                      ? "Equipado"
+                      : titleBusy === title.id
+                        ? "Equipando..."
+                        : title.source === "discord"
+                          ? title.roleName
+                          : "Padrão"}
+                  </small>
                 </button>
               );
             })}
           </div>
         </article>
-
       </section>
 
       <section className="account-favorites glass-panel">
