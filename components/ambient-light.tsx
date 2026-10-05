@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function AmbientLight() {
+  const pathname = usePathname();
+  const disabled = pathname.startsWith("/control");
+
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (disabled || window.matchMedia("(pointer: coarse)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const root = document.documentElement;
     let frame = 0;
@@ -28,7 +32,8 @@ export default function AmbientLight() {
       window.removeEventListener("pointermove", onMove);
       if (frame) window.cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [disabled]);
 
+  if (disabled) return null;
   return <div className="ambient-light" aria-hidden="true" />;
 }
