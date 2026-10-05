@@ -110,7 +110,7 @@ export default function AccountPage() {
           <h1>Sua identidade dentro do ecossistema Studio K.</h1>
           <p>
             Conecte seu Discord para criar seu Studio K ID, salvar favoritos, acompanhar compras,
-            liberar badges, benefícios e evoluir seu perfil.
+            tickets, entregas e sua participação no Studio K.
           </p>
           <a className="btn btn-primary" href="/api/oauth/start?next=/account">
             Criar meu Studio K ID <Icon name="arrow" />
@@ -120,10 +120,6 @@ export default function AccountPage() {
     );
   }
 
-  const xpFloor = profile?.levelFloor || 0;
-  const xpTarget = profile?.nextLevelXp || Math.max(300, xpFloor + 300);
-  const xpCurrent = profile?.xp || xpFloor;
-  const xpProgress = Math.max(0, Math.min(100, ((xpCurrent - xpFloor) / Math.max(1, xpTarget - xpFloor)) * 100));
   const memberSince = profile?.joinedAt ? new Date(profile.joinedAt) : null;
   const memberSinceLabel = memberSince && !Number.isNaN(memberSince.getTime())
     ? new Intl.DateTimeFormat("pt-BR", { month: "short", year: "numeric" }).format(memberSince)
@@ -169,15 +165,6 @@ export default function AccountPage() {
             <strong>{profile?.studioId || "SK-•••••"}</strong>
           </div>
 
-          <div className="studio-id-level">
-            <div>
-              <span>LEVEL {profile?.level || 1}</span>
-              <small>{profile?.xp || 0} XP</small>
-            </div>
-            <div className="studio-id-progress"><i style={{ width: `${xpProgress}%` }} /></div>
-            <small>{Math.max(0, xpTarget - xpCurrent)} XP para o próximo nível</small>
-          </div>
-
           <div className="studio-id-foot">
             <span>MEMBRO DESDE {memberSinceLabel.toUpperCase()}</span>
             <strong>{profile?.discountPercent ? `${profile.discountPercent}% OFF` : "STUDIO K MEMBER"}</strong>
@@ -189,7 +176,7 @@ export default function AccountPage() {
             <div>
               <span className="section-eyebrow">PERFIL STUDIO K</span>
               <h2>Seu espaço no ecossistema.</h2>
-              <p>Compras, favoritos, badges e benefícios evoluem junto com sua atividade no Studio K.</p>
+              <p>Acompanhe compras, favoritos, feedbacks, tickets e tudo que você salva no Studio K.</p>
             </div>
             <div className="hero-actions">
               {me.canControl && <a className="btn btn-primary compact" href="/control">Central de Controle</a>}

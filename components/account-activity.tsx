@@ -8,12 +8,7 @@ function detail(entry:{event:string;itemId:string;meta:Record<string,unknown>}){
     return String(meta.productName||meta.title||entry.itemId||"Pedido Studio K");
   }
   if(entry.event==="mission_claim"){
-    const xp=Number(meta.xp||0);
-    return `${String(meta.title||"Missão Studio K")}${xp ? ` · +${xp} XP` : ""}`;
-  }
-  if(entry.event==="xp_gain"){
-    const xp=Number(meta.xp||0);
-    return `${xp ? `+${xp} XP · ` : ""}${String(meta.title||meta.source||"Progressão Studio K")}`;
+    return String(meta.title||"Atividade Studio K");
   }
   if(entry.event==="achievement_unlock"){
     return String(meta.title||"Nova conquista");
@@ -30,7 +25,7 @@ export default function AccountActivity() {
     <section className="account-activity glass-panel">
       <div className="section-heading compact-heading">
         <div>
-          <span className="section-eyebrow">PROGRESSÃO</span>
+          <span className="section-eyebrow">ATIVIDADE</span>
           <h2>Histórico recente</h2>
         </div>
       </div>
@@ -45,7 +40,7 @@ export default function AccountActivity() {
               <small>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(entry.created))}</small>
             </div>
           </article>
-        )) : <p className="muted">Compras, XP, missões concluídas e novas conquistas aparecerão aqui.</p>}
+        )) : <p className="muted">Compras, atividades concluídas e novas conquistas aparecerão aqui.</p>}
       </div>
     </section>
   );
