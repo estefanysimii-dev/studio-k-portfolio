@@ -100,10 +100,10 @@ export const studioApi = {
       method: "POST",
       body: JSON.stringify({ channelId })
     }),
-  uploadTicket: (name: string, isPublic: boolean) =>
+  uploadTicket: (name: string, isPublic: boolean, purpose: "library" | "fivem-source" = "library") =>
     request<{ uploadUrl: string; expiresIn: number }>("control/upload-ticket", {
       method: "POST",
-      body: JSON.stringify({ name, public: isPublic })
+      body: JSON.stringify({ name, public: isPublic, purpose })
     }),
   memberUploadTicket: (name: string) =>
     request<{ uploadUrl: string; expiresIn: number }>("me/upload-ticket", {
@@ -115,6 +115,16 @@ export const studioApi = {
       method: "POST",
       body: "{}"
     }),
+  cleanupAssets: () =>
+    request<{
+      ok: boolean;
+      removedAssets: number;
+      removedTemporarySources: number;
+      removedGenerated: number;
+      removedUntrackedFiles: number;
+      freedBytes: number;
+      keptAssets: number;
+    }>("control/assets/cleanup", { method: "POST", body: "{}" }),
   processFiveMPreview: (yddAssetId: string, ytdAssetId: string) =>
     request<{
       publicUrl: string;
