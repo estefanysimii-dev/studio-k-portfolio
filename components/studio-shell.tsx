@@ -2,17 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CSSProperties, useState } from "react";
+import { CSSProperties, lazy, Suspense, useEffect, useState } from "react";
 import Icon from "./icons";
 import { useStudio } from "./studio-provider";
 import { ThemeToggle } from './theme-provider';
 import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
 import StudioRadio from "./studio-radio";
-import StudioAssistant from "./studio-assistant";
 import BehaviorTracker from "./behavior-tracker";
 import CommerceActions from "./commerce-actions";
 import CommerceBanners from "./commerce-banners";
-import AccountTickets from "./account-tickets";
+
+const StudioAssistant = lazy(() => import("./studio-assistant"));
+const AccountTickets = lazy(() => import("./account-tickets"));
 
 const nav = [
   { href: "/", label: "Início", icon: "home" },
@@ -46,6 +47,26 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const pathname = usePathname();
   const { state, loading } = useStudio();
   const { site, me, status } = state;
+  const [enhancementsReady, setEnhancementsReady] = useState(false);
+
+  useEffect(() => {
+    let timer = 0;
+    const activate = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setEnhancementsReady(true), 320);
+    };
+
+    if (document.documentElement.classList.contains("studio-entry-locked")) {
+      window.addEventListener("studio-k-entered", activate, { once: true });
+    } else {
+      activate();
+    }
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("studio-k-entered", activate);
+    };
+  }, []);
 
   const invite = discordInviteHref(site.discordInviteUrl);
   const appInvite = discordAppInviteHref(invite);
@@ -56,9 +77,11 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
     ? "SUA IDENTIDADE. SUA CIDADE."
     : site.brandTagline;
   const configuredBg = variant === "control" ? site.controlBackgroundUrl : site.homeBackgroundUrl;
-  const backgroundUrl = configuredBg && !configuredBg.startsWith("/media/")
+  const backgroundUrl = configuredBg &&
+    !configuredBg.startsWith("/media/") &&
+    configuredBg !== "/studio-assets/studio-k-banner-hq.webp"
     ? configuredBg
-    : "/studio-assets/studio-k-banner-hq.webp";
+    : "/studio-assets/studio-k-banner.webp";
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated
@@ -126,7 +149,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
         <div className="sidebar-foot">
           <Link href="/account" className="mini-profile">
             {me.user?.avatar ? (
-              <img className="profile-avatar" src={me.user.avatar} alt="" />
+              <img className="profile-avatar" src={me.user.avatar} alt="" loading="lazy" decoding="async" />
             ) : (
               <div className="avatar-placeholder">{me.authenticated ? "SK" : "K"}</div>
             )}
@@ -162,7 +185,12 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
         <section className="page-content"><CommerceBanners />{children}</section>
       </main>
 
-      {variant !== "control" && <><StudioAssistant /><AccountTickets /></>}
+      {variant !== "control" && enhancementsReady && (
+        <Suspense fallback={null}>
+          <StudioAssistant />
+          <AccountTickets />
+        </Suspense>
+      )}
       <BehaviorTracker />
     </div>
   );
