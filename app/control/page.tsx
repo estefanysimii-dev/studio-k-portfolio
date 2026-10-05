@@ -107,6 +107,14 @@ const parseViewerVariants = (value: string) =>
     };
   }).filter((variant): variant is NonNullable<typeof variant> => Boolean(variant));
 
+const createViewerPiece = (number: number): StudioViewerPiece => ({
+  id: `piece-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  label: `Peça ${number}`,
+  component: "",
+  modelUrl: "",
+  posterUrl: ""
+});
+
 function itemDraft(item: StudioItem): ItemDraft {
   return {
     name: item.name,
