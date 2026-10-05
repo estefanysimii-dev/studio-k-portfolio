@@ -16,7 +16,7 @@ export default function EntryIntro() {
   useEffect(() => {
     if (phase !== "leaving") return;
     document.documentElement.classList.remove("studio-entry-locked");
-    const timer = window.setTimeout(() => setPhase("gone"), 1000);
+    const timer = window.setTimeout(() => setPhase("gone"), 900);
     return () => window.clearTimeout(timer);
   }, [phase]);
 
@@ -25,6 +25,9 @@ export default function EntryIntro() {
   const enter = () => {
     if (phase === "locked") setPhase("leaving");
   };
+
+  const infinityPath =
+    "M34 105C70 26 145 26 210 105C275 184 350 184 386 105C350 26 275 26 210 105C145 184 70 184 34 105Z";
 
   return (
     <div
@@ -44,39 +47,16 @@ export default function EntryIntro() {
       <div className="studio-entry-stars" aria-hidden="true" />
 
       <div className="studio-entry-stage" aria-hidden="true">
-        <div className="studio-entry-art studio-entry-logo">
-          <span className="studio-entry-aura" />
-          <img src="/studio-assets/studio-k-logo.webp" alt="" draggable={false} />
-        </div>
-
         <div className="studio-entry-infinity">
-          <span className="studio-entry-core" />
+          <span className="studio-entry-infinity-halo" />
           <svg viewBox="0 0 420 210" focusable="false">
-            <path
-              className="studio-entry-inf-glow"
-              d="M34 105C70 26 145 26 210 105C275 184 350 184 386 105C350 26 275 26 210 105C145 184 70 184 34 105Z"
-            />
-            <path
-              className="studio-entry-inf-line"
-              d="M34 105C70 26 145 26 210 105C275 184 350 184 386 105C350 26 275 26 210 105C145 184 70 184 34 105Z"
-            />
-            <path
-              className="studio-entry-inf-runner"
-              d="M34 105C70 26 145 26 210 105C275 184 350 184 386 105C350 26 275 26 210 105C145 184 70 184 34 105Z"
-            />
+            <path className="studio-entry-inf-blur" d={infinityPath} />
+            <path className="studio-entry-inf-glow" d={infinityPath} />
+            <path className="studio-entry-inf-line" d={infinityPath} />
+            <path className="studio-entry-inf-runner-soft" d={infinityPath} />
+            <path className="studio-entry-inf-runner" d={infinityPath} />
           </svg>
         </div>
-
-        <div className="studio-entry-art studio-entry-kiki">
-          <span className="studio-entry-aura" />
-          <img src="/studio-assets/studio-k-mascot.webp" alt="" draggable={false} />
-        </div>
-      </div>
-
-      <div className="studio-entry-copy">
-        <span>STUDIO K</span>
-        <strong>Clique para entrar</strong>
-        <small>Experiência interativa · FiveM Design</small>
       </div>
     </div>
   );
