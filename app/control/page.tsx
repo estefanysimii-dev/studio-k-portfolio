@@ -764,7 +764,8 @@ export default function ControlPage() {
 
       {tab === "studioId" && studioIdDraft && (
         <StudioIdSettings
-          value={studioIdDraft}
+          value={studioIdDraft}
+          roles={state.discord?.roles || []}
           onChange={setStudioIdDraft}
           onSave={() => void saveStudioIdSettings()}
         />
