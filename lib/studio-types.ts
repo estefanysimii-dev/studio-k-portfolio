@@ -324,29 +324,36 @@ export type StudioAsset = {
   generated?: boolean;
 };
 
-export type StudioMemberRarity = "common" | "rare" | "epic" | "legendary";
-
 export type StudioMemberTitle = {
   id: string;
   label: string;
-  rarity: StudioMemberRarity;
   description: string;
-  unlocked: boolean;
+  roleId: string;
+  roleName: string;
+  source: "default" | "discord";
+};
+
+export type StudioRoleTitleConfig = {
+  id: string;
+  label: string;
+  description: string;
+  roleId: string;
+  enabled: boolean;
 };
 
 export type StudioIdConfig = {
   enabled: boolean;
-  earlyMemberLimit: number;
-  thresholds: {
-    collectorPurchases: number;
+  defaultTitle: {
+    label: string;
+    description: string;
   };
-  supporterRolePattern: string;
+  titles: StudioRoleTitleConfig[];
 };
 
 export type StudioMemberProfile = {
   studioId: string;
   joinedAt: string;
-  equippedTitle: { id: string; label: string; rarity: StudioMemberRarity };
+  equippedTitle: StudioMemberTitle;
   titles: StudioMemberTitle[];
   discountPercent: number;
   favorites: { items: string[]; products: string[] };
