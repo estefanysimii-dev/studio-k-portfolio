@@ -15,7 +15,7 @@ import FiveMConverter from "@/components/fivem-converter";
 import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
-import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
+import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite, StudioViewerMode, StudioViewerPiece } from "@/lib/studio-types";
 
 type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "commerce" | "portfolio" | "products" | "media" | "converter" | "integrations" | "clothtool";
 
