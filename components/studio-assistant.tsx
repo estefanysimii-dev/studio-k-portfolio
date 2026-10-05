@@ -315,7 +315,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [campaignViews, config.campaigns, dwellReady, index, levelUp, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.personal?.recommendations, state.products]);
+  }, [campaignViews, config.campaigns, dwellReady, index, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.personal?.recommendations, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];
