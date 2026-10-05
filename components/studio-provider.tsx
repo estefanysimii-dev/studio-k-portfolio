@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import type { StudioPublicState } from "@/lib/studio-types";
 import { DEFAULT_DISCORD_INVITE } from "@/lib/links";
@@ -77,25 +77,44 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<StudioPublicState>(fallback);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const inFlight = useRef<Promise<void> | null>(null);
+  const lastSuccessAt = useRef(0);
 
-  const refresh = useCallback(async () => {
-    try {
-      setError("");
-      const next = await studioApi.publicState();
-      setState(next);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Studio K.");
-    } finally {
-      setLoading(false);
-    }
+  const refresh = useCallback(() => {
+    if (inFlight.current) return inFlight.current;
+
+    const run = (async () => {
+      try {
+        setError("");
+        const next = await studioApi.publicState();
+        setState(next);
+        lastSuccessAt.current = Date.now();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Studio K.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+
+    inFlight.current = run;
+    void run.finally(() => {
+      if (inFlight.current === run) inFlight.current = null;
+    });
+    return run;
   }, []);
 
   useEffect(() => {
     void refresh();
-    const timer = window.setInterval(() => void refresh(), 60000);
-    const syncWhenVisible = () => {
-      if (document.visibilityState === "visible") void refresh();
+
+    const refreshWhenUseful = (minimumAgeMs: number) => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - lastSuccessAt.current < minimumAgeMs) return;
+      void refresh();
     };
+
+    const timer = window.setInterval(() => refreshWhenUseful(55_000), 60_000);
+    const syncWhenVisible = () => refreshWhenUseful(30_000);
+
     document.addEventListener("visibilitychange", syncWhenVisible);
     return () => {
       window.clearInterval(timer);
