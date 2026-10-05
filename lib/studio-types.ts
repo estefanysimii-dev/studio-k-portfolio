@@ -363,14 +363,6 @@ export type StudioPerk = {
   target: number;
 };
 
-export type StudioIdRankConfig = {
-  id: string;
-  label: string;
-  icon: string;
-  rarity: StudioMemberRarity;
-  minLevel: number;
-};
-
 export type StudioIdBadgeCondition =
   | "always"
   | "early-member"
@@ -399,10 +391,6 @@ export type StudioIdConfig = {
   thresholds: {
     collectorPurchases: number;
     profileFramePurchases: number;
-    creatorLevel: number;
-    levelFive: number;
-    insiderLevel: number;
-    iconLevel: number;
   };
   supporterRolePattern: string;
   features: {
@@ -410,18 +398,12 @@ export type StudioIdConfig = {
     achievements: boolean;
     perks: boolean;
   };
-  ranks: StudioIdRankConfig[];
   badges: StudioIdBadgeConfig[];
-  discordRankSync: {
-    enabled: boolean;
-    roleIds: Record<string, string>;
-  };
 };
 
 export type StudioMemberProfile = {
   studioId: string;
   joinedAt: string;
-  rank: { id: string; label: string; icon: string; rarity: StudioMemberRarity };
   equippedTitle: { id: string; label: string; rarity: StudioMemberRarity };
   titles: StudioMemberTitle[];
   discountPercent: number;
