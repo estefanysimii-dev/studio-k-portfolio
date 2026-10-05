@@ -200,7 +200,12 @@ export default function ControlPage() {
   const [editingProductId, setEditingProductId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
-  const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
+  const [converterTarget, setConverterTarget] = useState<
+    | { kind: "project-base" }
+    | { kind: "project-outfit" }
+    | { kind: "project-piece"; pieceId: string }
+    | { kind: "product-base" }
+  >({ kind: "project-base" });
   const [announceChannelId, setAnnounceChannelId] = useState("");
   const [digitalStockBatch, setDigitalStockBatch] = useState("");
   const [stockBusy, setStockBusy] = useState(false);
@@ -703,7 +708,7 @@ export default function ControlPage() {
               <label>Categoria<input value={project.category} onChange={(e) => setProject({ ...project, category: e.target.value })} /></label>
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={project.coverUrl} onChange={(value) => setProject({ ...project, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("project"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertFiveM={() => { setConverterTarget({ kind: "project-base" }); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={project.compareModelUrl} onChange={(value) => setProject({ ...project, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={project.viewerHotspots} onChange={(e) => setProject({ ...project, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Manga emissiva | 0.12 0.84 0.05 | 0 1 0"} />
@@ -774,7 +779,7 @@ export default function ControlPage() {
                 </select>
               </label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("product"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertFiveM={() => { setConverterTarget({ kind: "product-base" }); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={product.viewerHotspots} onChange={(e) => setProduct({ ...product, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Material neon | 0.15 0.90 0.04 | 0 1 0"} />
@@ -943,15 +948,35 @@ export default function ControlPage() {
         <FiveMConverter
           onChanged={refresh}
           onUse={(url) => {
-            if (converterTarget === "product") {
+            if (converterTarget.kind === "product-base") {
               setProduct((current) => ({ ...current, modelUrl: url }));
               setTab("products");
               flash("Prévia FiveM inserida automaticamente no produto.");
-            } else {
-              setProject((current) => ({ ...current, modelUrl: url }));
-              setTab("portfolio");
-              flash("Prévia FiveM inserida automaticamente no projeto.");
+              return;
             }
+
+            if (converterTarget.kind === "project-outfit") {
+              setProject((current) => ({ ...current, outfitModelUrl: url }));
+              setTab("portfolio");
+              flash("Prévia FiveM definida como Outfit completo.");
+              return;
+            }
+
+            if (converterTarget.kind === "project-piece") {
+              setProject((current) => ({
+                ...current,
+                viewerPieces: current.viewerPieces.map((piece) =>
+                  piece.id === converterTarget.pieceId ? { ...piece, modelUrl: url } : piece
+                )
+              }));
+              setTab("portfolio");
+              flash("Prévia FiveM inserida na peça selecionada.");
+              return;
+            }
+
+            setProject((current) => ({ ...current, modelUrl: url }));
+            setTab("portfolio");
+            flash("Prévia FiveM inserida automaticamente no projeto.");
           }}
         />
       )}
