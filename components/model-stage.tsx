@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Icon from "./icons";
 import type {
   StudioViewerHotspot,
@@ -12,14 +12,33 @@ import type {
 const MODEL_VIEWER_SRC = "https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js";
 let modelViewerPromise: Promise<void> | null = null;
 
+type ModelViewerConstructor = CustomElementConstructor & {
+  modelCacheSize?: number;
+};
+
+function tuneModelViewerMemory() {
+  if (typeof window === "undefined" || !window.customElements) return;
+  const ctor = window.customElements.get("model-viewer") as ModelViewerConstructor | undefined;
+  if (!ctor) return;
+  // model-viewer otherwise keeps recently loaded glTF assets alive after the
+  // element leaves the DOM. Studio K prefers deterministic release over RAM cache.
+  ctor.modelCacheSize = 0;
+}
+
 function ensureModelViewer() {
   if (typeof window === "undefined" || !window.customElements) return Promise.resolve();
-  if (window.customElements.get("model-viewer")) return Promise.resolve();
+  if (window.customElements.get("model-viewer")) {
+    tuneModelViewerMemory();
+    return Promise.resolve();
+  }
   if (modelViewerPromise) return modelViewerPromise;
 
   modelViewerPromise = new Promise<void>((resolve, reject) => {
     const finish = () => {
-      window.customElements.whenDefined("model-viewer").then(() => resolve()).catch(reject);
+      window.customElements.whenDefined("model-viewer").then(() => {
+        tuneModelViewerMemory();
+        resolve();
+      }).catch(reject);
     };
 
     let script = document.querySelector<HTMLScriptElement>('script[data-studio-model-viewer="true"]');
@@ -32,6 +51,7 @@ function ensureModelViewer() {
     }
 
     if (window.customElements.get("model-viewer")) {
+      tuneModelViewerMemory();
       resolve();
       return;
     }
@@ -71,6 +91,17 @@ type ModelViewerElement = HTMLElement & {
   availableVariants?: string[];
 };
 
+function releaseModelViewer(viewer: ModelViewerElement | null) {
+  if (!viewer) return;
+  try {
+    viewer.variantName = null;
+    viewer.removeAttribute("auto-rotate");
+    viewer.removeAttribute("src");
+    viewer.removeAttribute("poster");
+  } catch {}
+  tuneModelViewerMemory();
+}
+
 type PresentationOption = {
   id: string;
   label: string;
@@ -106,6 +137,12 @@ export default function ModelStage({
   const [presentationId, setPresentationId] = useState("");
   const [lighting, setLighting] = useState<LightingMode>("studio");
   const [compare, setCompare] = useState(false);
+
+  const bindViewer = useCallback((node: ModelViewerElement | null) => {
+    const previous = viewerRef.current;
+    if (previous && previous !== node) releaseModelViewer(previous);
+    viewerRef.current = node;
+  }, []);
 
   const enabledModes = new Set(viewerModes);
   const presentationOptions: PresentationOption[] = [];
@@ -293,7 +330,8 @@ export default function ModelStage({
 
       {activeModelUrl && ready ? (
         <model-viewer
-          ref={(node) => { viewerRef.current = node as ModelViewerElement | null; }}
+          key={activeModelUrl}
+          ref={(node) => bindViewer(node as ModelViewerElement | null)}
           src={activeModelUrl}
           poster={activePosterUrl || undefined}
           alt={!hasPresentationMode && compare ? `${title} · antes` : activePresentation ? `${title} · ${activePresentation.label}` : title}
