@@ -139,35 +139,35 @@ export default function ModelStage({
   useEffect(() => {
     if (!activeModelUrl || !viewerRequested) return;
     let active = true;
-    let cleanup: (() => void) | undefined;
 
     const connectViewer = async () => {
       try {
         await ensureModelViewer();
-        if (!active) return;
-
-        const viewer = viewerRef.current;
-        const syncVariants = () => {
-          const available = Array.from(viewer?.availableVariants || []);
-          setVariants(available);
-          if (available.length && !available.includes(variant)) setVariant("");
-        };
-
-        viewer?.addEventListener("load", syncVariants);
-        cleanup = () => viewer?.removeEventListener("load", syncVariants);
-        setReady(true);
-        syncVariants();
+        if (active) setReady(true);
       } catch {
         if (active) setReady(false);
       }
     };
 
     void connectViewer();
-    return () => {
-      active = false;
-      cleanup?.();
-    };
+    return () => { active = false; };
   }, [activeModelUrl, viewerRequested]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    const syncVariants = () => {
+      const available = Array.from(viewer.availableVariants || []);
+      setVariants(available);
+      setVariant((current) => available.length && !available.includes(current) ? "" : current);
+    };
+
+    viewer.addEventListener("load", syncVariants);
+    syncVariants();
+    return () => viewer.removeEventListener("load", syncVariants);
+  }, [activeModelUrl, ready]);
 
   useEffect(() => {
     if (!compareModelUrl && compare) setCompare(false);
