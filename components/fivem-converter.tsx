@@ -33,7 +33,7 @@ const prettyBytes = (value: number) => {
 };
 
 async function uploadPrivate(file: File) {
-  const ticket = await studioApi.uploadTicket(file.name, false);
+  const ticket = await studioApi.uploadTicket(file.name, false, "fivem-source");
   const target = new URL(ticket.uploadUrl);
   target.searchParams.set("name", file.name);
   const response = await fetch(target, {
