@@ -306,6 +306,15 @@ export default function ControlPage() {
   const saveProject = async (event: FormEvent) => {
     event.preventDefault();
     try {
+      setError("");
+      if (project.published && project.viewerModes.includes("outfit") && !project.outfitModelUrl.trim()) {
+        setError("Adicione o GLB do Outfit completo ou desative essa visualização antes de publicar.");
+        return;
+      }
+      if (project.published && project.viewerModes.includes("pieces") && !project.viewerPieces.some((piece) => piece.label.trim() && piece.modelUrl.trim())) {
+        setError("Adicione pelo menos uma peça 3D válida ou desative Peças separadas antes de publicar.");
+        return;
+      }
       const body = draftPayload(project);
       if (editingProjectId) {
         await studioApi.updateItem(editingProjectId, body);
