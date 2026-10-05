@@ -49,7 +49,6 @@ export default function StudioAssistant() {
   const [visible, setVisible] = useState(true);
   const [dwellReady, setDwellReady] = useState(false);
   const [revisitCount, setRevisitCount] = useState(0);
-  const [newAchievement, setNewAchievement] = useState("");
   const [campaignViews, setCampaignViews] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -76,23 +75,6 @@ export default function StudioAssistant() {
     window.addEventListener("studio-k-product-viewed", onViewed);
     return () => window.removeEventListener("studio-k-product-viewed", onViewed);
   }, [pathname]);
-
-  useEffect(() => {
-    const profile = state.me.profile;
-    const userId = state.me.user?.id;
-    if (!state.me.authenticated || !profile || !userId) return;
-    try {
-      const achievementKey = `studio-k-known-achievements:${userId}`;
-      const current = (profile.achievements || []).filter((item) => item.unlocked).map((item) => item.id);
-      const savedRaw = localStorage.getItem(achievementKey);
-      if (savedRaw) {
-        const known = new Set(JSON.parse(savedRaw) as string[]);
-        const unlocked = (profile.achievements || []).find((item) => item.unlocked && !known.has(item.id));
-        if (unlocked) setNewAchievement(unlocked.label);
-      }
-      localStorage.setItem(achievementKey, JSON.stringify(current));
-    } catch {}
-  }, [state.me.authenticated, state.me.profile, state.me.user?.id]);
 
   useEffect(() => {
     try {
@@ -128,19 +110,6 @@ export default function StudioAssistant() {
       .sort((a, b) => Number(b.priority || 0) - Number(a.priority || 0));
     const contextual = [];
 
-    if (newAchievement) {
-      contextual.push({
-        id: `context-achievement-${newAchievement}`,
-        type: "cute" as const,
-        title: "Nova conquista desbloqueada! 🏆",
-        text: `Você acabou de liberar “${newAchievement}” no seu Studio K ID.`,
-        ctaLabel: "Ver conquistas",
-        href: "/account",
-        priceCents: 0,
-        oldPriceCents: 0,
-        active: true
-      });
-    }
     const activeDrop = (state.drops || []).find((drop) =>
       drop.published !== false &&
       Date.parse(drop.startsAt) <= now &&
@@ -315,7 +284,7 @@ export default function StudioAssistant() {
     }
 
     return [...contextual, ...configured, ...BUILT_IN_TIPS].map(buildAssistantMessage);
-  }, [campaignViews, config.campaigns, dwellReady, index, newAchievement, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.personal?.recommendations, state.products]);
+  }, [campaignViews, config.campaigns, dwellReady, index, pathname, revisitCount, state.drops, state.items, state.me.authenticated, state.me.favorites, state.me.profile, state.personal?.recommendations, state.products]);
 
   const intervalMs = Math.max(5000, Number(config.intervalSeconds || 5) * 1000);
   const current = messages[index % Math.max(messages.length, 1)];

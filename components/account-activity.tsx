@@ -10,9 +10,6 @@ function detail(entry:{event:string;itemId:string;meta:Record<string,unknown>}){
   if(entry.event==="mission_claim"){
     return String(meta.title||"Atividade Studio K");
   }
-  if(entry.event==="achievement_unlock"){
-    return String(meta.title||"Nova conquista");
-  }
   return entry.itemId||"Studio K";
 }
 
@@ -40,7 +37,7 @@ export default function AccountActivity() {
               <small>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(entry.created))}</small>
             </div>
           </article>
-        )) : <p className="muted">Compras, atividades concluídas e novas conquistas aparecerão aqui.</p>}
+        )) : <p className="muted">Compras e atividades concluídas aparecerão aqui.</p>}
       </div>
     </section>
   );

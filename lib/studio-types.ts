@@ -326,14 +326,6 @@ export type StudioAsset = {
 
 export type StudioMemberRarity = "common" | "rare" | "epic" | "legendary";
 
-export type StudioMemberBadge = {
-  id: string;
-  label: string;
-  icon: string;
-  rarity: StudioMemberRarity;
-  description?: string;
-};
-
 export type StudioMemberTitle = {
   id: string;
   label: string;
@@ -342,63 +334,13 @@ export type StudioMemberTitle = {
   unlocked: boolean;
 };
 
-export type StudioAchievement = {
-  id: string;
-  label: string;
-  description: string;
-  icon: string;
-  rarity: StudioMemberRarity;
-  unlocked: boolean;
-  unlockedAt: string;
-};
-
-export type StudioPerk = {
-  id: string;
-  label: string;
-  description: string;
-  icon: string;
-  rarity: StudioMemberRarity;
-  unlocked: boolean;
-  progress: number;
-  target: number;
-};
-
-export type StudioIdBadgeCondition =
-  | "always"
-  | "early-member"
-  | "discord-member"
-  | "supporter"
-  | "purchases"
-  | "neon-lover"
-  | "feedbacks"
-  | "level"
-  | "favorites";
-
-export type StudioIdBadgeConfig = {
-  id: string;
-  label: string;
-  icon: string;
-  rarity: StudioMemberRarity;
-  description: string;
-  condition: StudioIdBadgeCondition;
-  value: number;
-  enabled: boolean;
-};
-
 export type StudioIdConfig = {
   enabled: boolean;
   earlyMemberLimit: number;
   thresholds: {
     collectorPurchases: number;
-    profileFramePurchases: number;
   };
   supporterRolePattern: string;
-  features: {
-    badges: boolean;
-    achievements: boolean;
-    perks: boolean;
-  };
-  badges: StudioIdBadgeConfig[];
 };
 
 export type StudioMemberProfile = {
@@ -407,9 +349,6 @@ export type StudioMemberProfile = {
   equippedTitle: { id: string; label: string; rarity: StudioMemberRarity };
   titles: StudioMemberTitle[];
   discountPercent: number;
-  badges: StudioMemberBadge[];
-  achievements: StudioAchievement[];
-  perks: StudioPerk[];
   favorites: { items: string[]; products: string[] };
   stats: {
     purchases: number;

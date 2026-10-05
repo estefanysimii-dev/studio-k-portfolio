@@ -171,7 +171,7 @@ export const studioApi = {
     issuedAt: string;
     identity: { studioId: string; discordId: string; username: string; displayName: string; avatar: string };
     identityState: { title: import("./studio-types").StudioMemberProfile["equippedTitle"] };
-    entitlements: { discountPercent: number; badges: import("./studio-types").StudioMemberBadge[]; perks: Omit<import("./studio-types").StudioPerk, "progress" | "target">[] };
+    entitlements: { discountPercent: number };
   }>("me/ecosystem"),
   setFavorite: (kind: "items" | "products", id: string, favorite: boolean) =>
     request<{ ok: boolean; favorite: boolean; favorites: { items: string[]; products: string[] }; profile: import("./studio-types").StudioMemberProfile }>(
