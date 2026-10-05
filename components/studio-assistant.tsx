@@ -305,7 +305,7 @@ export default function StudioAssistant() {
         id: "context-account",
         type: "cute" as const,
         title: `${state.me.profile?.studioId || "Seu Studio K ID"} · ${state.me.profile?.rank?.label || "Studio Member"} 💜`,
-        text: `Você está no level ${state.me.profile?.level || 1} com o título “${state.me.profile?.equippedTitle?.label || "Studio K Member"}”. Favoritos, compras e feedbacks ajudam seu perfil a evoluir.`,
+        text: `Seu Studio K ID está conectado com o título “${state.me.profile?.equippedTitle?.label || "Studio K Member"}”. Favoritos, compras, feedbacks e tickets ficam reunidos no seu perfil.`,
         ctaLabel: "",
         href: "",
         priceCents: 0,
