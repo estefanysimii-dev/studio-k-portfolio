@@ -34,7 +34,7 @@ export default function ProductRecommendations({ productId, title = "VocÃª tambÃ
         {products.slice(0, 4).map(({ entry, product }) => (
           <a className="recommendation-card glass-panel" href={`/products/${product.id}`} key={product.id}>
             <div className="recommendation-thumb">
-              {product.coverUrl || product.gifUrl ? <img src={product.coverUrl || product.gifUrl} alt="" loading="lazy" /> : <span>SK</span>}
+              {product.coverUrl || product.gifUrl ? <img src={product.coverUrl || product.gifUrl} alt="" loading="lazy" decoding="async" /> : <span>SK</span>}
             </div>
             <div>
               <span>{entry.reason}</span>
