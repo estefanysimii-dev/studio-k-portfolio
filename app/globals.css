@@ -7552,3 +7552,209 @@ body::-webkit-scrollbar,
   }
 }
 /* ===== /Studio K · analytics readability pass ===== */
+
+
+/* ===== Studio K · overview redesign v2 ===== */
+.control-shell .analytics-dashboard {
+  padding: 26px;
+  border-radius: 18px;
+}
+.control-shell .analytics-head {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 210px;
+  align-items: stretch;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.control-shell .analytics-head > div:first-child {
+  align-self: center;
+}
+.control-shell .analytics-head .section-eyebrow {
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: .08em;
+}
+.control-shell .analytics-head h2 {
+  margin: 7px 0 7px;
+  font-size: clamp(25px,2.1vw,34px);
+  line-height: 1.08;
+}
+.control-shell .analytics-head p {
+  max-width: 860px;
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+.control-shell .analytics-revenue {
+  min-width: 0;
+  display: grid;
+  align-content: center;
+  padding: 17px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg,rgba(108,25,255,.12),rgba(23,12,35,.50));
+}
+.control-shell .analytics-revenue small {
+  font-size: 10px;
+  line-height: 1.35;
+}
+.control-shell .analytics-revenue strong {
+  margin-top: 8px;
+  font-size: 24px;
+}
+.control-shell .analytics-metrics,
+.control-shell .analytics-metrics-extended {
+  grid-template-columns: repeat(4,minmax(0,1fr)) !important;
+  gap: 10px !important;
+}
+.control-shell .analytics-metrics article {
+  min-height: 102px;
+  padding: 15px 16px;
+  border-radius: 13px;
+  background:
+    linear-gradient(145deg,rgba(108,25,255,.055),rgba(var(--surface-rgb),.52));
+}
+.control-shell .analytics-metrics span {
+  font-size: 9.5px;
+  line-height: 1.35;
+  letter-spacing: .055em;
+}
+.control-shell .analytics-metrics strong {
+  margin: 8px 0 5px;
+  font-size: 24px;
+}
+.control-shell .analytics-metrics small {
+  font-size: 10px;
+  line-height: 1.42;
+}
+.control-shell .analytics-panels {
+  grid-template-columns: minmax(0,.92fr) minmax(0,1.08fr) !important;
+  gap: 12px;
+  margin-top: 12px;
+}
+.control-shell .analytics-funnel,
+.control-shell .analytics-top-products,
+.control-shell .analytics-ranked-panel,
+.control-shell .analytics-daily {
+  border-radius: 14px;
+  background: linear-gradient(145deg,rgba(108,25,255,.035),rgba(var(--surface-rgb),.46));
+}
+.control-shell .analytics-funnel,
+.control-shell .analytics-top-products {
+  padding: 17px;
+}
+.control-shell .analytics-subhead {
+  margin-bottom: 13px;
+}
+.control-shell .analytics-subhead strong {
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+.control-shell .analytics-subhead span {
+  font-size: 9.5px;
+  line-height: 1.4;
+}
+.control-shell .analytics-funnel-row {
+  margin-top: 10px;
+}
+.control-shell .analytics-funnel-row > div:first-child span {
+  font-size: 10px;
+  line-height: 1.35;
+}
+.control-shell .analytics-funnel-row > div:first-child strong {
+  font-size: 11px;
+}
+.control-shell .analytics-product-row {
+  min-height: 52px;
+  padding-block: 7px;
+}
+.control-shell .analytics-product-row > b,
+.control-shell .analytics-ranked-row > b {
+  font-size: 9.5px;
+}
+.control-shell .analytics-product-row > div strong {
+  font-size: 11px;
+  line-height: 1.35;
+}
+.control-shell .analytics-product-row > div span {
+  margin-top: 3px;
+  font-size: 9.5px;
+  line-height: 1.42;
+}
+.control-shell .analytics-product-row > em {
+  min-width: 30px;
+  min-height: 30px;
+  font-size: 10.5px;
+}
+.control-shell .analytics-ranked-grid {
+  grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  gap: 12px !important;
+  margin-top: 12px;
+}
+.control-shell .analytics-ranked-panel {
+  padding: 17px;
+  min-height: 154px;
+}
+.control-shell .analytics-ranked-row {
+  min-height: 38px;
+  gap: 10px;
+}
+.control-shell .analytics-ranked-row > span {
+  font-size: 10px;
+  line-height: 1.4;
+}
+.control-shell .analytics-ranked-row > strong {
+  font-size: 10.5px;
+}
+.control-shell .analytics-ranked-panel .muted,
+.control-shell .analytics-top-products .muted {
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+.control-shell .analytics-daily {
+  margin-top: 12px;
+  padding: 17px;
+}
+.control-shell .analytics-chart {
+  height: 112px;
+  gap: 7px;
+}
+.control-shell .analytics-day {
+  gap: 7px;
+}
+.control-shell .analytics-day small {
+  font-size: 9px;
+  line-height: 1.2;
+}
+@media (max-width: 1180px) {
+  .control-shell .analytics-metrics,
+  .control-shell .analytics-metrics-extended {
+    grid-template-columns: repeat(3,minmax(0,1fr)) !important;
+  }
+}
+@media (max-width: 900px) {
+  .control-shell .analytics-head,
+  .control-shell .analytics-panels {
+    grid-template-columns: 1fr !important;
+  }
+  .control-shell .analytics-revenue {
+    width: 100%;
+  }
+  .control-shell .analytics-ranked-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 680px) {
+  .control-shell .analytics-dashboard {
+    padding: 18px;
+  }
+  .control-shell .analytics-metrics,
+  .control-shell .analytics-metrics-extended {
+    grid-template-columns: repeat(2,minmax(0,1fr)) !important;
+  }
+}
+@media (max-width: 470px) {
+  .control-shell .analytics-metrics,
+  .control-shell .analytics-metrics-extended {
+    grid-template-columns: 1fr !important;
+  }
+}
+/* ===== /Studio K · overview redesign v2 ===== */
