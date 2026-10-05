@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import "./entry-intro.css";
 
 type Phase = "locked" | "leaving" | "gone";
@@ -8,7 +8,7 @@ type Phase = "locked" | "leaving" | "gone";
 export default function EntryIntro() {
   const [phase, setPhase] = useState<Phase>("locked");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.classList.add("studio-entry-locked");
     return () => document.documentElement.classList.remove("studio-entry-locked");
   }, []);
@@ -23,7 +23,9 @@ export default function EntryIntro() {
   if (phase === "gone") return null;
 
   const enter = () => {
-    if (phase === "locked") setPhase("leaving");
+    if (phase !== "locked") return;
+    window.dispatchEvent(new Event("studio-k-entered"));
+    setPhase("leaving");
   };
 
   const infinityPath =
