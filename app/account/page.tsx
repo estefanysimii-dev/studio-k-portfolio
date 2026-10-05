@@ -128,12 +128,7 @@ export default function AccountPage() {
   return (
     <StudioShell eyebrow="CONTA" title="Minha Conta">
       <section className="studio-id-layout">
-        <article className={[
-          "studio-id-card",
-          profile?.perks?.some((perk) => perk.id === "profile-frame" && perk.unlocked) ? "has-collector-frame" : "",
-          profile?.perks?.some((perk) => perk.id === "neon-aura" && perk.unlocked) ? "has-neon-aura" : "",
-          profile?.perks?.some((perk) => perk.id === "icon-aura" && perk.unlocked) ? "has-icon-aura" : ""
-        ].filter(Boolean).join(" ")}>
+        <article className="studio-id-card">
           <div className="studio-id-card-glow" aria-hidden="true" />
           <div className="studio-id-top">
             <div className="studio-id-brand">
@@ -194,24 +189,6 @@ export default function AccountPage() {
             <div><span>Abertos</span><strong>{profile?.stats.openTickets || 0}</strong></div>
           </div>
 
-          <div className="account-badges">
-            <div className="section-mini-head">
-              <span>BADGES</span>
-              <small>{profile?.badges.length || 0} desbloqueados</small>
-            </div>
-            <div className="account-badge-row">
-              {profile?.badges.length ? profile.badges.map((badge) => (
-                <span
-                  className={`account-badge rarity-${badge.rarity || "common"}`}
-                  key={badge.id}
-                  title={badge.description || badge.label}
-                >
-                  <i>{badge.icon}</i>{badge.label}<small>{rarityLabel[badge.rarity] || badge.rarity}</small>
-                </span>
-              )) : <span className="muted">Continue explorando o Studio K para desbloquear badges.</span>}
-            </div>
-          </div>
-
           {!!me.member?.roles?.length && (
             <div className="account-badges account-discord-roles">
               <div className="section-mini-head"><span>CARGOS DO DISCORD</span></div>
@@ -223,7 +200,7 @@ export default function AccountPage() {
         </article>
       </section>
 
-      <section className="account-evolution-grid">
+      <section className="account-evolution-grid account-title-grid">
         <article className="account-evolution-panel glass-panel">
           <div className="section-mini-head">
             <span>TÍTULOS EQUIPÁVEIS</span>
@@ -250,52 +227,6 @@ export default function AccountPage() {
           </div>
         </article>
 
-        <article className="account-evolution-panel glass-panel">
-          <div className="section-mini-head">
-            <span>CONQUISTAS</span>
-            <small>{profile?.achievements?.filter((achievement) => achievement.unlocked).length || 0}/{profile?.achievements?.length || 0}</small>
-          </div>
-          <p className="account-evolution-copy">Seu histórico fica ligado ao Studio K ID e não depende do dispositivo.</p>
-          <div className="account-achievement-list">
-            {profile?.achievements?.map((achievement) => (
-              <div className={`account-achievement rarity-${achievement.rarity} ${achievement.unlocked ? "unlocked" : "locked"}`.trim()} key={achievement.id}>
-                <i>{achievement.icon}</i>
-                <div>
-                  <strong>{achievement.label}</strong>
-                  <span>{achievement.description}</span>
-                  <small>
-                    {achievement.unlocked && achievement.unlockedAt
-                      ? `Desbloqueado em ${new Intl.DateTimeFormat("pt-BR").format(new Date(achievement.unlockedAt))}`
-                      : "Ainda bloqueado"}
-                  </small>
-                </div>
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="account-evolution-panel glass-panel">
-          <div className="section-mini-head">
-            <span>PERKS DO ECOSSISTEMA</span>
-            <small>{profile?.perks?.filter((perk) => perk.unlocked).length || 0} ativos</small>
-          </div>
-          <p className="account-evolution-copy">Benefícios e efeitos que evoluem com compras, atividade e participação.</p>
-          <div className="account-perk-list">
-            {profile?.perks?.map((perk) => {
-              const progress = Math.max(0, Math.min(100, (perk.progress / Math.max(1, perk.target)) * 100));
-              return (
-                <div className={`account-perk rarity-${perk.rarity} ${perk.unlocked ? "unlocked" : "locked"}`.trim()} key={perk.id}>
-                  <div className="account-perk-head">
-                    <span><i>{perk.icon}</i>{perk.label}</span>
-                    <small>{perk.unlocked ? "ATIVO" : `${perk.progress}/${perk.target}`}</small>
-                  </div>
-                  <p>{perk.description}</p>
-                  <div className="account-perk-progress"><i style={{ width: `${progress}%` }} /></div>
-                </div>
-              );
-            })}
-          </div>
-        </article>
       </section>
 
       <section className="account-favorites glass-panel">
