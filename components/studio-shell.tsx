@@ -134,7 +134,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           </div>
         </div>
 
-        <StudioRadio />
+        {variant !== "control" && <StudioRadio />}
 
         <div className="sidebar-spacer" />
 
