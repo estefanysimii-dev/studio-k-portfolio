@@ -211,6 +211,7 @@ export default function AccountPage() {
                   type="button"
                   key={title.id}
                   disabled={!!titleBusy}
+                  aria-pressed={active}
                   className={`account-title-option ${active ? "active" : ""}`.trim()}
                   onClick={() => void equipTitle(title.id)}
                   title={title.description}
