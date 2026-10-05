@@ -131,15 +131,15 @@ export default function StudioScrollbars() {
       bindSidebar();
       if (observedSidebar && observedSidebar !== previous) {
         try { resizeObserver.observe(observedSidebar); } catch {}
+        scheduleMeasure();
       }
-      scheduleMeasure();
     });
 
-    if (document.body) {
-      mutationObserver.observe(document.body, {
+    const mutationRoot = document.getElementById("root") || document.body;
+    if (mutationRoot) {
+      mutationObserver.observe(mutationRoot, {
         childList: true,
-        subtree: true,
-        characterData: true
+        subtree: true
       });
     }
 
