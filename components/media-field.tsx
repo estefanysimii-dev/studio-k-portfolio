@@ -13,6 +13,7 @@ type Props = {
   onChange: (value: string) => void;
   onConvertFiveM?: () => void;
   showPreview?: boolean;
+  compactRow?: boolean;
 };
 
 const accepts: Record<Kind, string> = {
@@ -45,7 +46,7 @@ async function uploadAsset(file: File, isPublic: boolean) {
   return result;
 }
 
-export default function MediaField({ label, kind, value, onChange, onConvertFiveM, showPreview = true }: Props) {
+export default function MediaField({ label, kind, value, onChange, onConvertFiveM, showPreview = true, compactRow = false }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -80,7 +81,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
   };
 
   return (
-    <div className="media-field">
+    <div className={compactRow ? "media-field media-field-compact-row" : "media-field"}>
       <div className="media-field-head">
         <span>{label}</span>
         <div className="media-field-actions">

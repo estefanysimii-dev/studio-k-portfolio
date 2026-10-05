@@ -7469,3 +7469,165 @@ body::-webkit-scrollbar,
   }
 }
 /* ===== /Studio K · Home banner carousel ===== */
+
+
+/* ===== Studio K · compact Home banner editor ===== */
+.home-banner-editor.home-banner-editor-compact {
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+}
+
+.home-banner-editor-compact .home-banner-editor-head {
+  min-height: 34px;
+  gap: 10px;
+}
+
+.home-banner-editor-compact .home-banner-editor-head > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.home-banner-editor-compact .home-banner-editor-head small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 9px;
+}
+
+.home-banner-editor-compact .home-banner-editor-list.compact {
+  display: grid;
+  gap: 6px;
+}
+
+.home-banner-editor-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(166, 94, 216, .16);
+  border-radius: 10px;
+  background: rgba(var(--surface-rgb), .42);
+}
+
+.home-banner-row-index {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(173, 93, 236, .20);
+  border-radius: 8px;
+  color: var(--purple-light);
+  background: rgba(139, 44, 255, .08);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+.media-field.media-field-compact-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "input actions"
+    "status status";
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.media-field-compact-row > input {
+  grid-area: input;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 9px;
+}
+
+.media-field-compact-row .media-field-head {
+  grid-area: actions;
+  display: block;
+  min-width: auto;
+}
+
+.media-field-compact-row .media-field-head > span {
+  display: none;
+}
+
+.media-field-compact-row .media-field-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.media-field-compact-row .mini-upload,
+.media-field-compact-row .media-field-actions > button {
+  min-height: 32px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.media-field-compact-row .media-field-status,
+.media-field-compact-row .media-field-error {
+  grid-area: status;
+  margin: 0 2px;
+  font-size: 8px;
+  line-height: 1.25;
+}
+
+.home-banner-remove {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 100, 126, .22);
+  border-radius: 8px;
+  color: #ff8ba0;
+  background: rgba(255, 83, 115, .055);
+  cursor: pointer;
+  font: 700 8.5px/1 "Manrope", sans-serif;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+
+.home-banner-remove:hover {
+  color: #ffb0bd;
+  border-color: rgba(255, 111, 139, .46);
+  background: rgba(255, 83, 115, .10);
+}
+
+.home-banner-editor-empty.compact {
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: 9px;
+}
+
+@media (max-width: 720px) {
+  .home-banner-editor-compact .home-banner-editor-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-banner-editor-compact .home-banner-editor-head > div {
+    display: grid;
+    gap: 3px;
+  }
+
+  .home-banner-editor-row {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  .home-banner-remove {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .media-field.media-field-compact-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+/* ===== /Studio K · compact Home banner editor ===== */
