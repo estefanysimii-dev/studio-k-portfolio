@@ -7210,3 +7210,262 @@ body::-webkit-scrollbar,
   }
 }
 /* ===== /Studio K · multi-piece portfolio viewer ===== */
+
+
+/* ===== Studio K · Home banner carousel ===== */
+.home-banner-carousel {
+  --home-banner-rotation: 5s;
+}
+
+.home-banner-slides,
+.home-banner-slide,
+.home-banner-slide picture {
+  position: absolute;
+  inset: 0;
+}
+
+.home-banner-slides {
+  z-index: 0;
+}
+
+.home-banner-slide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .72s ease, visibility .72s step-end;
+}
+
+.home-banner-slide.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity .72s ease;
+}
+
+.home-banner-slide .home-banner-image {
+  transform: scale(1.018);
+}
+
+.home-banner-slide.active .home-banner-image {
+  animation: studioKBannerDrift 5s ease-out both;
+}
+
+.home-banner-carousel:hover .home-banner-slide.active .home-banner-image {
+  transform: scale(1.035);
+}
+
+@keyframes studioKBannerDrift {
+  from { transform: scale(1.018); }
+  to { transform: scale(1.045); }
+}
+
+.home-banner-dots {
+  position: absolute;
+  z-index: 6;
+  left: 50%;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transform: translateX(-50%);
+  padding: 6px 8px;
+  border: 1px solid rgba(211, 164, 255, .18);
+  border-radius: 999px;
+  background: rgba(8, 5, 13, .36);
+  backdrop-filter: blur(14px) saturate(130%);
+  box-shadow: 0 8px 28px rgba(0,0,0,.2);
+}
+
+.home-banner-dots button {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home-banner-dots button span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(229, 214, 239, .42);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04);
+  transition: width .22s ease, background .22s ease, box-shadow .22s ease, transform .22s ease;
+}
+
+.home-banner-dots button:hover span,
+.home-banner-dots button:focus-visible span {
+  background: rgba(236, 211, 255, .82);
+  transform: scale(1.18);
+}
+
+.home-banner-dots button.active span {
+  width: 18px;
+  background: linear-gradient(90deg, #b96bff, #f0d5ff);
+  box-shadow:
+    0 0 9px rgba(187, 98, 255, .62),
+    0 0 18px rgba(139, 44, 255, .30);
+}
+
+.home-banner-progress {
+  position: absolute;
+  z-index: 5;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(255,255,255,.035);
+}
+
+.home-banner-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  background: linear-gradient(90deg, rgba(139,44,255,.2), rgba(197,120,255,.9), rgba(241,218,255,.8));
+  box-shadow: 0 0 10px rgba(166, 76, 255, .45);
+  animation: studioKBannerProgress var(--home-banner-rotation) linear both;
+}
+
+.home-banner-progress span.paused {
+  animation-play-state: paused;
+}
+
+@keyframes studioKBannerProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.home-banner-editor {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(164, 83, 255, .24);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(139,44,255,.10), transparent 38%),
+    rgba(var(--surface-rgb), .42);
+}
+
+.home-banner-editor-head,
+.home-banner-editor-card-head,
+.home-banner-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.home-banner-editor-head > div,
+.home-banner-editor-card-head > div {
+  display: grid;
+  gap: 4px;
+}
+
+.home-banner-editor-head strong {
+  color: var(--white);
+  font-size: 15px;
+}
+
+.home-banner-editor-head small,
+.home-banner-editor-card-head small {
+  color: var(--text-2);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.home-banner-editor-list {
+  display: grid;
+  gap: 12px;
+}
+
+.home-banner-editor-card {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(166, 94, 216, .20);
+  border-radius: 15px;
+  background: rgba(var(--surface-rgb), .58);
+}
+
+.home-banner-editor-card-head > div > span {
+  color: var(--purple-light);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.home-banner-editor-actions {
+  justify-content: flex-end;
+}
+
+.home-banner-editor-actions button:not(.danger-link) {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(171, 94, 228, .20);
+  border-radius: 9px;
+  background: rgba(255,255,255,.025);
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.home-banner-editor-actions button:not(.danger-link):hover:not(:disabled) {
+  color: var(--white);
+  border-color: rgba(185, 106, 255, .48);
+  background: rgba(139,44,255,.10);
+}
+
+.home-banner-editor-actions button:disabled {
+  opacity: .3;
+  cursor: default;
+}
+
+.home-banner-editor-empty {
+  padding: 18px;
+  border: 1px dashed rgba(172, 95, 230, .22);
+  border-radius: 13px;
+  color: var(--text-2);
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .home-banner-dots {
+    bottom: 11px;
+    gap: 4px;
+    padding: 5px 7px;
+  }
+
+  .home-banner-copy {
+    bottom: 42px;
+  }
+
+  .home-banner-editor-head,
+  .home-banner-editor-card-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .home-banner-editor-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-banner-slide {
+    transition: none;
+  }
+
+  .home-banner-slide.active .home-banner-image,
+  .home-banner-progress span {
+    animation: none;
+  }
+}
+/* ===== /Studio K · Home banner carousel ===== */
