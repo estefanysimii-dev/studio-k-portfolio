@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import AmbientLight from "@/components/ambient-light";
 import StudioScrollbars from "@/components/studio-scrollbars";
@@ -8,7 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { RadioPlayerProvider } from "@/components/radio-player-provider";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://studiokoficial.netlify.app"),
+  metadataBase: new URL("https://studiokatelier.infinityfreeapp.com"),
   title: {
     default: "Studio K",
     template: "%s · Studio K"
@@ -22,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Studio K",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
-    url: "https://studiokoficial.netlify.app",
+    url: "https://studiokatelier.infinityfreeapp.com",
     siteName: "Studio K",
     locale: "pt_BR",
     type: "website",
@@ -51,11 +50,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="importmap" dangerouslySetInnerHTML={{ __html: threeImportMap }} />
       </head>
       <body>
-        <Script
-          type="module"
-          src="https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js"
-          strategy="afterInteractive"
-        />
         <StudioProvider>
           <RadioPlayerProvider>
             <ThemeProvider>
