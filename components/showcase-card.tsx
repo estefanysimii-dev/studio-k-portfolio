@@ -2,6 +2,7 @@ import Icon from "./icons";
 import { externalLinkProps } from "@/lib/links";
 import FavoriteButton from "./favorite-button";
 import ModelStage from "./model-stage";
+import type { StudioViewerMode, StudioViewerPiece } from "@/lib/studio-types";
 
 type Props = {
   eyebrow: string;
@@ -10,23 +11,37 @@ type Props = {
   meta?: string;
   coverUrl?: string;
   modelUrl?: string;
+  viewerModes?: StudioViewerMode[];
+  outfitModelUrl?: string;
+  outfitPosterUrl?: string;
+  viewerPieces?: StudioViewerPiece[];
   href?: string;
   favoriteKind?: "items" | "products";
   favoriteId?: string;
 };
 
-export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, modelUrl, href = "/portfolio", favoriteKind, favoriteId }: Props) {
+export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, modelUrl, viewerModes = [], outfitModelUrl = "", outfitPosterUrl = "", viewerPieces = [], href = "/portfolio", favoriteKind, favoriteId }: Props) {
+  const has3D = Boolean(modelUrl || (viewerModes.includes("outfit") && outfitModelUrl) || (viewerModes.includes("pieces") && viewerPieces.some((piece) => piece.modelUrl)));
   return (
     <article className="showcase-card glass-panel">
       <div className="showcase-visual">
         {coverUrl ? (
           <img src={coverUrl} alt={title} loading="lazy" />
-        ) : modelUrl ? (
-          <ModelStage modelUrl={modelUrl} title={title} compact previewOnly />
+        ) : has3D ? (
+          <ModelStage
+            modelUrl={modelUrl}
+            viewerModes={viewerModes}
+            outfitModelUrl={outfitModelUrl}
+            outfitPosterUrl={outfitPosterUrl}
+            viewerPieces={viewerPieces}
+            title={title}
+            compact
+            previewOnly
+          />
         ) : (
           <div className="showcase-orb"><Icon name="spark" /></div>
         )}
-        {modelUrl && <span className="media-badge">360°</span>}
+        {has3D && <span className="media-badge">360°</span>}
         {favoriteKind && favoriteId && <FavoriteButton kind={favoriteKind} itemId={favoriteId} className="favorite-card-button" />}
       </div>
       <div className="showcase-copy">

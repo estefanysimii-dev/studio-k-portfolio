@@ -82,6 +82,16 @@ export type StudioViewerVariant = {
   posterUrl?: string;
 };
 
+export type StudioViewerMode = "outfit" | "pieces";
+
+export type StudioViewerPiece = {
+  id: string;
+  label: string;
+  component: string;
+  modelUrl: string;
+  posterUrl?: string;
+};
+
 export type StudioItem = {
   id: string;
   name: string;
@@ -96,6 +106,10 @@ export type StudioItem = {
   compareModelUrl?: string;
   viewerHotspots?: StudioViewerHotspot[];
   viewerVariants?: StudioViewerVariant[];
+  viewerModes?: StudioViewerMode[];
+  outfitModelUrl?: string;
+  outfitPosterUrl?: string;
+  viewerPieces?: StudioViewerPiece[];
   featured: boolean;
   published: boolean;
   created?: string;

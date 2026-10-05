@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Icon from "./icons";
-import type { StudioViewerHotspot, StudioViewerVariant } from "@/lib/studio-types";
+import type {
+  StudioViewerHotspot,
+  StudioViewerMode,
+  StudioViewerPiece,
+  StudioViewerVariant
+} from "@/lib/studio-types";
 
 const MODEL_VIEWER_SRC = "https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js";
 let modelViewerPromise: Promise<void> | null = null;
@@ -46,6 +51,10 @@ type Props = {
   compareModelUrl?: string;
   hotspots?: StudioViewerHotspot[];
   viewerVariants?: StudioViewerVariant[];
+  viewerModes?: StudioViewerMode[];
+  outfitModelUrl?: string;
+  outfitPosterUrl?: string;
+  viewerPieces?: StudioViewerPiece[];
   posterUrl?: string;
   title?: string;
   compact?: boolean;
@@ -62,11 +71,23 @@ type ModelViewerElement = HTMLElement & {
   availableVariants?: string[];
 };
 
+type PresentationOption = {
+  id: string;
+  label: string;
+  meta: string;
+  modelUrl: string;
+  posterUrl: string;
+};
+
 export default function ModelStage({
   modelUrl = "",
   compareModelUrl = "",
   hotspots = [],
   viewerVariants = [],
+  viewerModes = [],
+  outfitModelUrl = "",
+  outfitPosterUrl = "",
+  viewerPieces = [],
   posterUrl = "",
   title = "Modelo Studio K",
   compact = false,
@@ -82,14 +103,57 @@ export default function ModelStage({
   const [variants, setVariants] = useState<string[]>([]);
   const [variant, setVariant] = useState("");
   const [catalogVariant, setCatalogVariant] = useState("");
+  const [presentationId, setPresentationId] = useState("");
   const [lighting, setLighting] = useState<LightingMode>("studio");
   const [compare, setCompare] = useState(false);
 
-  const activeCatalogVariant = viewerVariants.find((item) => item.id === catalogVariant);
-  const activeModelUrl = compare && compareModelUrl ? compareModelUrl : (activeCatalogVariant?.modelUrl || modelUrl);
-  const activePosterUrl = compare ? posterUrl : (activeCatalogVariant?.posterUrl || posterUrl);
+  const enabledModes = new Set(viewerModes);
+  const presentationOptions: PresentationOption[] = [];
+
+  if (enabledModes.has("outfit") && outfitModelUrl) {
+    presentationOptions.push({
+      id: "outfit",
+      label: "Outfit completo",
+      meta: "CONJUNTO",
+      modelUrl: outfitModelUrl,
+      posterUrl: outfitPosterUrl || posterUrl
+    });
+  }
+
+  if (enabledModes.has("pieces")) {
+    for (const piece of viewerPieces) {
+      if (!piece.modelUrl) continue;
+      presentationOptions.push({
+        id: `piece:${piece.id}`,
+        label: piece.label,
+        meta: piece.component || "PEÇA",
+        modelUrl: piece.modelUrl,
+        posterUrl: piece.posterUrl || posterUrl
+      });
+    }
+  }
+
+  const presentationSignature = presentationOptions.map((option) => `${option.id}:${option.modelUrl}`).join("|");
+  const activePresentation = presentationOptions.find((option) => option.id === presentationId) || presentationOptions[0];
+  const hasPresentationMode = Boolean(activePresentation);
+  const activeCatalogVariant = !hasPresentationMode
+    ? viewerVariants.find((item) => item.id === catalogVariant)
+    : undefined;
+  const activeModelUrl = !hasPresentationMode && compare && compareModelUrl
+    ? compareModelUrl
+    : activePresentation?.modelUrl || activeCatalogVariant?.modelUrl || modelUrl;
+  const activePosterUrl = !hasPresentationMode && compare
+    ? posterUrl
+    : activePresentation?.posterUrl || activeCatalogVariant?.posterUrl || posterUrl;
   const exposure = lighting === "day" ? "1.32" : lighting === "night" ? "0.58" : "1.05";
   const shadow = lighting === "night" ? "0.35" : lighting === "day" ? "0.82" : "1";
+
+  useEffect(() => {
+    setPresentationId((current) => {
+      if (presentationOptions.some((option) => option.id === current)) return current;
+      return presentationOptions[0]?.id || "";
+    });
+  }, [presentationSignature]);
 
   useEffect(() => {
     setReady(false);
@@ -170,8 +234,15 @@ export default function ModelStage({
   }, [activeModelUrl, ready]);
 
   useEffect(() => {
-    if (!compareModelUrl && compare) setCompare(false);
-  }, [compare, compareModelUrl]);
+    if ((!compareModelUrl || hasPresentationMode) && compare) setCompare(false);
+  }, [compare, compareModelUrl, hasPresentationMode]);
+
+  const selectPresentation = (id: string) => {
+    setPresentationId(id);
+    setCompare(false);
+    setCatalogVariant("");
+    setVariant("");
+  };
 
   const setOrbitZoom = (next: number) => {
     const value = Math.max(55, Math.min(180, next));
@@ -183,6 +254,7 @@ export default function ModelStage({
     setZoom(105);
     setVariant("");
     setCatalogVariant("");
+    setPresentationId(presentationOptions[0]?.id || "");
     setAutoRotate(true);
     setLighting("studio");
     const viewer = viewerRef.current;
@@ -224,7 +296,7 @@ export default function ModelStage({
           ref={(node) => { viewerRef.current = node as ModelViewerElement | null; }}
           src={activeModelUrl}
           poster={activePosterUrl || undefined}
-          alt={compare ? `${title} · antes` : title}
+          alt={!hasPresentationMode && compare ? `${title} · antes` : activePresentation ? `${title} · ${activePresentation.label}` : title}
           {...(!previewOnly ? { "camera-controls": "" } : {})}
           {...autoProps}
           rotation-per-second="18deg"
@@ -253,7 +325,7 @@ export default function ModelStage({
         <img
           className="model-poster"
           src={activePosterUrl}
-          alt={title}
+          alt={activePresentation ? `${title} · ${activePresentation.label}` : title}
           loading={compact || previewOnly ? "lazy" : "eager"}
           decoding="async"
         />
@@ -266,8 +338,29 @@ export default function ModelStage({
 
       {!compact && !previewOnly && (
         <div className="model-viewer-mode">
-          <span>{compare ? "ANTES" : "STUDIO K"}</span>
-          {hotspots.length > 0 && !compare && <small>{hotspots.length} hotspot{hotspots.length === 1 ? "" : "s"}</small>}
+          <span>{!hasPresentationMode && compare ? "ANTES" : activePresentation?.label || "STUDIO K"}</span>
+          {activePresentation?.meta && <small>{activePresentation.meta}</small>}
+          {!activePresentation && hotspots.length > 0 && !compare && <small>{hotspots.length} hotspot{hotspots.length === 1 ? "" : "s"}</small>}
+        </div>
+      )}
+
+      {!compact && !previewOnly && presentationOptions.length > 1 && (
+        <div className="model-presentation-picker" aria-label="Visualizações 3D do projeto">
+          <span>VISUALIZAÇÃO 3D</span>
+          <div>
+            {presentationOptions.map((option) => (
+              <button
+                type="button"
+                key={option.id}
+                className={(activePresentation?.id || "") === option.id ? "active" : ""}
+                onClick={() => selectPresentation(option.id)}
+                title={option.meta ? `${option.label} · ${option.meta}` : option.label}
+              >
+                <b>{option.label}</b>
+                {option.meta && <small>{option.meta}</small>}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -276,7 +369,7 @@ export default function ModelStage({
         <button type="button" onClick={() => setOrbitZoom(zoom - 15)} aria-label="Aumentar zoom">+</button>
         <button type="button" onClick={() => setAutoRotate((value) => !value)}>{autoRotate ? "Pausar" : "Auto 360°"}</button>
         {!compact && <button type="button" onClick={cycleLighting}>{lightingLabel}</button>}
-        {compareModelUrl && !compact && (
+        {compareModelUrl && !compact && !hasPresentationMode && (
           <button type="button" className={compare ? "active" : ""} onClick={() => setCompare((value) => !value)}>
             {compare ? "Ver depois" : "Antes / Depois"}
           </button>
@@ -285,7 +378,7 @@ export default function ModelStage({
         <button type="button" onClick={fullscreen}>Tela cheia</button>
       </div>}
 
-      {!previewOnly && viewerVariants.length > 0 && !compare && (
+      {!previewOnly && viewerVariants.length > 0 && !compare && !hasPresentationMode && (
         <div className="model-catalog-variants" aria-label="Cores e variantes disponíveis">
           <span>CORES / VERSÕES</span>
           <div>

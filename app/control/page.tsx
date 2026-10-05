@@ -15,7 +15,7 @@ import FiveMConverter from "@/components/fivem-converter";
 import MediaField from "@/components/media-field";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
-import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite } from "@/lib/studio-types";
+import type { StudioAsset, StudioControlState, StudioIdConfig, StudioItem, StudioProduct, StudioSite, StudioViewerMode, StudioViewerPiece } from "@/lib/studio-types";
 
 type Tab = "overview" | "site" | "studioId" | "assistant" | "drops" | "feedbacks" | "commerce" | "portfolio" | "products" | "media" | "converter" | "integrations" | "clothtool";
 
@@ -29,6 +29,10 @@ type ItemDraft = {
   compareModelUrl: string;
   viewerHotspots: string;
   viewerVariants: string;
+  viewerModes: StudioViewerMode[];
+  outfitModelUrl: string;
+  outfitPosterUrl: string;
+  viewerPieces: StudioViewerPiece[];
   videoUrl: string;
   gifUrl: string;
   galleryUrls: string;
@@ -57,6 +61,10 @@ const emptyProject: ItemDraft = {
   compareModelUrl: "",
   viewerHotspots: "",
   viewerVariants: "",
+  viewerModes: [],
+  outfitModelUrl: "",
+  outfitPosterUrl: "",
+  viewerPieces: [],
   videoUrl: "",
   gifUrl: "",
   galleryUrls: "",
@@ -107,6 +115,14 @@ const parseViewerVariants = (value: string) =>
     };
   }).filter((variant): variant is NonNullable<typeof variant> => Boolean(variant));
 
+const createViewerPiece = (number: number): StudioViewerPiece => ({
+  id: `piece-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+  label: `Peça ${number}`,
+  component: "",
+  modelUrl: "",
+  posterUrl: ""
+});
+
 function itemDraft(item: StudioItem): ItemDraft {
   return {
     name: item.name,
@@ -118,6 +134,10 @@ function itemDraft(item: StudioItem): ItemDraft {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: hotspotText(item.viewerHotspots || []),
     viewerVariants: variantText(item.viewerVariants || []),
+    viewerModes: item.viewerModes || [],
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: (item.viewerPieces || []).map((piece) => ({ ...piece })),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: (item.galleryUrls || []).join("\n"),
@@ -137,6 +157,10 @@ function itemPayload(item: StudioItem) {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: item.viewerHotspots || [],
     viewerVariants: item.viewerVariants || [],
+    viewerModes: item.viewerModes || [],
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: item.viewerPieces || [],
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: item.galleryUrls || [],
@@ -156,6 +180,18 @@ function draftPayload(item: ItemDraft) {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: parseHotspots(item.viewerHotspots),
     viewerVariants: parseViewerVariants(item.viewerVariants),
+    viewerModes: item.viewerModes,
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: item.viewerPieces
+      .map((piece, index) => ({
+        id: piece.id || `piece-${index + 1}`,
+        label: piece.label.trim(),
+        component: piece.component.trim(),
+        modelUrl: piece.modelUrl.trim(),
+        posterUrl: piece.posterUrl?.trim() || ""
+      }))
+      .filter((piece) => piece.label && piece.modelUrl),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: list(item.galleryUrls),
@@ -200,7 +236,12 @@ export default function ControlPage() {
   const [editingProductId, setEditingProductId] = useState("");
   const [uploading, setUploading] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
-  const [converterTarget, setConverterTarget] = useState<"project" | "product">("project");
+  const [converterTarget, setConverterTarget] = useState<
+    | { kind: "project-base" }
+    | { kind: "project-outfit" }
+    | { kind: "project-piece"; pieceId: string }
+    | { kind: "product-base" }
+  >({ kind: "project-base" });
   const [announceChannelId, setAnnounceChannelId] = useState("");
   const [digitalStockBatch, setDigitalStockBatch] = useState("");
   const [stockBusy, setStockBusy] = useState(false);
@@ -301,6 +342,15 @@ export default function ControlPage() {
   const saveProject = async (event: FormEvent) => {
     event.preventDefault();
     try {
+      setError("");
+      if (project.published && project.viewerModes.includes("outfit") && !project.outfitModelUrl.trim()) {
+        setError("Adicione o GLB do Outfit completo ou desative essa visualização antes de publicar.");
+        return;
+      }
+      if (project.published && project.viewerModes.includes("pieces") && !project.viewerPieces.some((piece) => piece.label.trim() && piece.modelUrl.trim())) {
+        setError("Adicione pelo menos uma peça 3D válida ou desative Peças separadas antes de publicar.");
+        return;
+      }
       const body = draftPayload(project);
       if (editingProjectId) {
         await studioApi.updateItem(editingProjectId, body);
@@ -703,7 +753,183 @@ export default function ControlPage() {
               <label>Categoria<input value={project.category} onChange={(e) => setProject({ ...project, category: e.target.value })} /></label>
               <label>Tags<input value={project.tags} onChange={(e) => setProject({ ...project, tags: e.target.value })} placeholder="FiveM, Feminino, Neon" /></label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={project.coverUrl} onChange={(value) => setProject({ ...project, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("project"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D principal / fallback" kind="model" value={project.modelUrl} onChange={(value) => setProject({ ...project, modelUrl: value })} onConvertFiveM={() => { setConverterTarget({ kind: "project-base" }); setTab("converter"); }} />
+
+              <div className="span-2 portfolio-viewer-config">
+                <div className="portfolio-viewer-config-head">
+                  <div>
+                    <span className="section-eyebrow">APRESENTAÇÃO 3D DO PROJETO</span>
+                    <strong>Como este projeto será exibido no Portfólio?</strong>
+                    <small>Você pode ativar uma das opções ou manter as duas no mesmo projeto.</small>
+                  </div>
+                  <span className="viewer-mode-count">{project.viewerModes.length || 0}/2 modos</span>
+                </div>
+
+                <div className="viewer-mode-options">
+                  <label className={project.viewerModes.includes("outfit") ? "viewer-mode-option active" : "viewer-mode-option"}>
+                    <input
+                      type="checkbox"
+                      checked={project.viewerModes.includes("outfit")}
+                      onChange={(event) => {
+                        const enabled = event.target.checked;
+                        setProject((current) => ({
+                          ...current,
+                          viewerModes: enabled
+                            ? [...current.viewerModes.filter((mode) => mode !== "outfit"), "outfit"]
+                            : current.viewerModes.filter((mode) => mode !== "outfit"),
+                          outfitModelUrl: enabled ? (current.outfitModelUrl || current.modelUrl) : current.outfitModelUrl
+                        }));
+                      }}
+                    />
+                    <span className="viewer-mode-icon">◎</span>
+                    <span>
+                      <strong>Outfit completo</strong>
+                      <small>Exibe todas as peças juntas em um único GLB composto.</small>
+                    </span>
+                  </label>
+
+                  <label className={project.viewerModes.includes("pieces") ? "viewer-mode-option active" : "viewer-mode-option"}>
+                    <input
+                      type="checkbox"
+                      checked={project.viewerModes.includes("pieces")}
+                      onChange={(event) => {
+                        const enabled = event.target.checked;
+                        setProject((current) => ({
+                          ...current,
+                          viewerModes: enabled
+                            ? [...current.viewerModes.filter((mode) => mode !== "pieces"), "pieces"]
+                            : current.viewerModes.filter((mode) => mode !== "pieces"),
+                          viewerPieces: enabled && current.viewerPieces.length === 0
+                            ? [createViewerPiece(1)]
+                            : current.viewerPieces
+                        }));
+                      }}
+                    />
+                    <span className="viewer-mode-icon">◇</span>
+                    <span>
+                      <strong>Peças separadas</strong>
+                      <small>Camiseta, calça, tênis e outras peças ficam selecionáveis individualmente.</small>
+                    </span>
+                  </label>
+                </div>
+
+                {project.viewerModes.includes("outfit") && (
+                  <div className="viewer-outfit-editor">
+                    <div className="viewer-subsection-head">
+                      <div><strong>Outfit completo</strong><small>GLB único contendo o conjunto montado.</small></div>
+                      <span>CONJUNTO</span>
+                    </div>
+                    <div className="viewer-media-grid">
+                      <MediaField
+                        label="Modelo do Outfit completo"
+                        kind="model"
+                        value={project.outfitModelUrl}
+                        onChange={(value) => setProject((current) => ({ ...current, outfitModelUrl: value }))}
+                        onConvertFiveM={() => { setConverterTarget({ kind: "project-outfit" }); setTab("converter"); }}
+                        showPreview={false}
+                      />
+                      <MediaField
+                        label="Poster do Outfit (opcional)"
+                        kind="image"
+                        value={project.outfitPosterUrl}
+                        onChange={(value) => setProject((current) => ({ ...current, outfitPosterUrl: value }))}
+                        showPreview={false}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {project.viewerModes.includes("pieces") && (
+                  <div className="viewer-pieces-editor">
+                    <div className="viewer-subsection-head">
+                      <div><strong>Peças separadas</strong><small>Cadastre cada item que aparecerá no seletor do viewer.</small></div>
+                      <button
+                        className="btn btn-outline compact"
+                        type="button"
+                        onClick={() => setProject((current) => ({
+                          ...current,
+                          viewerPieces: [...current.viewerPieces, createViewerPiece(current.viewerPieces.length + 1)]
+                        }))}
+                      >
+                        + Adicionar peça
+                      </button>
+                    </div>
+
+                    <div className="viewer-piece-list">
+                      {project.viewerPieces.map((piece, index) => (
+                        <article className="viewer-piece-card" key={piece.id}>
+                          <div className="viewer-piece-card-head">
+                            <span>PEÇA {String(index + 1).padStart(2, "0")}</span>
+                            <button
+                              type="button"
+                              className="danger-link"
+                              onClick={() => setProject((current) => ({
+                                ...current,
+                                viewerPieces: current.viewerPieces.filter((entry) => entry.id !== piece.id)
+                              }))}
+                            >
+                              Remover
+                            </button>
+                          </div>
+
+                          <div className="viewer-piece-meta-grid">
+                            <label>Nome da peça
+                              <input
+                                value={piece.label}
+                                onChange={(event) => setProject((current) => ({
+                                  ...current,
+                                  viewerPieces: current.viewerPieces.map((entry) => entry.id === piece.id ? { ...entry, label: event.target.value } : entry)
+                                }))}
+                                placeholder="Ex.: Camiseta"
+                              />
+                            </label>
+                            <label>Componente FiveM
+                              <input
+                                value={piece.component}
+                                onChange={(event) => setProject((current) => ({
+                                  ...current,
+                                  viewerPieces: current.viewerPieces.map((entry) => entry.id === piece.id ? { ...entry, component: event.target.value } : entry)
+                                }))}
+                                placeholder="Ex.: jbib, lowr, feet, accs"
+                              />
+                            </label>
+                          </div>
+
+                          <div className="viewer-media-grid">
+                            <MediaField
+                              label="Modelo 3D da peça"
+                              kind="model"
+                              value={piece.modelUrl}
+                              onChange={(value) => setProject((current) => ({
+                                ...current,
+                                viewerPieces: current.viewerPieces.map((entry) => entry.id === piece.id ? { ...entry, modelUrl: value } : entry)
+                              }))}
+                              onConvertFiveM={() => { setConverterTarget({ kind: "project-piece", pieceId: piece.id }); setTab("converter"); }}
+                              showPreview={false}
+                            />
+                            <MediaField
+                              label="Poster da peça (opcional)"
+                              kind="image"
+                              value={piece.posterUrl || ""}
+                              onChange={(value) => setProject((current) => ({
+                                ...current,
+                                viewerPieces: current.viewerPieces.map((entry) => entry.id === piece.id ? { ...entry, posterUrl: value } : entry)
+                              }))}
+                              showPreview={false}
+                            />
+                          </div>
+                        </article>
+                      ))}
+
+                      {!project.viewerPieces.length && (
+                        <div className="viewer-piece-empty">
+                          Nenhuma peça cadastrada. Use <strong>+ Adicionar peça</strong> para começar.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
               <MediaField label="Modelo Antes / Comparação" kind="model" value={project.compareModelUrl} onChange={(value) => setProject({ ...project, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={project.viewerHotspots} onChange={(e) => setProject({ ...project, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Manga emissiva | 0.12 0.84 0.05 | 0 1 0"} />
@@ -774,7 +1000,7 @@ export default function ControlPage() {
                 </select>
               </label>
               <MediaField label="Capa / imagem / PSD" kind="image" value={product.coverUrl} onChange={(value) => setProduct({ ...product, coverUrl: value })} />
-              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertFiveM={() => { setConverterTarget("product"); setTab("converter"); }} />
+              <MediaField label="Modelo 3D" kind="model" value={product.modelUrl} onChange={(value) => setProduct({ ...product, modelUrl: value })} onConvertFiveM={() => { setConverterTarget({ kind: "product-base" }); setTab("converter"); }} />
               <MediaField label="Modelo Antes / Comparação" kind="model" value={product.compareModelUrl} onChange={(value) => setProduct({ ...product, compareModelUrl: value })} />
               <label className="span-2">Hotspots 3D
                 <textarea rows={3} value={product.viewerHotspots} onChange={(e) => setProduct({ ...product, viewerHotspots: e.target.value })} placeholder={"Nome do detalhe | x y z | nx ny nz\nEx.: Material neon | 0.15 0.90 0.04 | 0 1 0"} />
@@ -943,15 +1169,35 @@ export default function ControlPage() {
         <FiveMConverter
           onChanged={refresh}
           onUse={(url) => {
-            if (converterTarget === "product") {
+            if (converterTarget.kind === "product-base") {
               setProduct((current) => ({ ...current, modelUrl: url }));
               setTab("products");
               flash("Prévia FiveM inserida automaticamente no produto.");
-            } else {
-              setProject((current) => ({ ...current, modelUrl: url }));
-              setTab("portfolio");
-              flash("Prévia FiveM inserida automaticamente no projeto.");
+              return;
             }
+
+            if (converterTarget.kind === "project-outfit") {
+              setProject((current) => ({ ...current, outfitModelUrl: url }));
+              setTab("portfolio");
+              flash("Prévia FiveM definida como Outfit completo.");
+              return;
+            }
+
+            if (converterTarget.kind === "project-piece") {
+              setProject((current) => ({
+                ...current,
+                viewerPieces: current.viewerPieces.map((piece) =>
+                  piece.id === converterTarget.pieceId ? { ...piece, modelUrl: url } : piece
+                )
+              }));
+              setTab("portfolio");
+              flash("Prévia FiveM inserida na peça selecionada.");
+              return;
+            }
+
+            setProject((current) => ({ ...current, modelUrl: url }));
+            setTab("portfolio");
+            flash("Prévia FiveM inserida automaticamente no projeto.");
           }}
         />
       )}

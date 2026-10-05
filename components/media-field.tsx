@@ -12,6 +12,7 @@ type Props = {
   value: string;
   onChange: (value: string) => void;
   onConvertFiveM?: () => void;
+  showPreview?: boolean;
 };
 
 const accepts: Record<Kind, string> = {
@@ -44,7 +45,7 @@ async function uploadAsset(file: File, isPublic: boolean) {
   return result;
 }
 
-export default function MediaField({ label, kind, value, onChange, onConvertFiveM }: Props) {
+export default function MediaField({ label, kind, value, onChange, onConvertFiveM, showPreview = true }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
@@ -108,7 +109,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
       {status && <small className="media-field-status">{status}</small>}
       {error && <small className="media-field-error">{error}</small>}
 
-      {kind === "image" && value && (
+      {showPreview && kind === "image" && value && (
         <div className="media-preview image-preview">
           <img src={value} alt="Pré-visualização" />
           <div>
@@ -118,7 +119,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
         </div>
       )}
 
-      {kind === "model" && value && (
+      {showPreview && kind === "model" && value && (
         <div className="media-preview model-preview">
           <div className="media-preview-title">
             <strong>Prévia 3D</strong>
@@ -128,7 +129,7 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
         </div>
       )}
 
-      {kind === "video" && value && (
+      {showPreview && kind === "video" && value && (
         <div className="media-preview video-preview">
           <video src={value} controls preload="metadata" />
         </div>

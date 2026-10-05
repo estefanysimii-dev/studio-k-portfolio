@@ -161,6 +161,10 @@ export default function HomePage() {
           compareModelUrl={featured?.compareModelUrl}
           hotspots={featured?.viewerHotspots}
           viewerVariants={featured?.viewerVariants}
+          viewerModes={featured?.viewerModes}
+          outfitModelUrl={featured?.outfitModelUrl}
+          outfitPosterUrl={featured?.outfitPosterUrl}
+          viewerPieces={featured?.viewerPieces}
           posterUrl={featured?.coverUrl || featured?.gifUrl}
           title={featured?.name || "Studio K"}
           hideControls
@@ -186,6 +190,10 @@ export default function HomePage() {
               meta={(item.tags || []).join(" · ")}
               coverUrl={item.coverUrl || item.gifUrl}
               modelUrl={item.modelUrl}
+              viewerModes={item.viewerModes}
+              outfitModelUrl={item.outfitModelUrl}
+              outfitPosterUrl={item.outfitPosterUrl}
+              viewerPieces={item.viewerPieces}
               href={`/portfolio/${item.id}`}
               favoriteKind="items"
               favoriteId={item.id}

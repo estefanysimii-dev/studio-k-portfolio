@@ -225,6 +225,10 @@ export default function ShowcaseDetail(props: Props) {
           compareModelUrl={item.compareModelUrl}
           hotspots={item.viewerHotspots}
           viewerVariants={item.viewerVariants}
+          viewerModes={item.viewerModes}
+          outfitModelUrl={item.outfitModelUrl}
+          outfitPosterUrl={item.outfitPosterUrl}
+          viewerPieces={item.viewerPieces}
           posterUrl={item.coverUrl || item.gifUrl}
           title={item.name}
           hideControls={!isProduct}
