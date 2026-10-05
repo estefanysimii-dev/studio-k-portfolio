@@ -19,7 +19,7 @@ export default function CollectionsPage() {
         {collections.length ? collections.map((collection) => (
           <a className="collection-card glass-panel" href={`/collections/${collection.slug}`} key={collection.id}>
             <div className="collection-cover">
-              {collection.coverUrl ? <img src={collection.coverUrl} alt="" loading="lazy" /> : <span>SK</span>}
+              {collection.coverUrl ? <img src={collection.coverUrl} alt="" loading="lazy" decoding="async" /> : <span>SK</span>}
             </div>
             <div>
               <span>{collection.productIds.length} produtos · {collection.itemIds.length} projetos</span>

@@ -4,6 +4,43 @@ import { useEffect, useRef, useState } from "react";
 import Icon from "./icons";
 import type { StudioViewerHotspot, StudioViewerVariant } from "@/lib/studio-types";
 
+const MODEL_VIEWER_SRC = "https://unpkg.com/@google/model-viewer@4.1.0/dist/model-viewer.min.js";
+let modelViewerPromise: Promise<void> | null = null;
+
+function ensureModelViewer() {
+  if (typeof window === "undefined" || !window.customElements) return Promise.resolve();
+  if (window.customElements.get("model-viewer")) return Promise.resolve();
+  if (modelViewerPromise) return modelViewerPromise;
+
+  modelViewerPromise = new Promise<void>((resolve, reject) => {
+    const finish = () => {
+      window.customElements.whenDefined("model-viewer").then(() => resolve()).catch(reject);
+    };
+
+    let script = document.querySelector<HTMLScriptElement>('script[data-studio-model-viewer="true"]');
+    if (!script) {
+      script = document.createElement("script");
+      script.type = "module";
+      script.src = MODEL_VIEWER_SRC;
+      script.dataset.studioModelViewer = "true";
+      document.head.appendChild(script);
+    }
+
+    if (window.customElements.get("model-viewer")) {
+      resolve();
+      return;
+    }
+
+    script.addEventListener("load", finish, { once: true });
+    script.addEventListener("error", () => {
+      modelViewerPromise = null;
+      reject(new Error("Não foi possível carregar o viewer 3D."));
+    }, { once: true });
+  });
+
+  return modelViewerPromise;
+}
+
 type Props = {
   modelUrl?: string;
   compareModelUrl?: string;
@@ -38,6 +75,7 @@ export default function ModelStage({
 }: Props) {
   const wrapper = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<ModelViewerElement | null>(null);
+  const [viewerRequested, setViewerRequested] = useState(false);
   const [ready, setReady] = useState(false);
   const [autoRotate, setAutoRotate] = useState(true);
   const [zoom, setZoom] = useState(105);
@@ -54,41 +92,82 @@ export default function ModelStage({
   const shadow = lighting === "night" ? "0.35" : lighting === "day" ? "0.82" : "1";
 
   useEffect(() => {
-    let active = true;
     setReady(false);
     setVariants([]);
     setVariant("");
     setZoom(105);
+  }, [activeModelUrl]);
 
-    if (!activeModelUrl) return;
+  useEffect(() => {
+    setViewerRequested(false);
+    if (!activeModelUrl || typeof window === "undefined") return;
+
+    const node = wrapper.current;
+    let entered = !document.documentElement.classList.contains("studio-entry-locked");
+    let nearby = false;
+
+    const requestViewer = () => {
+      if (entered && nearby) setViewerRequested(true);
+    };
+    const onEntered = () => {
+      entered = true;
+      requestViewer();
+    };
+
+    window.addEventListener("studio-k-entered", onEntered, { once: true });
+
+    let observer: IntersectionObserver | null = null;
+    if (node && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        nearby = true;
+        observer?.disconnect();
+        requestViewer();
+      }, { rootMargin: "420px 0px" });
+      observer.observe(node);
+    } else {
+      nearby = true;
+      requestViewer();
+    }
+
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("studio-k-entered", onEntered);
+    };
+  }, [activeModelUrl]);
+
+  useEffect(() => {
+    if (!activeModelUrl || !viewerRequested) return;
+    let active = true;
 
     const connectViewer = async () => {
-      if (typeof window === "undefined" || !window.customElements) return;
       try {
-        await window.customElements.whenDefined("model-viewer");
-        if (!active) return;
-        const viewer = viewerRef.current;
-        const syncVariants = () => {
-          const available = Array.from(viewer?.availableVariants || []);
-          setVariants(available);
-          if (available.length && !available.includes(variant)) setVariant("");
-        };
-        viewer?.addEventListener("load", syncVariants);
-        setReady(true);
-        syncVariants();
-        return () => viewer?.removeEventListener("load", syncVariants);
+        await ensureModelViewer();
+        if (active) setReady(true);
       } catch {
         if (active) setReady(false);
       }
     };
 
-    let cleanup: (() => void) | undefined;
-    void connectViewer().then((fn) => { cleanup = fn; });
-    return () => {
-      active = false;
-      cleanup?.();
+    void connectViewer();
+    return () => { active = false; };
+  }, [activeModelUrl, viewerRequested]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const viewer = viewerRef.current;
+    if (!viewer) return;
+
+    const syncVariants = () => {
+      const available = Array.from(viewer.availableVariants || []);
+      setVariants(available);
+      setVariant((current) => available.length && !available.includes(current) ? "" : current);
     };
-  }, [activeModelUrl]);
+
+    viewer.addEventListener("load", syncVariants);
+    syncVariants();
+    return () => viewer.removeEventListener("load", syncVariants);
+  }, [activeModelUrl, ready]);
 
   useEffect(() => {
     if (!compareModelUrl && compare) setCompare(false);
@@ -153,7 +232,7 @@ export default function ModelStage({
           exposure={exposure}
           environment-image="neutral"
           interaction-prompt="auto"
-          loading={compact ? "lazy" : "eager"}
+          loading={compact || previewOnly ? "lazy" : "eager"}
         >
           {!previewOnly && !compare && hotspots.map((spot, index) => (
             <button
@@ -171,7 +250,13 @@ export default function ModelStage({
           ))}
         </model-viewer>
       ) : activePosterUrl ? (
-        <img className="model-poster" src={activePosterUrl} alt={title} />
+        <img
+          className="model-poster"
+          src={activePosterUrl}
+          alt={title}
+          loading={compact || previewOnly ? "lazy" : "eager"}
+          decoding="async"
+        />
       ) : (
         <div className="model-placeholder">
           <Icon name="cube" />

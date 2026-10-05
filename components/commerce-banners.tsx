@@ -40,7 +40,7 @@ export default function CommerceBanners() {
         <div className="commerce-banner-stack">
           {inline.slice(0, 3).map((banner) => (
             <a className="commerce-banner" href={banner.href || "#"} key={banner.id}>
-              {banner.imageUrl && <img src={banner.imageUrl} alt="" />}
+              {banner.imageUrl && <img src={banner.imageUrl} alt="" loading="lazy" decoding="async" />}
               <div>
                 <strong>{banner.title}</strong>
                 {banner.text && <span>{banner.text}</span>}
@@ -55,7 +55,7 @@ export default function CommerceBanners() {
         <div className="commerce-popup-backdrop" role="dialog" aria-modal="true" aria-label={popup.title}>
           <article className="commerce-popup glass-panel">
             <button type="button" className="commerce-popup-close" onClick={() => dismiss(popup.id)} aria-label="Fechar">×</button>
-            {popup.imageUrl && <img src={popup.imageUrl} alt="" />}
+            {popup.imageUrl && <img src={popup.imageUrl} alt="" decoding="async" />}
             <span className="section-eyebrow">STUDIO K</span>
             <strong>{popup.title}</strong>
             {popup.text && <p>{popup.text}</p>}

@@ -20,7 +20,7 @@ export default function CommunityPage() {
         <div className="lookbook-grid">
           {lookbooks.map((lookbook) => (
             <article className="lookbook-card glass-panel" key={lookbook.id}>
-              {lookbook.coverUrl ? <img src={lookbook.coverUrl} alt="" /> : <div className="lookbook-placeholder">SK</div>}
+              {lookbook.coverUrl ? <img src={lookbook.coverUrl} alt="" loading="lazy" decoding="async" /> : <div className="lookbook-placeholder">SK</div>}
               <div><strong>{lookbook.name}</strong><p>{lookbook.description}</p><div>{lookbook.productIds.map((id) => { const p=state.products.find(x=>x.id===id); return p ? <a key={id} href={`/products/${id}`}>{p.name}</a> : null; })}</div></div>
             </article>
           ))}
@@ -33,7 +33,7 @@ export default function CommunityPage() {
           <div className="community-gallery-grid">
             {gallery.length ? gallery.map((item) => (
               <article key={item.id}>
-                <img src={item.imageUrl} alt="" loading="lazy" />
+                <img src={item.imageUrl} alt="" loading="lazy" decoding="async" />
                 <div><strong>{item.name}</strong><p>{item.caption}</p></div>
               </article>
             )) : <p className="muted">Ainda não há imagens aprovadas.</p>}
