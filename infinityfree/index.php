@@ -127,9 +127,11 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
 } elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/collections', '/community', '/compare', '/cart', '/account', '/control', '/discord'], true)) http_response_code(404);
 $escape = fn(string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $url = STUDIO_ORIGIN . $path;
+$privatePage = in_array(rtrim($path, '/') ?: '/', ['/account', '/control', '/cart'], true);
 $tags = '<title>' . $escape($title) . '</title><meta name="description" content="' . $escape($description) . '">';
+$tags .= '<meta name="robots" content="' . ($privatePage ? 'noindex,nofollow' : 'index,follow') . '">';
 $tags .= '<link rel="canonical" href="' . $escape($url) . '">';
 foreach (['og:title' => $title, 'og:description' => $description, 'og:url' => $url, 'og:image' => $image, 'og:site_name' => 'Studio K', 'og:type' => 'website', 'og:locale' => 'pt_BR'] as $key => $value) $tags .= '<meta property="' . $key . '" content="' . $escape((string) $value) . '">';
-$tags .= '<meta name="twitter:card" content="summary_large_image">';
+foreach (['twitter:card' => 'summary_large_image', 'twitter:title' => $title, 'twitter:description' => $description, 'twitter:image' => $image] as $key => $value) $tags .= '<meta name="' . $key . '" content="' . $escape((string) $value) . '">';
 header('Content-Type: text/html; charset=utf-8'); header('Cache-Control: no-store');
 if ($method !== 'HEAD') echo str_replace('<!--STUDIO_METADATA-->', $tags, file_get_contents(__DIR__ . '/template.html'));
