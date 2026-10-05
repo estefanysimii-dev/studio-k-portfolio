@@ -166,15 +166,15 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
               </div>
 
               <div className="studio-title-role-actions">
-                <label className="badge-enabled-toggle">
+                <label className="studio-title-enabled-toggle">
                   <input type="checkbox" checked={title.enabled} onChange={(e) => patchTitle(title.id, { enabled: e.target.checked })} />
                   <span>{title.enabled ? "Ativo" : "Desativado"}</span>
                 </label>
-                <div className="badge-order-buttons">
+                <div className="studio-title-order-buttons">
                   <button type="button" onClick={() => moveTitle(title.id, -1)} disabled={index === 0} title="Subir">↑</button>
                   <button type="button" onClick={() => moveTitle(title.id, 1)} disabled={index === value.titles.length - 1} title="Descer">↓</button>
                 </div>
-                <button type="button" className="rank-action-remove" onClick={() => removeTitle(title.id)}>Apagar</button>
+                <button type="button" className="studio-title-remove" onClick={() => removeTitle(title.id)}>Apagar</button>
               </div>
             </article>
           ))}
