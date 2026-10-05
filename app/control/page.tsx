@@ -660,12 +660,11 @@ export default function ControlPage() {
             <label className="span-2">Descrição do Hero<textarea rows={4} value={siteDraft.heroSubtitle} onChange={(e) => setSiteDraft({ ...siteDraft, heroSubtitle: e.target.value })} /></label>
             <label>Logo URL<input value={siteDraft.logoUrl} onChange={(e) => setSiteDraft({ ...siteDraft, logoUrl: e.target.value })} /></label>
             <label>Background Home<input value={siteDraft.homeBackgroundUrl} onChange={(e) => setSiteDraft({ ...siteDraft, homeBackgroundUrl: e.target.value })} /></label>
-            <div className="span-2 home-banner-editor">
+            <div className="span-2 home-banner-editor home-banner-editor-compact">
               <div className="home-banner-editor-head">
                 <div>
                   <span className="section-eyebrow">BANNERS DA HOME</span>
-                  <strong>Carrossel principal</strong>
-                  <small>Os banners trocam automaticamente a cada 5 segundos. As bolinhas abaixo do banner permitem trocar manualmente.</small>
+                  <small>Uma linha por banner · troca automática a cada 5 segundos.</small>
                 </div>
                 <button
                   className="btn btn-outline compact"
@@ -681,48 +680,15 @@ export default function ControlPage() {
               </div>
 
               {(siteDraft.homeBannerSlides || []).length ? (
-                <div className="home-banner-editor-list">
+                <div className="home-banner-editor-list compact">
                   {(siteDraft.homeBannerSlides || []).map((slide, index) => (
-                    <article className="home-banner-editor-card" key={slide.id}>
-                      <div className="home-banner-editor-card-head">
-                        <div>
-                          <span>BANNER {String(index + 1).padStart(2, "0")}</span>
-                          <small>{index === 0 ? "Primeiro a aparecer" : `Aparece após ${index * 5}s no ciclo`}</small>
-                        </div>
-                        <div className="home-banner-editor-actions">
-                          <button
-                            type="button"
-                            disabled={index === 0}
-                            onClick={() => setSiteDraft((current) => {
-                              if (!current) return current;
-                              const slides = [...(current.homeBannerSlides || [])];
-                              [slides[index - 1], slides[index]] = [slides[index], slides[index - 1]];
-                              return { ...current, homeBannerSlides: slides };
-                            })}
-                          >↑</button>
-                          <button
-                            type="button"
-                            disabled={index === (siteDraft.homeBannerSlides || []).length - 1}
-                            onClick={() => setSiteDraft((current) => {
-                              if (!current) return current;
-                              const slides = [...(current.homeBannerSlides || [])];
-                              [slides[index], slides[index + 1]] = [slides[index + 1], slides[index]];
-                              return { ...current, homeBannerSlides: slides };
-                            })}
-                          >↓</button>
-                          <button
-                            type="button"
-                            className="danger-link"
-                            onClick={() => setSiteDraft((current) => current ? ({
-                              ...current,
-                              homeBannerSlides: (current.homeBannerSlides || []).filter((entry) => entry.id !== slide.id)
-                            }) : current)}
-                          >Remover</button>
-                        </div>
-                      </div>
+                    <div className="home-banner-editor-row" key={slide.id}>
+                      <span className="home-banner-row-index" title={`Banner ${index + 1}`}>
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
 
                       <MediaField
-                        label="Imagem do banner"
+                        label={`Banner ${index + 1}`}
                         kind="image"
                         value={slide.imageUrl}
                         onChange={(value) => setSiteDraft((current) => current ? ({
@@ -730,24 +696,27 @@ export default function ControlPage() {
                           homeBannerSlides: (current.homeBannerSlides || []).map((entry) => entry.id === slide.id ? { ...entry, imageUrl: value } : entry)
                         }) : current)}
                         showPreview={false}
+                        compactRow
                       />
 
-                      <label>Texto alternativo
-                        <input
-                          value={slide.alt || ""}
-                          onChange={(event) => setSiteDraft((current) => current ? ({
-                            ...current,
-                            homeBannerSlides: (current.homeBannerSlides || []).map((entry) => entry.id === slide.id ? { ...entry, alt: event.target.value } : entry)
-                          }) : current)}
-                          placeholder="Ex.: Kiki criando roupa 3D no Studio K"
-                        />
-                      </label>
-                    </article>
+                      <button
+                        type="button"
+                        className="home-banner-remove"
+                        onClick={() => setSiteDraft((current) => current ? ({
+                          ...current,
+                          homeBannerSlides: (current.homeBannerSlides || []).filter((entry) => entry.id !== slide.id)
+                        }) : current)}
+                        aria-label={`Apagar banner ${index + 1}`}
+                        title="Apagar banner"
+                      >
+                        Apagar
+                      </button>
+                    </div>
                   ))}
                 </div>
               ) : (
-                <div className="home-banner-editor-empty">
-                  O banner atual continua sendo usado. Clique em <strong>+ Adicionar banner</strong> para criar o carrossel.
+                <div className="home-banner-editor-empty compact">
+                  Nenhum banner adicional. O banner atual continua ativo.
                 </div>
               )}
             </div>
