@@ -7334,3 +7334,35 @@ body::-webkit-scrollbar,
   }
 }
 /* ===== /Studio K · media cleanup ===== */
+
+
+/* ===== Studio K · control memory budget ===== */
+.control-shell::before {
+  animation: none !important;
+  background-attachment: scroll;
+  transform: scale(1.025);
+  filter: blur(3px) saturate(.88) brightness(.46);
+}
+.control-shell .glass-panel,
+.control-shell .control-tabs,
+.control-shell .control-notice {
+  backdrop-filter: blur(9px) saturate(110%);
+}
+.control-shell .media-preview-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.control-shell .media-preview-title > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+@media (max-width: 720px) {
+  .control-shell .media-preview-title {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+/* ===== /Studio K · control memory budget ===== */
