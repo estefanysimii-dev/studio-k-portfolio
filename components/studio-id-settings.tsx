@@ -4,13 +4,11 @@ import type {
   StudioIdBadgeCondition,
   StudioIdBadgeConfig,
   StudioIdConfig,
-  StudioIdRankConfig,
   StudioMemberRarity
 } from "@/lib/studio-types";
 
 type Props = {
   value: StudioIdConfig;
-  roles: { id: string; name: string }[];
   onChange: (next: StudioIdConfig) => void;
   onSave: () => void;
 };
@@ -39,17 +37,6 @@ const badgeConditionUsesValue = (condition: StudioIdBadgeCondition) =>
 const clampInt = (value: string, min = 0, max = 100000) =>
   Math.min(max, Math.max(min, Math.round(Number(value) || 0)));
 
-const rankId = (ranks: StudioIdRankConfig[]) => {
-  const taken = new Set(ranks.map((rank) => rank.id));
-  let index = ranks.length + 1;
-  let id = `rank-${index}`;
-  while (taken.has(id)) {
-    index += 1;
-    id = `rank-${index}`;
-  }
-  return id;
-};
-
 const badgeId = (badges: StudioIdBadgeConfig[]) => {
   const taken = new Set(badges.map((badge) => badge.id));
   let index = badges.length + 1;
@@ -61,55 +48,11 @@ const badgeId = (badges: StudioIdBadgeConfig[]) => {
   return id;
 };
 
-const nextLegacyRankOrder = (ranks: StudioIdRankConfig[]) =>
-  Math.max(1, ...ranks.map((rank) => Number(rank.minLevel || 1))) + 1;
-
-export default function StudioIdSettings({ value, roles, onChange, onSave }: Props) {
+export default function StudioIdSettings({ value, onChange, onSave }: Props) {
   const badges = (value.badges || []).filter((badge) => badge.condition !== "level");
   const patch = (next: Partial<StudioIdConfig>) => onChange({ ...value, ...next });
   const patchThreshold = (key: "collectorPurchases" | "profileFramePurchases", number: number) =>
     patch({ thresholds: { ...value.thresholds, [key]: number } });
-
-  const patchRank = (id: string, next: Partial<StudioIdRankConfig>) => {
-    onChange({
-      ...value,
-      ranks: value.ranks.map((rank) => rank.id === id ? { ...rank, ...next } : rank)
-    });
-  };
-
-  const addRank = () => {
-    if (value.ranks.length >= 12) return;
-    const id = rankId(value.ranks);
-    const next: StudioIdRankConfig = {
-      id,
-      label: "Novo Rank",
-      icon: "✦",
-      rarity: "common",
-      minLevel: nextLegacyRankOrder(value.ranks)
-    };
-    onChange({
-      ...value,
-      ranks: [...value.ranks, next],
-      discordRankSync: {
-        ...value.discordRankSync,
-        roleIds: { ...value.discordRankSync.roleIds, [id]: "" }
-      }
-    });
-  };
-
-  const removeRank = (id: string) => {
-    if (value.ranks.length <= 1) return;
-    const rank = value.ranks.find((item) => item.id === id);
-    if (!rank) return;
-    if (!window.confirm(`Remover o rank “${rank.label}”?`)) return;
-    const roleIds = { ...value.discordRankSync.roleIds };
-    delete roleIds[id];
-    onChange({
-      ...value,
-      ranks: value.ranks.filter((item) => item.id !== id),
-      discordRankSync: { ...value.discordRankSync, roleIds }
-    });
-  };
 
   const patchBadge = (id: string, next: Partial<StudioIdBadgeConfig>) => {
     onChange({
@@ -152,14 +95,6 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
     onChange({ ...value, badges: nextBadges });
   };
 
-  const setRankRole = (id: string, roleId: string) =>
-    patch({
-      discordRankSync: {
-        ...value.discordRankSync,
-        roleIds: { ...value.discordRankSync.roleIds, [id]: roleId }
-      }
-    });
-
   return (
     <div className="studio-id-settings">
       <section className="control-form glass-panel">
@@ -167,7 +102,7 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
           <div>
             <span className="section-eyebrow">STUDIO K ID</span>
             <h2>Identidade do membro</h2>
-            <p>XP e níveis foram desativados. Nesta etapa permanecem apenas os recursos de identidade que ainda serão revisados separadamente.</p>
+            <p>O Studio K ID permanece como identificador da conta. XP, níveis e ranks não fazem mais parte do sistema.</p>
           </div>
           <button className="btn btn-primary" type="button" onClick={onSave}>Salvar Studio K ID</button>
         </div>
@@ -205,59 +140,11 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       </section>
 
       <section className="control-form glass-panel">
-        <div className="form-heading studio-id-rank-heading">
-          <div>
-            <span className="section-eyebrow">RANKS</span>
-            <h2>Ranks legados</h2>
-            <p>Os ranks não evoluem mais por atividade. Eles permanecem temporariamente preservados até a próxima etapa da limpeza.</p>
-          </div>
-          <button className="btn btn-primary compact" type="button" onClick={addRank} disabled={value.ranks.length >= 12}>
-            + Adicionar rank
-          </button>
-        </div>
-
-        <div className="studio-id-rank-list">
-          {value.ranks.map((rank) => (
-            <article className={`studio-id-rank-editor rarity-${rank.rarity}`} key={rank.id}>
-              <div className="studio-id-rank-preview">
-                <i>{rank.icon || "•"}</i>
-                <div>
-                  <strong>{rank.label || "Rank sem nome"}</strong>
-                  <span>{rarityLabels[rank.rarity]}</span>
-                  <small>ID interno: {rank.id}</small>
-                </div>
-              </div>
-              <div className="studio-id-rank-editor-main">
-                <div className="studio-id-rank-fields">
-                  <label>Nome
-                    <input value={rank.label} onChange={(e) => patchRank(rank.id, { label: e.target.value })} />
-                  </label>
-                  <label>Ícone
-                    <input maxLength={12} value={rank.icon} onChange={(e) => patchRank(rank.id, { icon: e.target.value })} />
-                  </label>
-                  <label>Raridade
-                    <select value={rank.rarity} onChange={(e) => patchRank(rank.id, { rarity: e.target.value as StudioMemberRarity })}>
-                      {Object.entries(rarityLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
-                    </select>
-                  </label>
-                </div>
-                <div className="studio-id-rank-actions">
-                  <button type="button" className="rank-action-remove" onClick={() => removeRank(rank.id)} disabled={value.ranks.length <= 1}>
-                    Remover
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="control-form glass-panel">
         <div className="form-heading studio-id-badge-heading">
           <div>
             <span className="section-eyebrow">BADGES</span>
             <h2>Badges do Studio K ID</h2>
-            <p>Badges ligados à antiga progressão foram desativados. Os demais continuam preservados até a etapa específica de badges.</p>
+            <p>Os badges continuam temporariamente ativos e serão tratados na etapa específica de badges e conquistas.</p>
           </div>
           <button className="btn btn-primary compact" type="button" onClick={addBadge} disabled={badges.length >= 24}>
             + Adicionar badge
@@ -275,6 +162,7 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
                   <small>{badgeConditionLabels[badge.condition as Exclude<StudioIdBadgeCondition, "level">] || "Regra preservada"}</small>
                 </div>
               </div>
+
               <div className="studio-id-badge-editor-main">
                 <div className="studio-id-badge-fields">
                   <label>Nome
@@ -335,37 +223,6 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
           <label>Compras para Collector Frame
             <input type="number" min={1} value={value.thresholds.profileFramePurchases} onChange={(e) => patchThreshold("profileFramePurchases", clampInt(e.target.value, 1, 10000))} />
           </label>
-        </div>
-      </section>
-
-      <section className="control-form glass-panel">
-        <div className="form-heading">
-          <div>
-            <span className="section-eyebrow">DISCORD</span>
-            <h2>Sincronização de ranks com cargos</h2>
-            <p>Este recurso fica preservado temporariamente junto aos ranks e será revisado na próxima etapa.</p>
-          </div>
-        </div>
-        <label className="automation-toggle">
-          <input
-            type="checkbox"
-            checked={value.discordRankSync.enabled}
-            onChange={(event) => patch({ discordRankSync: { ...value.discordRankSync, enabled: event.target.checked } })}
-          />
-          <span>
-            <strong>Sincronizar cargos automaticamente</strong>
-            <small>Desativado por padrão.</small>
-          </span>
-        </label>
-        <div className="form-grid two studio-id-role-grid">
-          {value.ranks.map((rank) => (
-            <label key={rank.id}>{rank.label}
-              <select value={value.discordRankSync.roleIds[rank.id] || ""} onChange={(e) => setRankRole(rank.id, e.target.value)}>
-                <option value="">Sem cargo automático</option>
-                {roles.map((role) => <option value={role.id} key={role.id}>{role.name}</option>)}
-              </select>
-            </label>
-          ))}
         </div>
       </section>
     </div>

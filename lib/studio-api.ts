@@ -170,7 +170,7 @@ export const studioApi = {
     subject: string;
     issuedAt: string;
     identity: { studioId: string; discordId: string; username: string; displayName: string; avatar: string };
-    progression: { level: number; xp: number; rank: import("./studio-types").StudioMemberProfile["rank"]; title: import("./studio-types").StudioMemberProfile["equippedTitle"] };
+    identityState: { title: import("./studio-types").StudioMemberProfile["equippedTitle"] };
     entitlements: { discountPercent: number; badges: import("./studio-types").StudioMemberBadge[]; perks: Omit<import("./studio-types").StudioPerk, "progress" | "target">[] };
   }>("me/ecosystem"),
   setFavorite: (kind: "items" | "products", id: string, favorite: boolean) =>

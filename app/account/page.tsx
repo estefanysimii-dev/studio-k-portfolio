@@ -130,7 +130,6 @@ export default function AccountPage() {
       <section className="studio-id-layout">
         <article className={[
           "studio-id-card",
-          `studio-rank-${profile?.rank?.id || "member"}`,
           profile?.perks?.some((perk) => perk.id === "profile-frame" && perk.unlocked) ? "has-collector-frame" : "",
           profile?.perks?.some((perk) => perk.id === "neon-aura" && perk.unlocked) ? "has-neon-aura" : "",
           profile?.perks?.some((perk) => perk.id === "icon-aura" && perk.unlocked) ? "has-icon-aura" : ""
@@ -144,7 +143,7 @@ export default function AccountPage() {
                 <small>IDENTIDADE DIGITAL</small>
               </div>
             </div>
-            <span className={`studio-id-status rarity-${profile?.rank?.rarity || "common"}`}><i /> {profile?.rank?.label || "Studio Member"}</span>
+            <span className="studio-id-status"><i /> CONTA CONECTADA</span>
           </div>
 
           <div className="studio-id-person">
