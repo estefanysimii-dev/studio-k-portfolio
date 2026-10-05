@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /control
+Disallow: /account
+Disallow: /cart
+Sitemap: https://studiokatelier.infinityfreeapp.com/sitemap.xml
