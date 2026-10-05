@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { RadioPlayerProvider } from '@/components/radio-player-provider';
 import AmbientLight from '@/components/ambient-light';
 import StudioScrollbars from '@/components/studio-scrollbars';
+import EntryIntro from './entry-intro';
 import StudioShell from '@/components/studio-shell';
 import ShowcaseDetail from '@/components/showcase-detail';
 import Home from '@/app/page';
@@ -67,6 +68,7 @@ createRoot(document.getElementById('root')!).render(
   <StudioProvider>
     <RadioPlayerProvider>
       <ThemeProvider>
+        <EntryIntro />
         <AmbientLight />
         <StudioScrollbars />
         <Routes />
