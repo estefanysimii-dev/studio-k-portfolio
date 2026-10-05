@@ -23,7 +23,7 @@ type Section = "orders" | "bundles" | "collections" | "missions" | "benefits" | 
 
 const emptyBundle = (): StudioBundle => ({ id:"",name:"",description:"",productIds:[],minItems:2,discountType:"percent",discountValue:10,tiers:[],giftProductId:"",active:true });
 const emptyCollection = (): StudioCollection => ({ id:"",name:"",slug:"",description:"",coverUrl:"",productIds:[],itemIds:[],active:true,startsAt:"",endsAt:"" });
-const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",xp:50,active:true,startsAt:"",endsAt:"" });
+const emptyMission = (): StudioMission => ({ id:"",title:"",description:"",type:"favorite_products",target:1,targetId:"",active:true,startsAt:"",endsAt:"" });
 const emptyBenefit = (): StudioRoleBenefit => ({ id:"",roleId:"",label:"",discountPercent:10,stackWithCoupon:false,productIds:[],excludedProductIds:[],collectionIds:[],active:true });
 const emptyBanner = (): StudioBanner => ({ id:"",title:"",text:"",imageUrl:"",href:"",placement:"all",pages:[],active:true,startsAt:"",endsAt:"" });
 const emptySchedule = (): StudioSchedule => ({ id:"",kind:"product_publish",targetId:"",runAt:new Date(Date.now()+3600000).toISOString(),status:"scheduled",error:"" });
@@ -81,7 +81,7 @@ export default function CommerceControl({ commerce, products, items, roles, vers
   return (
     <div className="commerce-control">
       <section className="control-form glass-panel">
-        <div className="form-heading"><div><span className="section-eyebrow">COMMERCE HUB</span><h2>Loja, retenção e conteúdo</h2><p>Combos, coleções, missões, benefícios, banners, agendamentos, comunidade e histórico num único lugar.</p></div></div>
+        <div className="form-heading"><div><span className="section-eyebrow">COMMERCE HUB</span><h2>Loja, retenção e conteúdo</h2><p>Combos, coleções, atividades, benefícios, banners, agendamentos, comunidade e histórico num único lugar.</p></div></div>
         <div className="commerce-tabs">
           {([
             ["orders","Pedidos em grupo"],["bundles","Combos"],["collections","Coleções"],["missions","Missões"],["benefits","Benefícios Discord"],["banners","Banners"],
@@ -173,12 +173,11 @@ export default function CommerceControl({ commerce, products, items, roles, vers
           <label>Título<input value={mission.title} onChange={e=>setMission({...mission,title:e.target.value})}/></label>
           <label>Tipo<select value={mission.type} onChange={e=>setMission({...mission,type:e.target.value as StudioMission["type"]})}><option value="favorite_products">Favoritar produtos</option><option value="purchases">Compras</option><option value="feedbacks">Feedbacks</option><option value="join_discord">Entrar no Discord</option><option value="view_product">Ver produto</option><option value="visit_path">Visitar página</option></select></label>
           <label>Meta<input type="number" min={1} value={mission.target} onChange={e=>setMission({...mission,target:Number(e.target.value)||1})}/></label>
-          <label>XP de recompensa<input type="number" min={0} value={mission.xp} onChange={e=>setMission({...mission,xp:Number(e.target.value)||0})}/></label>
           <label>Produto / caminho alvo<input value={mission.targetId} onChange={e=>setMission({...mission,targetId:e.target.value})} placeholder="/products ou ID do produto"/></label>
           <label className="span-2">Descrição<textarea rows={2} value={mission.description} onChange={e=>setMission({...mission,description:e.target.value})}/></label>
         </div>
         <button className="btn btn-primary" disabled={busy||!mission.title} onClick={()=>void save("missions",mission,()=>setMission(emptyMission()))}>{mission.id?"Salvar missão":"Criar missão"}</button>
-        <div className="commerce-list">{commerce.missions.map(x=><article key={x.id}><div><strong>{x.title}</strong><span>{x.type} · meta {x.target} · +{x.xp} XP</span></div><div><button onClick={()=>setMission(x)}>Editar</button><button className="danger" onClick={()=>void remove("missions",x.id)}>Excluir</button></div></article>)}</div>
+        <div className="commerce-list">{commerce.missions.map(x=><article key={x.id}><div><strong>{x.title}</strong><span>{x.type} · meta {x.target}</span></div><div><button onClick={()=>setMission(x)}>Editar</button><button className="danger" onClick={()=>void remove("missions",x.id)}>Excluir</button></div></article>)}</div>
       </section>}
 
       {section==="benefits" && <section className="control-form glass-panel commerce-editor">
