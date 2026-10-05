@@ -74,14 +74,36 @@ export default function HomePage() {
       : validFeedbacks.filter((feedback) => Math.round(Number(feedback.rating)) === feedbackFilter),
     [feedbackFilter, validFeedbacks]
   );
-  const banner = site.homeBackgroundUrl && !site.homeBackgroundUrl.startsWith("/media/")
+  const customBanner = site.homeBackgroundUrl && !site.homeBackgroundUrl.startsWith("/media/")
     ? site.homeBackgroundUrl
-    : "/studio-assets/studio-k-banner-hq.webp";
+    : "";
+  const banner = customBanner || "/studio-assets/studio-k-banner-hq.webp";
 
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
       <section className="home-banner glass-panel" aria-label="Studio K">
-        <img className="home-banner-image" src={banner} alt="Studio K · estúdio de criação 3D" />
+        {customBanner ? (
+          <img
+            className="home-banner-image"
+            src={banner}
+            alt="Studio K · estúdio de criação 3D"
+            fetchPriority="high"
+            decoding="async"
+          />
+        ) : (
+          <picture>
+            <source media="(max-width: 600px)" srcSet="/studio-assets/studio-k-banner.webp" />
+            <img
+              className="home-banner-image"
+              src="/studio-assets/studio-k-banner-hq.webp"
+              alt="Studio K · estúdio de criação 3D"
+              width={1622}
+              height={970}
+              fetchPriority="high"
+              decoding="async"
+            />
+          </picture>
+        )}
         <div className="home-banner-shade" />
         <div className="home-banner-copy">
           <span>STUDIO K · FIVEM DESIGN</span>
@@ -238,7 +260,7 @@ export default function HomePage() {
                 <article className="feedback-card glass-panel" key={feedback.id}>
                   <div className="feedback-card-head">
                     {feedback.avatar ? (
-                      <img className="feedback-avatar" src={feedback.avatar} alt="" loading="lazy" />
+                      <img className="feedback-avatar" src={feedback.avatar} alt="" loading="lazy" decoding="async" />
                     ) : (
                       <div className="feedback-avatar feedback-avatar-fallback" aria-hidden="true">SK</div>
                     )}
