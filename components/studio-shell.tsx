@@ -70,9 +70,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
 
   const invite = discordInviteHref(site.discordInviteUrl);
   const appInvite = discordAppInviteHref(invite);
-  const logoSrc = site.logoUrl && !site.logoUrl.startsWith("/media/")
-    ? site.logoUrl
-    : "/studio-assets/studio-k-logo.webp";
+  const logoSrc = "/studio-assets/studio-k-logo-official.svg";
   const tagline = !site.brandTagline || site.brandTagline === "KINETIC LOOM"
     ? "SUA IDENTIDADE. SUA CIDADE."
     : site.brandTagline;
