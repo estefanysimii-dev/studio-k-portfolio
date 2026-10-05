@@ -42,8 +42,15 @@ export const studioApi = {
     }).catch(() => undefined),
   publicState: () => request<StudioPublicState>("public-state"),
   controlState: () => request<StudioControlState>("control/state"),
-  saveSite: (body: unknown) =>
-    request("control/site", { method: "PUT", body: JSON.stringify(body) }),
+  saveSite: (body: import("./studio-types").StudioSite) => {
+    const clean = {
+      ...body,
+      homeBannerSlides: (body.homeBannerSlides || [])
+        .map((slide) => ({ ...slide, imageUrl: slide.imageUrl.trim(), alt: slide.alt?.trim() || "" }))
+        .filter((slide) => slide.imageUrl)
+    };
+    return request("control/site", { method: "PUT", body: JSON.stringify(clean) });
+  },
   saveStudioIdConfig: (body: import("./studio-types").StudioIdConfig) =>
     request<import("./studio-types").StudioIdConfig>("control/studio-id", { method: "PUT", body: JSON.stringify(body) }),
   saveFeedbackModeration: (body: { order: string[]; hidden: string[] }) =>
