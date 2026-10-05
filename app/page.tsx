@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import ShowcaseCard from "@/components/showcase-card";
+import HomeBannerCarousel from "@/components/home-banner-carousel";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
 import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
@@ -74,42 +75,11 @@ export default function HomePage() {
       : validFeedbacks.filter((feedback) => Math.round(Number(feedback.rating)) === feedbackFilter),
     [feedbackFilter, validFeedbacks]
   );
-  const customBanner = site.homeBackgroundUrl && !site.homeBackgroundUrl.startsWith("/media/")
-    ? site.homeBackgroundUrl
-    : "";
-  const banner = customBanner || "/studio-assets/studio-k-banner-hq.webp";
+
 
   return (
     <StudioShell eyebrow="STUDIO K" title="Showroom">
-      <section className="home-banner glass-panel" aria-label="Studio K">
-        {customBanner ? (
-          <img
-            className="home-banner-image"
-            src={banner}
-            alt="Studio K · estúdio de criação 3D"
-            fetchPriority="high"
-            decoding="async"
-          />
-        ) : (
-          <picture>
-            <source media="(max-width: 600px)" srcSet="/studio-assets/studio-k-banner.webp" />
-            <img
-              className="home-banner-image"
-              src="/studio-assets/studio-k-banner-hq.webp"
-              alt="Studio K · estúdio de criação 3D"
-              width={1622}
-              height={970}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
-        )}
-        <div className="home-banner-shade" />
-        <div className="home-banner-copy">
-          <span>STUDIO K · FIVEM DESIGN</span>
-          <strong>{site.brandTagline || "Sua identidade. Sua cidade."}</strong>
-        </div>
-      </section>
+      <HomeBannerCarousel site={site} />
 
       {featuredDrop && featuredDropProduct && (
         <section className={`drop-live-banner glass-panel ${liveDrop ? "is-live" : "is-scheduled"}`}>

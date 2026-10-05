@@ -32,6 +32,7 @@ export type StudioSite = {
   brandTagline: string;
   logoUrl: string;
   homeBackgroundUrl: string;
+  homeBannerSlides?: { id: string; imageUrl: string; alt?: string }[];
   controlBackgroundUrl: string;
   heroEyebrow: string;
   heroTitle: string;
