@@ -49,7 +49,6 @@ export default function StudioAssistant() {
   const [visible, setVisible] = useState(true);
   const [dwellReady, setDwellReady] = useState(false);
   const [revisitCount, setRevisitCount] = useState(0);
-  const [levelUp, setLevelUp] = useState<{ from: number; to: number } | null>(null);
   const [newAchievement, setNewAchievement] = useState("");
   const [campaignViews, setCampaignViews] = useState<Record<string, number>>({});
 
@@ -83,11 +82,6 @@ export default function StudioAssistant() {
     const userId = state.me.user?.id;
     if (!state.me.authenticated || !profile || !userId) return;
     try {
-      const levelKey = `studio-k-last-level:${userId}`;
-      const previous = Number(localStorage.getItem(levelKey) || 0);
-      if (previous > 0 && profile.level > previous) setLevelUp({ from: previous, to: profile.level });
-      localStorage.setItem(levelKey, String(profile.level));
-
       const achievementKey = `studio-k-known-achievements:${userId}`;
       const current = (profile.achievements || []).filter((item) => item.unlocked).map((item) => item.id);
       const savedRaw = localStorage.getItem(achievementKey);
@@ -134,19 +128,6 @@ export default function StudioAssistant() {
       .sort((a, b) => Number(b.priority || 0) - Number(a.priority || 0));
     const contextual = [];
 
-    if (levelUp) {
-      contextual.push({
-        id: `context-level-up-${levelUp.to}`,
-        type: "motivation" as const,
-        title: `LEVEL ${levelUp.to} desbloqueado! ✨`,
-        text: `Seu Studio K ID evoluiu do level ${levelUp.from} para o ${levelUp.to}. Seu rank, títulos e perks podem ter mudado também. 💜`,
-        ctaLabel: "Ver meu Studio K ID",
-        href: "/account",
-        priceCents: 0,
-        oldPriceCents: 0,
-        active: true
-      });
-    }
     if (newAchievement) {
       contextual.push({
         id: `context-achievement-${newAchievement}`,
