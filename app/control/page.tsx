@@ -241,6 +241,7 @@ export default function ControlPage() {
   const [editingProjectId, setEditingProjectId] = useState("");
   const [editingProductId, setEditingProductId] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [cleaningAssets, setCleaningAssets] = useState(false);
   const [isPublicUpload, setIsPublicUpload] = useState(true);
   const [converterTarget, setConverterTarget] = useState<
     | { kind: "project-base" }
@@ -527,6 +528,25 @@ export default function ControlPage() {
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao processar arquivo.");
+    }
+  };
+
+  const cleanupMedia = async () => {
+    const confirmed = window.confirm(
+      "Limpar arquivos temporários e prévias geradas que não estão sendo usadas? Mídias vinculadas a projetos, produtos ou ao site serão preservadas."
+    );
+    if (!confirmed) return;
+    setCleaningAssets(true);
+    setError("");
+    try {
+      const result = await studioApi.cleanupAssets();
+      const removed = result.removedAssets + result.removedUntrackedFiles;
+      flash(`Limpeza concluída: ${removed} arquivo${removed === 1 ? "" : "s"} removido${removed === 1 ? "" : "s"} · ${bytes(result.freedBytes)} liberados.`);
+      await refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível limpar a biblioteca.");
+    } finally {
+      setCleaningAssets(false);
     }
   };
 
@@ -1211,10 +1231,31 @@ export default function ControlPage() {
 
       {tab === "media" && (
         <>
-          <section className="upload-zone glass-panel">
-            <span className="section-eyebrow">BIBLIOTECA</span>
-            <h2>Mídia e arquivos-fonte</h2>
-            <p>PNG, JPEG, WebP, GIF, MP4, WebM, GLB e GLTF podem ser públicos. YDD, YTD, BLEND, FBX e PSD ficam privados; a Central gera apenas a prévia pública sem expor os arquivos-fonte.</p>
+          <section className="upload-zone glass-panel media-library-panel">
+            <div className="media-library-heading">
+              <div>
+                <span className="section-eyebrow">BIBLIOTECA</span>
+                <h2>Mídia permanente</h2>
+                <p>
+                  Aqui ficam apenas arquivos que você enviou para reutilizar. Fontes do FiveM e prévias técnicas geradas pelo conversor ficam ocultas e podem ser limpas sem afetar projetos que estejam usando seus GLBs.
+                </p>
+              </div>
+              <button
+                className="btn btn-outline media-cleanup-button"
+                type="button"
+                disabled={cleaningAssets}
+                onClick={() => void cleanupMedia()}
+              >
+                {cleaningAssets ? "Limpando..." : "Limpar temporários"}
+              </button>
+            </div>
+
+            <div className="media-library-stats">
+              <span><strong>{state.assetStats?.visible ?? state.assets.length}</strong> na biblioteca</span>
+              <span><strong>{state.assetStats?.temporary ?? 0}</strong> técnicos ocultos</span>
+              <span><strong>{bytes(state.assetStats?.bytes || 0)}</strong> registrados</span>
+            </div>
+
             <div className="upload-actions">
               <label className="btn btn-primary file-button">
                 {uploading ? "Enviando..." : "Selecionar arquivo"}
@@ -1234,6 +1275,12 @@ export default function ControlPage() {
                 {sourceAsset(asset) && <button className="btn btn-outline compact asset-process" type="button" onClick={() => void processAsset(asset)}>{asset.ext === "psd" ? "Gerar preview" : "Converter para GLB"}</button>}
               </article>
             ))}
+            {!state.assets.length && (
+              <div className="media-library-empty glass-panel">
+                <strong>Biblioteca limpa</strong>
+                <span>Arquivos temporários de conversão não aparecem aqui.</span>
+              </div>
+            )}
           </div>
         </>
       )}

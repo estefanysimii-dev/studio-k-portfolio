@@ -321,7 +321,11 @@ export type StudioAsset = {
   created: string;
   publicUrl: string;
   sourceAssetId?: string;
+  relatedSourceAssetIds?: string[];
   generated?: boolean;
+  generatedKind?: string;
+  temporary?: boolean;
+  assetRole?: string;
 };
 
 export type StudioMemberTitle = {
@@ -575,6 +579,12 @@ export type StudioControlState = StudioPublicState & {
     created: string;
   }[];
   assets: StudioAsset[];
+  assetStats?: {
+    visible: number;
+    total: number;
+    temporary: number;
+    bytes: number;
+  };
   user?: { name?: string; id?: string };
   discord?: {
     oauthConfigured: boolean;
