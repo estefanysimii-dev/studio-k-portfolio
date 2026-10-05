@@ -40,7 +40,7 @@ export default function MediaGallery({ coverUrl = "", gifUrl = "", videoUrl = ""
       <div className="media-gallery-main">
         {selected.type === "video"
           ? <video src={selected.url} controls playsInline preload="metadata" />
-          : <img src={selected.url} alt={title} />}
+          : <img src={selected.url} alt={title} decoding="async" />}
       </div>
       {media.length > 1 && (
         <div className="media-gallery-strip" aria-label="Galeria de mídia">
@@ -52,7 +52,7 @@ export default function MediaGallery({ coverUrl = "", gifUrl = "", videoUrl = ""
               onClick={() => setActive(index)}
               aria-label={`Abrir mídia ${index + 1}`}
             >
-              {item.type === "video" ? <span>VÍDEO</span> : <img src={item.url} alt="" loading="lazy" />}
+              {item.type === "video" ? <span>VÍDEO</span> : <img src={item.url} alt="" loading="lazy" decoding="async" />}
             </button>
           ))}
         </div>
