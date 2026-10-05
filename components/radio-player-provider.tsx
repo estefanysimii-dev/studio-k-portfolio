@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useStudio } from "./studio-provider";
 import { studioApi } from "@/lib/studio-api";
 import { scheduledPosition } from "@/lib/radio-clock";
@@ -35,8 +36,10 @@ const RadioPlayerContext = createContext<RadioPlayerContextValue>({
 });
 
 export function RadioPlayerProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const { state } = useStudio();
   const radio = state.site.radio;
+  const suspendedForControl = pathname.startsWith("/control");
   const configKey = JSON.stringify(radio);
   const host = useRef<HTMLDivElement>(null);
   const actions = useRef({ play: noop, pause: noop, live: noop, volume: (_value: number) => {} });
@@ -49,10 +52,16 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
   const [spectrum, setSpectrum] = useState(false);
 
   useEffect(() => {
-    if (!radio?.enabled || radio.source === "spotify") {
+    if (suspendedForControl || !radio?.enabled || radio.source === "spotify") {
+      actions.current = { play: noop, pause: noop, live: noop, volume: () => {} };
+      host.current?.replaceChildren();
       setPlaying(false);
       setReady(false);
-      setMessage("Rádio indisponível");
+      setSpectrum(false);
+      setTrackTitle("");
+      setMessage(suspendedForControl ? "Rádio pausada na Central" : "Rádio indisponível");
+      document.documentElement.style.removeProperty("--studio-radio-bass");
+      document.documentElement.style.removeProperty("--studio-radio-treble");
       return;
     }
 
@@ -393,7 +402,7 @@ export function RadioPlayerProvider({ children }: { children: React.ReactNode })
     // The player only restarts when the saved radio configuration changes.
     // Internal route navigation does not change configKey, so playback stays continuous.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configKey]);
+  }, [configKey, suspendedForControl]);
 
   const value = useMemo<RadioPlayerContextValue>(() => ({
     playing,

@@ -107,7 +107,6 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
       <div className="analytics-ranked-grid">
         <RankedList title="Origens" subtitle="de onde chegaram" rows={data.topSources || []} />
         <RankedList title="Buscas" subtitle={data.searches + " buscas"} rows={data.topSearches || []} />
-        <RankedList title="Cliques" subtitle={data.clicks + " interações"} rows={data.topClicks || []} />
         <RankedList title="Cupons" subtitle="usados em pedidos pagos" rows={data.topCoupons || []} />
         <RankedList title="Páginas de saída" subtitle="onde encerraram" rows={data.exitPages || []} />
       </div>

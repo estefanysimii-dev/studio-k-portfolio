@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import ModelStage from "@/components/model-stage";
 import { studioApi } from "@/lib/studio-api";
 
@@ -50,6 +50,11 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [status, setStatus] = useState("");
+  const [preview3DOpen, setPreview3DOpen] = useState(false);
+
+  useEffect(() => {
+    setPreview3DOpen(false);
+  }, [value]);
 
   const upload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -123,10 +128,19 @@ export default function MediaField({ label, kind, value, onChange, onConvertFive
       {showPreview && kind === "model" && value && (
         <div className="media-preview model-preview">
           <div className="media-preview-title">
-            <strong>Prévia 3D</strong>
-            <span>BLEND/FBX são convertidos em GLB. Para arquivos nativos do FiveM, use YDD + YTD.</span>
+            <div>
+              <strong>Prévia 3D</strong>
+              <span>Carregue o viewer apenas quando precisar inspecionar o modelo.</span>
+            </div>
+            <button
+              className="btn btn-outline compact"
+              type="button"
+              onClick={() => setPreview3DOpen((current) => !current)}
+            >
+              {preview3DOpen ? "Fechar prévia" : "Abrir prévia 3D"}
+            </button>
           </div>
-          <ModelStage modelUrl={value} compact />
+          {preview3DOpen && <ModelStage modelUrl={value} compact />}
         </div>
       )}
 
