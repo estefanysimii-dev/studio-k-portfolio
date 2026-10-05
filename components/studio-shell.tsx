@@ -85,7 +85,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated
-    ? `${me.profile?.equippedTitle?.label || "Studio K Member"} · LV ${me.profile?.level || 1}`
+    ? (me.profile?.equippedTitle?.label || "Studio K Member")
     : "Discord não conectado";
 
   return (
