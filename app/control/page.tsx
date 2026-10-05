@@ -29,6 +29,10 @@ type ItemDraft = {
   compareModelUrl: string;
   viewerHotspots: string;
   viewerVariants: string;
+  viewerModes: StudioViewerMode[];
+  outfitModelUrl: string;
+  outfitPosterUrl: string;
+  viewerPieces: StudioViewerPiece[];
   videoUrl: string;
   gifUrl: string;
   galleryUrls: string;
@@ -57,6 +61,10 @@ const emptyProject: ItemDraft = {
   compareModelUrl: "",
   viewerHotspots: "",
   viewerVariants: "",
+  viewerModes: [],
+  outfitModelUrl: "",
+  outfitPosterUrl: "",
+  viewerPieces: [],
   videoUrl: "",
   gifUrl: "",
   galleryUrls: "",
@@ -126,6 +134,10 @@ function itemDraft(item: StudioItem): ItemDraft {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: hotspotText(item.viewerHotspots || []),
     viewerVariants: variantText(item.viewerVariants || []),
+    viewerModes: item.viewerModes || [],
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: (item.viewerPieces || []).map((piece) => ({ ...piece })),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: (item.galleryUrls || []).join("\n"),
@@ -145,6 +157,10 @@ function itemPayload(item: StudioItem) {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: item.viewerHotspots || [],
     viewerVariants: item.viewerVariants || [],
+    viewerModes: item.viewerModes || [],
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: item.viewerPieces || [],
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: item.galleryUrls || [],
@@ -164,6 +180,18 @@ function draftPayload(item: ItemDraft) {
     compareModelUrl: item.compareModelUrl || "",
     viewerHotspots: parseHotspots(item.viewerHotspots),
     viewerVariants: parseViewerVariants(item.viewerVariants),
+    viewerModes: item.viewerModes,
+    outfitModelUrl: item.outfitModelUrl || "",
+    outfitPosterUrl: item.outfitPosterUrl || "",
+    viewerPieces: item.viewerPieces
+      .map((piece, index) => ({
+        id: piece.id || `piece-${index + 1}`,
+        label: piece.label.trim(),
+        component: piece.component.trim(),
+        modelUrl: piece.modelUrl.trim(),
+        posterUrl: piece.posterUrl?.trim() || ""
+      }))
+      .filter((piece) => piece.label && piece.modelUrl),
     videoUrl: item.videoUrl || "",
     gifUrl: item.gifUrl || "",
     galleryUrls: list(item.galleryUrls),
