@@ -6913,3 +6913,17 @@ body::-webkit-scrollbar,
   display: none;
 }
 /* ===== /Studio K · unified internal scrollbars ===== */
+
+
+/* ===== Studio K · rendering performance ===== */
+@supports (content-visibility: auto) {
+  .page-content > .section-block,
+  .feedback-section,
+  .recommendation-section,
+  .collection-grid,
+  .community-columns {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+}
+/* ===== /Studio K · rendering performance ===== */
