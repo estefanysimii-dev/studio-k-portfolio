@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   },
   description: "Portfólio, produtos e experiências 3D do Studio K para GTA V / FiveM.",
   icons: {
-    icon: "/studio-assets/studio-k-logo-official.svg?v=20261005-3",
-    shortcut: "/studio-assets/studio-k-logo-official.svg?v=20261005-3",
-    apple: "/studio-assets/studio-k-logo-official.svg?v=20261005-3"
+    icon: "/studio-assets/studio-k-logo-official-v2.svg",
+    shortcut: "/studio-assets/studio-k-logo-official-v2.svg",
+    apple: "/studio-assets/studio-k-logo-official-v2.svg"
   },
   openGraph: {
     title: "Studio K",
