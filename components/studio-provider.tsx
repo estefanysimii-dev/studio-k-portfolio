@@ -5,6 +5,35 @@ import { studioApi } from "@/lib/studio-api";
 import type { StudioPublicState } from "@/lib/studio-types";
 import { DEFAULT_DISCORD_INVITE } from "@/lib/links";
 
+// Normalize display labels only. URLs, identifiers and stored backend data stay intact.
+const cryptoLabelFields = new Set([
+  "brandName", "brandTagline", "heroEyebrow", "heroTitle", "heroAccent", "heroDescription",
+  "memberBenefitTitle", "memberBenefitDescription", "name", "title", "description",
+  "text", "alt", "label", "category", "categories", "ctaLabel", "defaultTitle"
+]);
+function cryptoDisplayLabels<T>(value: T, field = ""): T {
+  if (typeof value === "string") {
+    if (field === "logoUrl" && value === "/studio-assets/studio-k-logo.webp") {
+      return "/studio-assets/crypto-logo.png" as T;
+    }
+    if (field === "imageUrl") {
+      const artwork: Record<string, string> = {
+        "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=20261011-2",
+        "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=20261011-2"
+      };
+      if (artwork[value]) return artwork[value] as T;
+    }
+    return (cryptoLabelFields.has(field) ? value.replace(/studio\s*k/gi, "Crypto") : value) as T;
+  }
+  if (Array.isArray(value)) return value.map((entry) => cryptoDisplayLabels(entry, field)) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, entry]) =>
+      [key, cryptoDisplayLabels(entry, key)]
+    )) as T;
+  }
+  return value;
+}
+
 const fallback: StudioPublicState = {
   site: {
     brandName: "Crypto",
@@ -87,7 +116,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
       try {
         setError("");
         const next = await studioApi.publicState();
-        setState(next);
+        setState(cryptoDisplayLabels(next));
         lastSuccessAt.current = Date.now();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Crypto.");

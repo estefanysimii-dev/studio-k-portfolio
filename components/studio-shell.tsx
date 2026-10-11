@@ -77,9 +77,9 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const configuredBg = variant === "control" ? site.controlBackgroundUrl : site.homeBackgroundUrl;
   const backgroundUrl = configuredBg &&
     !configuredBg.startsWith("/media/") &&
-    configuredBg !== "/studio-assets/crypto-banner.svg"
+    configuredBg !== "/studio-assets/crypto-banner.svg?v=20261011-2"
     ? configuredBg
-    : "/studio-assets/crypto-banner.svg";
+    : "/studio-assets/crypto-banner.svg?v=20261011-2";
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated
@@ -149,7 +149,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
             {me.user?.avatar ? (
               <img className="profile-avatar" src={me.user.avatar} alt="" loading="lazy" decoding="async" />
             ) : (
-              <div className="avatar-placeholder">{me.authenticated ? "SK" : "K"}</div>
+              <div className="avatar-placeholder">C</div>
             )}
             <div>
               <strong>{profileName}</strong>

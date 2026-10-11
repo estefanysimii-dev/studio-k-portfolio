@@ -104,7 +104,7 @@ if (str_starts_with($path, '/api/')) fail(404, 'Rota não encontrada.');
 if (!in_array($method, ['GET', 'HEAD'], true)) fail(405, 'Método não permitido.');
 $title = 'Crypto';
 $description = 'Portfólio, produtos e experiências 3D do Crypto para GTA V / FiveM.';
-$image = STUDIO_ORIGIN . '/studio-assets/crypto-banner.svg';
+$image = STUDIO_ORIGIN . '/studio-assets/crypto-banner.svg?v=20261011-2';
 if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
     [$status, $body] = upstream('/api/portfolio/public-state', 'GET', null, [], 5);
     $state = json_decode($body, true);
@@ -125,6 +125,8 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
 } elseif (preg_match('~^/collections/[A-Za-z0-9-]+/?$~', $path)) {
     // Dynamic collection pages are rendered by the Crypto frontend.
 } elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/collections', '/community', '/compare', '/cart', '/account', '/control', '/discord'], true)) http_response_code(404);
+$title = str_ireplace('Studio K', 'Crypto', $title);
+$description = str_ireplace('Studio K', 'Crypto', $description);
 $escape = fn(string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $url = STUDIO_ORIGIN . $path;
 $privatePage = in_array(rtrim($path, '/') ?: '/', ['/account', '/control', '/cart'], true);

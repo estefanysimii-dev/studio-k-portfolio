@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   },
   description: "Portfólio, produtos e experiências 3D do Crypto para GTA V / FiveM.",
   icons: {
-    icon: "/studio-assets/crypto-favicon.svg",
-    shortcut: "/studio-assets/crypto-favicon.svg",
-    apple: "/studio-assets/crypto-favicon.svg"
+    icon: "/studio-assets/crypto-favicon.svg?v=20261011-2",
+    shortcut: "/studio-assets/crypto-favicon.svg?v=20261011-2",
+    apple: "/studio-assets/crypto-favicon.svg?v=20261011-2"
   },
   openGraph: {
     title: "Crypto",
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     siteName: "Crypto",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/studio-assets/crypto-banner.svg", width: 1600, height: 900, alt: "Crypto" }]
+    images: [{ url: "/studio-assets/crypto-banner.svg?v=20261011-2", width: 1600, height: 900, alt: "Crypto" }]
   },
   twitter: {
     card: "summary_large_image",
     title: "Crypto",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
-    images: ["/studio-assets/crypto-banner.svg"]
+    images: ["/studio-assets/crypto-banner.svg?v=20261011-2"]
   }
 };
 

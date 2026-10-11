@@ -7,9 +7,14 @@ type Props = {
   site: StudioSite;
 };
 
-const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg";
-const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg";
+const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg?v=20261011-2";
+const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg?v=20261011-2";
 const ROTATION_MS = 5000;
+// Replace the two legacy brand artworks while retaining carousel slots and timing.
+const cryptoBannerArtwork = (url: string) => ({
+  "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=20261011-2",
+  "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=20261011-2"
+} as Record<string, string>)[url] || url;
 
 export default function HomeBannerCarousel({ site }: Props) {
   const [active, setActive] = useState(0);
@@ -20,7 +25,7 @@ export default function HomeBannerCarousel({ site }: Props) {
       .filter((slide) => slide?.imageUrl?.trim())
       .map((slide) => ({
         id: slide.id,
-        imageUrl: slide.imageUrl.trim(),
+        imageUrl: cryptoBannerArtwork(slide.imageUrl.trim()),
         alt: slide.alt?.trim() || "Crypto · estúdio de criação 3D",
         builtin: false
       }));
