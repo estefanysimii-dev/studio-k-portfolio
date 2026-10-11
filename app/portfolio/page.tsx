@@ -24,7 +24,7 @@ export default function PortfolioPage() {
     : state.items.filter((item) => item.category === filter || item.tags?.includes(filter));
 
   return (
-    <StudioShell eyebrow="PORTFÓLIO" title="Arquivo Studio K">
+    <StudioShell eyebrow="PORTFÓLIO" title="Arquivo Crypto">
       <div className="section-heading">
         <div>
           <span className="section-eyebrow">SEM PREÇOS · APENAS EXPOSIÇÃO</span>
@@ -84,7 +84,7 @@ export default function PortfolioPage() {
         {visible.length ? visible.map((item) => (
           <div key={item.id} onClick={() => setSelected(item)} role="button" tabIndex={0} onKeyDown={(event) => { if (event.key === "Enter") setSelected(item); }}>
             <ShowcaseCard
-              eyebrow={item.category || "STUDIO K"}
+              eyebrow={item.category || "CRYPTO"}
               title={item.name}
               copy={item.description}
               meta={(item.tags || []).join(" · ")}

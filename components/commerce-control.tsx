@@ -168,7 +168,7 @@ export default function CommerceControl({ commerce, products, items, roles, vers
       </section>}
 
       {section==="missions" && <section className="control-form glass-panel commerce-editor">
-        <div className="form-heading"><div><span className="section-eyebrow">MISSÕES</span><h2>Missões Studio K</h2></div></div>
+        <div className="form-heading"><div><span className="section-eyebrow">MISSÕES</span><h2>Missões Crypto</h2></div></div>
         <div className="form-grid two">
           <label>Título<input value={mission.title} onChange={e=>setMission({...mission,title:e.target.value})}/></label>
           <label>Tipo<select value={mission.type} onChange={e=>setMission({...mission,type:e.target.value as StudioMission["type"]})}><option value="favorite_products">Favoritar produtos</option><option value="purchases">Compras</option><option value="feedbacks">Feedbacks</option><option value="join_discord">Entrar no Discord</option><option value="view_product">Ver produto</option><option value="visit_path">Visitar página</option></select></label>

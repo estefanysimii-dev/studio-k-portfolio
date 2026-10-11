@@ -108,7 +108,7 @@ export default function FiveMConverter({ onUse, onChanged }: Props) {
         <div className="form-heading">
           <div>
             <span className="section-eyebrow">FIVEM · YDD + YTD</span>
-            <h2>Viewer nativo Studio K</h2>
+            <h2>Viewer nativo Crypto</h2>
           </div>
           <span className={`converter-status ${busy ? "working" : ""}`}>{status}</span>
         </div>

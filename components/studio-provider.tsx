@@ -7,9 +7,9 @@ import { DEFAULT_DISCORD_INVITE } from "@/lib/links";
 
 const fallback: StudioPublicState = {
   site: {
-    brandName: "Studio K",
+    brandName: "Crypto",
     brandTagline: "SUA IDENTIDADE. SUA CIDADE.",
-    logoUrl: "/studio-assets/studio-k-logo.webp",
+    logoUrl: "/studio-assets/crypto-logo.png",
     homeBackgroundUrl: "",
     controlBackgroundUrl: "",
     heroEyebrow: "DESIGN 3D · FIVEM · MODA DIGITAL",
@@ -24,7 +24,7 @@ const fallback: StudioPublicState = {
     adminRoleIds: [],
     memberDiscountPercent: 0,
     memberBenefitTitle: "Benefícios exclusivos para membros",
-    memberBenefitDescription: "Conecte sua conta do Discord para acessar vantagens, novidades e condições especiais do Studio K.",
+    memberBenefitDescription: "Conecte sua conta do Discord para acessar vantagens, novidades e condições especiais do Crypto.",
     assistant: {
       enabled: true,
       intervalSeconds: 5,
@@ -33,8 +33,8 @@ const fallback: StudioPublicState = {
         {
           id: "welcome",
           type: "cute",
-          title: "Oi, eu sou a Kiki 💜",
-          text: "Vou ficar por aqui te mostrando coisinhas legais do Studio K.",
+          title: "Oi, eu sou a Kiki 🤍",
+          text: "Vou ficar por aqui te mostrando coisinhas legais do Crypto.",
           ctaLabel: "",
           href: "",
           priceCents: 0,
@@ -90,7 +90,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         setState(next);
         lastSuccessAt.current = Date.now();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Studio K.");
+        setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Crypto.");
       } finally {
         setLoading(false);
       }

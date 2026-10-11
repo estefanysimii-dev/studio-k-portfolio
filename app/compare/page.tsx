@@ -38,7 +38,7 @@ export default function ComparePage() {
   ],[left,right]);
 
   return <StudioShell eyebrow="COMPARADOR" title="Comparar produtos">
-    <div className="section-heading"><div><span className="section-eyebrow">STUDIO K LAB</span><h1 className="page-title">Comparador visual</h1><p className="page-subtitle">Escolha duas peças para analisar lado a lado em 3D e comparar seus atributos.</p></div></div>
+    <div className="section-heading"><div><span className="section-eyebrow">CRYPTO LAB</span><h1 className="page-title">Comparador visual</h1><p className="page-subtitle">Escolha duas peças para analisar lado a lado em 3D e comparar seus atributos.</p></div></div>
     <div className="compare-selectors glass-panel">
       <label>Produto A<select value={leftId} onChange={e=>setLeftId(e.target.value)}><option value="">Selecione</option>{state.products.map(p=><option key={p.id} value={p.id} disabled={p.id===rightId}>{p.name}</option>)}</select></label>
       <span>VS</span>

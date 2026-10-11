@@ -27,7 +27,7 @@ export default function ClothToolControl() {
     try {
       const result = await studioApi.approveClothTool(code);
       setCode('');
-      setNotice(`${result.label} autorizado. Abrindo o ClothTool Studio K…`);
+      setNotice(`${result.label} autorizado. Abrindo o ClothTool Crypto…`);
       await refresh();
       window.setTimeout(openDesktop, 180);
     } catch (err) { setError(err instanceof Error ? err.message : 'Não foi possível autorizar.'); }
@@ -41,7 +41,7 @@ export default function ClothToolControl() {
   }
   return <section className="glass-panel clothtool-control">
     <span className="section-eyebrow">FERRAMENTAS DA EQUIPE</span>
-    <h2>ClothTool Studio K</h2>
+    <h2>ClothTool Crypto</h2>
     <p>Conecte o aplicativo Windows com sua conta da Central de Controle. O acesso acompanha seus cargos de Staff no Discord.</p>
     <ol><li>Abra a versão integrada do ClothTool no Windows.</li><li>Copie o código exibido na tela de conexão.</li><li>Autorize o código abaixo e volte ao aplicativo.</li></ol>
     <form onSubmit={approve} className="clothtool-pairing">
@@ -56,9 +56,9 @@ export default function ClothToolControl() {
       <div className="clothtool-return">
         <p className="control-notice success" role="status">{notice}</p>
         <button type="button" className="btn btn-primary compact" onClick={openDesktop}>
-          Abrir ClothTool Studio K
+          Abrir ClothTool Crypto
         </button>
-        <small>Se o navegador pedir confirmação, permita abrir o aplicativo Studio K.</small>
+        <small>Se o navegador pedir confirmação, permita abrir o aplicativo Crypto.</small>
       </div>
     )}
     <h3>Suas conexões</h3>

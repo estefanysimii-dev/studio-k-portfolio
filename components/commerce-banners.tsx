@@ -56,7 +56,7 @@ export default function CommerceBanners() {
           <article className="commerce-popup glass-panel">
             <button type="button" className="commerce-popup-close" onClick={() => dismiss(popup.id)} aria-label="Fechar">×</button>
             {popup.imageUrl && <img src={popup.imageUrl} alt="" decoding="async" />}
-            <span className="section-eyebrow">STUDIO K</span>
+            <span className="section-eyebrow">CRYPTO</span>
             <strong>{popup.title}</strong>
             {popup.text && <p>{popup.text}</p>}
             {popup.href && <a className="btn btn-primary" href={popup.href} onClick={() => dismiss(popup.id)}>Ver agora</a>}

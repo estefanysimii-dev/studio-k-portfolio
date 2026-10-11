@@ -78,7 +78,7 @@ export default function AssistantSettings({ value, onChange, onSave }: Props) {
         <div className="form-heading">
           <div>
             <span className="section-eyebrow">ASSISTENTE DO SITE</span>
-            <h2>Kiki · Assistente Studio K</h2>
+            <h2>Kiki · Assistente Crypto</h2>
             <p>
               A Kiki conversa com quem estiver navegando e alterna as falas conforme o intervalo configurado abaixo.
               Promoções, combos, novidades e destaques geram frases automaticamente.

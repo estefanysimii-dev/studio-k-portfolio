@@ -135,13 +135,13 @@ export default function FeedbackSettings({ feedbacks, onSaved }: Props) {
                     style={{ width: 46, height: 46, objectFit: "cover", borderRadius: 10 }}
                   />
                 ) : (
-                  <span className="row-placeholder">SK</span>
+                  <span className="row-placeholder">C</span>
                 )}
               </div>
 
               <div className="control-row-copy feedback-manager-copy">
                 <div className="feedback-manager-name-line">
-                  <strong>{feedback.name || "Cliente Studio K"}</strong>
+                  <strong>{feedback.name || "Cliente Crypto"}</strong>
                   <span className={`feedback-manager-status ${visible ? "visible" : "hidden"}`}>
                     {visible ? "Visível" : "Oculto"}
                   </span>

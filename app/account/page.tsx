@@ -99,15 +99,15 @@ export default function AccountPage() {
     return (
       <StudioShell eyebrow="CONTA" title="Minha Conta">
         <section className="account-guest glass-panel">
-          <div className="account-guest-mark">K</div>
-          <span className="section-eyebrow">STUDIO K ID</span>
-          <h1>Sua identidade dentro do ecossistema Studio K.</h1>
+          <div className="account-guest-mark"><img src="/studio-assets/crypto-logo.png" alt="Crypto" /></div>
+          <span className="section-eyebrow">CRYPTO ID</span>
+          <h1>Sua identidade dentro do ecossistema Crypto.</h1>
           <p>
-            Conecte seu Discord para criar seu Studio K ID, salvar favoritos, acompanhar compras,
-            tickets, entregas e sua participação no Studio K.
+            Conecte seu Discord para criar seu Crypto ID, salvar favoritos, acompanhar compras,
+            tickets, entregas e sua participação no Crypto.
           </p>
           <a className="btn btn-primary" href="/api/oauth/start?next=/account">
-            Criar meu Studio K ID <Icon name="arrow" />
+            Criar meu Crypto ID <Icon name="arrow" />
           </a>
         </section>
       </StudioShell>
@@ -126,9 +126,9 @@ export default function AccountPage() {
           <div className="studio-id-card-glow" aria-hidden="true" />
           <div className="studio-id-top">
             <div className="studio-id-brand">
-              <img src="/studio-assets/studio-k-logo.webp" alt="" />
+              <img src="/studio-assets/crypto-logo.png" alt="" />
               <div>
-                <span>STUDIO K ID</span>
+                <span>CRYPTO ID</span>
                 <small>IDENTIDADE DIGITAL</small>
               </div>
             </div>
@@ -140,31 +140,31 @@ export default function AccountPage() {
               ? <img src={me.user.avatar} alt="" />
               : <div className="studio-id-avatar-fallback">{(me.user?.name || me.user?.username || "K").slice(0, 1).toUpperCase()}</div>}
             <div>
-              <h1>{me.user?.name || me.user?.username || "Membro Studio K"}</h1>
+              <h1>{me.user?.name || me.user?.username || "Membro Crypto"}</h1>
               <span>@{me.user?.username || "studio-k"}</span>
               <small className="studio-id-equipped-title">
-                {profile?.equippedTitle?.label || "Studio K Member"}
+                {profile?.equippedTitle?.label || "Crypto Member"}
               </small>
             </div>
           </div>
 
           <div className="studio-id-code">
-            <small>STUDIO K ID</small>
+            <small>CRYPTO ID</small>
             <strong>{profile?.studioId || "SK-•••••"}</strong>
           </div>
 
           <div className="studio-id-foot">
             <span>MEMBRO DESDE {memberSinceLabel.toUpperCase()}</span>
-            <strong>{profile?.discountPercent ? `${profile.discountPercent}% OFF` : "STUDIO K MEMBER"}</strong>
+            <strong>{profile?.discountPercent ? `${profile.discountPercent}% OFF` : "CRYPTO MEMBER"}</strong>
           </div>
         </article>
 
         <article className="account-profile-panel glass-panel">
           <div className="account-profile-head">
             <div>
-              <span className="section-eyebrow">PERFIL STUDIO K</span>
+              <span className="section-eyebrow">PERFIL CRYPTO</span>
               <h2>Seu espaço no ecossistema.</h2>
-              <p>Acompanhe compras, favoritos, feedbacks, tickets e tudo que você salva no Studio K.</p>
+              <p>Acompanhe compras, favoritos, feedbacks, tickets e tudo que você salva no Crypto.</p>
             </div>
             <div className="hero-actions">
               {me.canControl && <a className="btn btn-primary compact" href="/control">Central de Controle</a>}
@@ -201,7 +201,7 @@ export default function AccountPage() {
             <small>{profile?.titles?.length || 0} disponíveis</small>
           </div>
           <p className="account-evolution-copy">
-            Seus títulos são definidos pelos cargos que você possui no Discord. Escolha qual deles quer exibir no Studio K ID.
+            Seus títulos são definidos pelos cargos que você possui no Discord. Escolha qual deles quer exibir no Crypto ID.
           </p>
           <div className="account-title-list">
             {profile?.titles?.map((title) => {
@@ -238,7 +238,7 @@ export default function AccountPage() {
           <div>
             <span className="section-eyebrow">WISHLIST</span>
             <h2>Meus favoritos</h2>
-            <p className="page-subtitle">Tudo que você marcou para rever depois fica salvo no seu Studio K ID.</p>
+            <p className="page-subtitle">Tudo que você marcou para rever depois fica salvo no seu Crypto ID.</p>
           </div>
           <a className="btn btn-outline compact" href="/products">Explorar produtos</a>
         </div>
@@ -253,7 +253,7 @@ export default function AccountPage() {
                     : <Icon name="cube" />}
                 </a>
                 <div>
-                  <span>PRODUTO · {item.category || "STUDIO K"}</span>
+                  <span>PRODUTO · {item.category || "CRYPTO"}</span>
                   <strong><a href={`/products/${item.id}`}>{item.name}</a></strong>
                   <small>{item.priceCents > 0 ? money.format(item.priceCents / 100) : "Sob consulta"}</small>
                 </div>
@@ -268,9 +268,9 @@ export default function AccountPage() {
                     : <Icon name="spark" />}
                 </a>
                 <div>
-                  <span>PORTFÓLIO · {item.category || "STUDIO K"}</span>
+                  <span>PORTFÓLIO · {item.category || "CRYPTO"}</span>
                   <strong><a href={`/portfolio/${item.id}`}>{item.name}</a></strong>
-                  <small>Projeto Studio K</small>
+                  <small>Projeto Crypto</small>
                 </div>
                 <FavoriteButton kind="items" itemId={item.id} />
               </article>
@@ -293,7 +293,7 @@ export default function AccountPage() {
         <div className="section-heading compact-heading">
           <div>
             <span className="section-eyebrow">PEDIDOS + ENTREGAS</span>
-            <h2>Minha biblioteca Studio K</h2>
+            <h2>Minha biblioteca Crypto</h2>
           </div>
           <button className="btn btn-outline compact" type="button" onClick={() => void loadOrders()} disabled={ordersLoading}>
             {ordersLoading ? "Atualizando..." : "Atualizar"}

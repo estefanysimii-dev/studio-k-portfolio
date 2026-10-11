@@ -12,15 +12,15 @@ export default function CommunityPage() {
   const ranking = Array.isArray(commerce?.leaderboard) ? commerce?.leaderboard : [];
 
   return (
-    <StudioShell eyebrow="COMUNIDADE" title="Studio K Community">
-      <div className="section-heading"><div><span className="section-eyebrow">COMUNIDADE STUDIO K</span><h1 className="page-title">Inspiração, looks e atividade.</h1></div></div>
+    <StudioShell eyebrow="COMUNIDADE" title="Crypto Community">
+      <div className="section-heading"><div><span className="section-eyebrow">COMUNIDADE CRYPTO</span><h1 className="page-title">Inspiração, looks e atividade.</h1></div></div>
 
       {!!lookbooks.length && <section className="section-block">
-        <div className="section-heading compact-heading"><div><span className="section-eyebrow">LOOKBOOK</span><h2>Combinações Studio K</h2></div></div>
+        <div className="section-heading compact-heading"><div><span className="section-eyebrow">LOOKBOOK</span><h2>Combinações Crypto</h2></div></div>
         <div className="lookbook-grid">
           {lookbooks.map((lookbook) => (
             <article className="lookbook-card glass-panel" key={lookbook.id}>
-              {lookbook.coverUrl ? <img src={lookbook.coverUrl} alt="" loading="lazy" decoding="async" /> : <div className="lookbook-placeholder">SK</div>}
+              {lookbook.coverUrl ? <img src={lookbook.coverUrl} alt="" loading="lazy" decoding="async" /> : <div className="lookbook-placeholder">C</div>}
               <div><strong>{lookbook.name}</strong><p>{lookbook.description}</p><div>{lookbook.productIds.map((id) => { const p=state.products.find(x=>x.id===id); return p ? <a key={id} href={`/products/${id}`}>{p.name}</a> : null; })}</div></div>
             </article>
           ))}
@@ -47,8 +47,8 @@ export default function CommunityPage() {
       </section>
 
       {!!ranking.length && <section className="glass-panel community-ranking">
-        <div className="section-heading compact-heading"><div><span className="section-eyebrow">RANKING OPCIONAL</span><h2>Studio K Community</h2></div></div>
-        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "Studio K Member"}</span><strong>{entry.score} pontos</strong></div>)}
+        <div className="section-heading compact-heading"><div><span className="section-eyebrow">RANKING OPCIONAL</span><h2>Crypto Community</h2></div></div>
+        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "Crypto Member"}</span><strong>{entry.score} pontos</strong></div>)}
         <p className="muted">Somente membros que optaram por aparecer entram neste ranking.</p>
       </section>}
     </StudioShell>

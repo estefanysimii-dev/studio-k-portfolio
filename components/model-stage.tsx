@@ -21,7 +21,7 @@ function tuneModelViewerMemory() {
   const ctor = window.customElements.get("model-viewer") as ModelViewerConstructor | undefined;
   if (!ctor) return;
   // model-viewer otherwise keeps recently loaded glTF assets alive after the
-  // element leaves the DOM. Studio K prefers deterministic release over RAM cache.
+  // element leaves the DOM. Crypto prefers deterministic release over RAM cache.
   ctor.modelCacheSize = 0;
 }
 
@@ -120,7 +120,7 @@ export default function ModelStage({
   outfitPosterUrl = "",
   viewerPieces = [],
   posterUrl = "",
-  title = "Modelo Studio K",
+  title = "Modelo Crypto",
   compact = false,
   previewOnly = false,
   hideControls = false
@@ -376,7 +376,7 @@ export default function ModelStage({
 
       {!compact && !previewOnly && (
         <div className="model-viewer-mode">
-          <span>{!hasPresentationMode && compare ? "ANTES" : activePresentation?.label || "STUDIO K"}</span>
+          <span>{!hasPresentationMode && compare ? "ANTES" : activePresentation?.label || "CRYPTO"}</span>
           {activePresentation?.meta && <small>{activePresentation.meta}</small>}
           {!activePresentation && hotspots.length > 0 && !compare && <small>{hotspots.length} hotspot{hotspots.length === 1 ? "" : "s"}</small>}
         </div>

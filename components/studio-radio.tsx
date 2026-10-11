@@ -41,12 +41,12 @@ export default function StudioRadio() {
     <aside
       hidden={hidden}
       className={`studio-radio radio-${radio.position} ${playing ? "is-playing" : ""} ${spectrum ? "has-spectrum" : ""}`}
-      aria-label={radio.name}
+      aria-label={radio.name.replace(/studio\s*k/gi, "Crypto")}
     >
       <div className="radio-heading">
         <div>
           <small>RÁDIO AO VIVO</small>
-          <strong>{radio.name}</strong>
+          <strong>{radio.name.replace(/studio\s*k/gi, "Crypto")}</strong>
         </div>
         <button
           type="button"

@@ -26,7 +26,7 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
     return (
       <section className="analytics-dashboard glass-panel">
         <span className="section-eyebrow">COMPORTAMENTO</span>
-        <h2>Analytics Studio K</h2>
+        <h2>Analytics Crypto</h2>
         <p className="muted">Os dados começarão a aparecer conforme as pessoas navegarem pelo site.</p>
       </section>
     );
@@ -47,7 +47,7 @@ export default function AnalyticsDashboard({ data }: { data?: StudioAnalytics })
       <div className="analytics-head">
         <div>
           <span className="section-eyebrow">COMPORTAMENTO 2.0 · ÚLTIMOS {data.days} DIAS</span>
-          <h2>O que as pessoas realmente fazem no Studio K</h2>
+          <h2>O que as pessoas realmente fazem no Crypto</h2>
           <p>Origem, permanência, buscas, scroll, conversão e pontos de saída em uma visão mais direta.</p>
         </div>
         <div className="analytics-revenue">

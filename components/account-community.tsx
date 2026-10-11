@@ -59,7 +59,7 @@ export default function AccountCommunity(){
   if(!state.me.authenticated)return null;
   return <section className="account-community glass-panel">
     <div className="section-heading compact-heading">
-      <div><span className="section-eyebrow">COMUNIDADE</span><h2>Participar do Studio K</h2></div>
+      <div><span className="section-eyebrow">COMUNIDADE</span><h2>Participar do Crypto</h2></div>
       <a className="btn btn-outline compact" href="/community">Abrir comunidade</a>
     </div>
 

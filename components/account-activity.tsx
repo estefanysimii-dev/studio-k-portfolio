@@ -5,12 +5,12 @@ import { useStudio } from "./studio-provider";
 function detail(entry:{event:string;itemId:string;meta:Record<string,unknown>}){
   const meta=entry.meta||{};
   if(entry.event==="order_created"){
-    return String(meta.productName||meta.title||entry.itemId||"Pedido Studio K");
+    return String(meta.productName||meta.title||entry.itemId||"Pedido Crypto");
   }
   if(entry.event==="mission_claim"){
-    return String(meta.title||"Atividade Studio K");
+    return String(meta.title||"Atividade Crypto");
   }
-  return entry.itemId||"Studio K";
+  return entry.itemId||"Crypto";
 }
 
 export default function AccountActivity() {

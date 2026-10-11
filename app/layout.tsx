@@ -9,29 +9,29 @@ import { RadioPlayerProvider } from "@/components/radio-player-provider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://studiokatelier.infinityfreeapp.com"),
   title: {
-    default: "Studio K",
-    template: "%s · Studio K"
+    default: "Crypto",
+    template: "%s · Crypto"
   },
-  description: "Portfólio, produtos e experiências 3D do Studio K para GTA V / FiveM.",
+  description: "Portfólio, produtos e experiências 3D do Crypto para GTA V / FiveM.",
   icons: {
-    icon: "/studio-assets/studio-k-logo-official-v2.svg",
-    shortcut: "/studio-assets/studio-k-logo-official-v2.svg",
-    apple: "/studio-assets/studio-k-logo-official-v2.svg"
+    icon: "/studio-assets/crypto-favicon.svg",
+    shortcut: "/studio-assets/crypto-favicon.svg",
+    apple: "/studio-assets/crypto-favicon.svg"
   },
   openGraph: {
-    title: "Studio K",
+    title: "Crypto",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
     url: "https://studiokatelier.infinityfreeapp.com",
-    siteName: "Studio K",
+    siteName: "Crypto",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/studio-assets/studio-k-banner-hq.webp", width: 1600, height: 900, alt: "Studio K" }]
+    images: [{ url: "/studio-assets/crypto-banner.svg", width: 1600, height: 900, alt: "Crypto" }]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Studio K",
+    title: "Crypto",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
-    images: ["/studio-assets/studio-k-banner-hq.webp"]
+    images: ["/studio-assets/crypto-banner.svg"]
   }
 };
 

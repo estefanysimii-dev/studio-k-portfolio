@@ -7,8 +7,8 @@ type Props = {
   site: StudioSite;
 };
 
-const DEFAULT_BANNER = "/studio-assets/studio-k-banner-hq.webp";
-const DEFAULT_BANNER_MOBILE = "/studio-assets/studio-k-banner.webp";
+const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg";
+const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg";
 const ROTATION_MS = 5000;
 
 export default function HomeBannerCarousel({ site }: Props) {
@@ -21,7 +21,7 @@ export default function HomeBannerCarousel({ site }: Props) {
       .map((slide) => ({
         id: slide.id,
         imageUrl: slide.imageUrl.trim(),
-        alt: slide.alt?.trim() || "Studio K · estúdio de criação 3D",
+        alt: slide.alt?.trim() || "Crypto · estúdio de criação 3D",
         builtin: false
       }));
 
@@ -34,7 +34,7 @@ export default function HomeBannerCarousel({ site }: Props) {
     return [{
       id: "studio-default",
       imageUrl: customBanner || DEFAULT_BANNER,
-      alt: "Studio K · estúdio de criação 3D",
+      alt: "Crypto · estúdio de criação 3D",
       builtin: !customBanner
     }];
   }, [site.homeBackgroundUrl, site.homeBannerSlides]);
@@ -66,7 +66,7 @@ export default function HomeBannerCarousel({ site }: Props) {
   return (
     <section
       className="home-banner home-banner-carousel glass-panel"
-      aria-label="Studio K"
+      aria-label="Crypto"
       aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -110,7 +110,7 @@ export default function HomeBannerCarousel({ site }: Props) {
 
       <div className="home-banner-shade" />
       <div className="home-banner-copy">
-        <span>STUDIO K · FIVEM DESIGN</span>
+        <span>CRYPTO · FIVEM DESIGN</span>
         <strong>{site.brandTagline || "Sua identidade. Sua cidade."}</strong>
       </div>
 

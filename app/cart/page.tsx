@@ -78,11 +78,11 @@ export default function CartPage() {
 
   if (!state.me.authenticated) {
     return (
-      <StudioShell eyebrow="CARRINHO" title="Studio K Store">
+      <StudioShell eyebrow="CARRINHO" title="Crypto Store">
         <section className="account-login glass-panel">
-          <span className="section-eyebrow">STUDIO K ID</span>
+          <span className="section-eyebrow">CRYPTO ID</span>
           <h1>Conecte sua conta para usar o carrinho.</h1>
-          <p>O carrinho, combos e benefícios ficam ligados ao seu Studio K ID.</p>
+          <p>O carrinho, combos e benefícios ficam ligados ao seu Crypto ID.</p>
           <a className="btn btn-primary" href="/api/oauth/start?next=/cart">Conectar Discord</a>
         </section>
       </StudioShell>
@@ -93,7 +93,7 @@ export default function CartPage() {
     <StudioShell eyebrow="CARRINHO" title="Minha sacola">
       <div className="section-heading">
         <div>
-          <span className="section-eyebrow">STUDIO K STORE</span>
+          <span className="section-eyebrow">CRYPTO STORE</span>
           <h1 className="page-title">Carrinho</h1>
           <p className="page-subtitle">Combos, benefícios do Discord e cupons são recalculados automaticamente.</p>
         </div>
@@ -104,10 +104,10 @@ export default function CartPage() {
           {products.length ? products.map(({ item, product }) => product && (
             <article className="cart-row" key={item.productId}>
               <a href={`/products/${product.id}`} className="cart-thumb">
-                {product.coverUrl || product.gifUrl ? <img src={product.coverUrl || product.gifUrl} alt="" /> : <span>SK</span>}
+                {product.coverUrl || product.gifUrl ? <img src={product.coverUrl || product.gifUrl} alt="" /> : <span>C</span>}
               </a>
               <div className="cart-copy">
-                <span>{product.category || "Studio K"}</span>
+                <span>{product.category || "Crypto"}</span>
                 <strong>{product.name}</strong>
                 <small>{money.format(product.priceCents / 100)} por unidade</small>
               </div>

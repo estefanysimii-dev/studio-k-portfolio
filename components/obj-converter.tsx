@@ -235,7 +235,7 @@ export default function ObjConverter({ onUse, onChanged }: Props) {
         <div className="form-heading">
           <div>
             <span className="section-eyebrow">OBJ → GLB</span>
-            <h2>Conversor 3D Studio K</h2>
+            <h2>Conversor 3D Crypto</h2>
           </div>
           <span className={`converter-status ${busy ? "working" : ""}`}>{status}</span>
         </div>

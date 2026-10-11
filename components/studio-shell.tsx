@@ -38,7 +38,7 @@ function BrandMark({ src, name }: { src?: string; name: string }) {
 
   return (
     <div className="brand-mark" aria-label={name}>
-      {usable ? <img src={src} alt="" onError={() => setFailed(true)} /> : <span>K</span>}
+      {usable ? <img src={src} alt="" onError={() => setFailed(true)} /> : <span>C</span>}
     </div>
   );
 }
@@ -70,29 +70,29 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
 
   const invite = discordInviteHref(site.discordInviteUrl);
   const appInvite = discordAppInviteHref(invite);
-  const logoSrc = "/studio-assets/studio-k-logo-official-v2.svg";
+  const logoSrc = "/studio-assets/crypto-logo.png";
   const tagline = !site.brandTagline || site.brandTagline === "KINETIC LOOM"
     ? "SUA IDENTIDADE. SUA CIDADE."
     : site.brandTagline;
   const configuredBg = variant === "control" ? site.controlBackgroundUrl : site.homeBackgroundUrl;
   const backgroundUrl = configuredBg &&
     !configuredBg.startsWith("/media/") &&
-    configuredBg !== "/studio-assets/studio-k-banner-hq.webp"
+    configuredBg !== "/studio-assets/crypto-banner.svg"
     ? configuredBg
-    : "/studio-assets/studio-k-banner.webp";
+    : "/studio-assets/crypto-banner.svg";
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated
-    ? (me.profile?.equippedTitle?.label || "Studio K Member")
+    ? (me.profile?.equippedTitle?.label || "Crypto Member")
     : "Discord não conectado";
 
   return (
     <div className={`studio-shell ${variant === "control" ? "control-shell" : ""}`} style={shellStyle}>
       <aside className="sidebar">
-        <Link href="/" className="brand-block" aria-label="Studio K · Início">
-          <BrandMark src={logoSrc} name={site.brandName || "Studio K"} />
+        <Link href="/" className="brand-block" aria-label="Crypto · Início">
+          <BrandMark src={logoSrc} name={"Crypto"} />
           <div>
-            <strong>{site.brandName || "STUDIO K"}</strong>
+            <strong>{"CRYPTO"}</strong>
             <span>{tagline}</span>
           </div>
         </Link>
@@ -109,7 +109,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
           })}
         </nav>
 
-        <div className="sidebar-live glass-panel" aria-label="Status ao vivo do Studio K">
+        <div className="sidebar-live glass-panel" aria-label="Status ao vivo do Crypto">
           <div className="sidebar-live-head">
             <span>Status ao vivo</span>
             <i className={status.botOnline ? "live-pulse online" : "live-pulse offline"} />
