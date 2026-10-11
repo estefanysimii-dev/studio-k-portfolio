@@ -7771,3 +7771,6 @@ body::-webkit-scrollbar,
 .account-guest-mark img { width:100%; height:100%; object-fit:contain; }
 
 .assistant-character img { filter:grayscale(1); }
+
+/* Keep the official mark fully visible in every banner aspect ratio. */
+.home-banner-image[src*="crypto-banner"] { object-fit:contain; background:#000000; }
