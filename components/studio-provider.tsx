@@ -16,8 +16,18 @@ function cryptoDisplayLabels<T>(value: T, field = ""): T {
     if (field === "logoUrl" && value === "/studio-assets/studio-k-logo.webp") {
       return "/studio-assets/crypto-logo.png" as T;
     }
+    // Resolve the current branded visuals locally, including expired Discord logo links.
+    if ((field === "logoUrl" || field === "imageUrl") && value.includes("/Logo_Crypto.png")) {
+      return "/studio-assets/crypto-logo.png" as T;
+    }
+    if ((field === "homeBackgroundUrl" && value.includes("/1558925725149564928/")) ||
+        (field === "controlBackgroundUrl" && value.includes("/1558925723517853796/"))) {
+      return "/studio-assets/crypto-banner.svg?v=studio-k-20261013" as T;
+    }
     if (field === "imageUrl") {
       const artwork: Record<string, string> = {
+        "/portfolio-assets/a54f2488-5872-4487-8403-07f6fe8350c0.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
+        "/portfolio-assets/90d9b5f4-1476-46dc-befd-e98c21669c40.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013",
         "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
         "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013"
       };
