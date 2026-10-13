@@ -141,7 +141,7 @@ export default function FeedbackSettings({ feedbacks, onSaved }: Props) {
 
               <div className="control-row-copy feedback-manager-copy">
                 <div className="feedback-manager-name-line">
-                  <strong>{feedback.name || "Cliente Crypto"}</strong>
+                  <strong>{feedback.name || "Cliente STUDIO K - CREATIVE LAB"}</strong>
                   <span className={`feedback-manager-status ${visible ? "visible" : "hidden"}`}>
                     {visible ? "Visível" : "Oculto"}
                   </span>

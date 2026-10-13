@@ -8,8 +8,8 @@ export const DEFAULT_ASSISTANT_CONFIG: StudioAssistantConfig = {
     {
       id: "welcome",
       type: "cute",
-      title: "Oi, eu sou a Kiki 🤍",
-      text: "Vou ficar por aqui te mostrando coisinhas legais do Crypto.",
+      title: "Oi, eu sou a Kiki 💜",
+      text: "Vou ficar por aqui te mostrando coisinhas legais do STUDIO K - CREATIVE LAB.",
       ctaLabel: "",
       href: "",
       priceCents: 0,
@@ -58,23 +58,23 @@ export function buildAssistantMessage(campaign: AssistantCampaign) {
   if (campaign.type === "promotion") {
     const value = price ? ` Agora por ${price}${oldPrice ? ` (antes ${oldPrice})` : ""}.` : "";
     const off = discount ? ` São ${discount}% OFF ✨` : "";
-    message = `Pssiu... ${title || "tem promoção nova no Crypto"}! 🤍${off}${value} ${detail}`.trim();
+    message = `Pssiu... ${title || "tem promoção nova no STUDIO K - CREATIVE LAB"}! 💜${off}${value} ${detail}`.trim();
   } else if (campaign.type === "combo") {
-    message = `Olha esse combo 👀 ${title || "tem combinação nova no Crypto"}${price ? ` por ${price}` : ""}! ${detail}`.trim();
+    message = `Olha esse combo 👀 ${title || "tem combinação nova no STUDIO K - CREATIVE LAB"}${price ? ` por ${price}` : ""}! ${detail}`.trim();
   } else if (campaign.type === "news") {
-    message = `Novidade fresquinha chegando ✨ ${title || "Tem coisa nova no Crypto"}! ${detail}`.trim();
+    message = `Novidade fresquinha chegando ✨ ${title || "Tem coisa nova no STUDIO K - CREATIVE LAB"}! ${detail}`.trim();
   } else if (campaign.type === "bestseller") {
-    message = `Esse aqui está fazendo sucesso por aqui 👀 ${title || "Um dos queridinhos do Crypto"}${price ? ` por ${price}` : ""}. ${detail}`.trim();
+    message = `Esse aqui está fazendo sucesso por aqui 👀 ${title || "Um dos queridinhos do STUDIO K - CREATIVE LAB"}${price ? ` por ${price}` : ""}. ${detail}`.trim();
   } else if (campaign.type === "motivation") {
     message = detail || "Vai no seu ritmo. Toda criação começa com uma ideia pequena e um pouquinho de coragem. ✨";
   } else if (campaign.type === "cute") {
-    message = detail || "Ei, só passando para dizer que seu personagem merece um look incrível hoje. 🤍";
+    message = detail || "Ei, só passando para dizer que seu personagem merece um look incrível hoje. 💜";
   }
 
   return {
     id: campaign.id,
     type: campaign.type,
-    title: title || "Kiki do Crypto",
+    title: title || "Kiki do STUDIO K - CREATIVE LAB",
     message,
     ctaLabel: campaign.ctaLabel.trim(),
     href: campaign.href.trim()

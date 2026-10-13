@@ -66,18 +66,18 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
       <section className="control-form glass-panel">
         <div className="form-heading">
           <div>
-            <span className="section-eyebrow">CRYPTO ID</span>
+            <span className="section-eyebrow">STUDIO K - CREATIVE LAB ID</span>
             <h2>Identidade da conta</h2>
-            <p>O Crypto ID identifica a conta. Os títulos são puramente visuais e vêm exclusivamente dos cargos do Discord.</p>
+            <p>O STUDIO K - CREATIVE LAB ID identifica a conta. Os títulos são puramente visuais e vêm exclusivamente dos cargos do Discord.</p>
           </div>
-          <button className="btn btn-primary" type="button" onClick={onSave}>Salvar Crypto ID</button>
+          <button className="btn btn-primary" type="button" onClick={onSave}>Salvar STUDIO K - CREATIVE LAB ID</button>
         </div>
 
         <label className="automation-toggle">
           <input type="checkbox" checked={value.enabled} onChange={(event) => patch({ enabled: event.target.checked })} />
           <span>
             <strong>Identidade ativa</strong>
-            <small>Mantém o Crypto ID e os recursos de conta disponíveis.</small>
+            <small>Mantém o STUDIO K - CREATIVE LAB ID e os recursos de conta disponíveis.</small>
           </span>
         </label>
       </section>
@@ -96,14 +96,14 @@ export default function StudioIdSettings({ value, roles, onChange, onSave }: Pro
             <input
               value={value.defaultTitle.label}
               onChange={(e) => patch({ defaultTitle: { ...value.defaultTitle, label: e.target.value } })}
-              placeholder="Crypto Member"
+              placeholder="STUDIO K - CREATIVE LAB Member"
             />
           </label>
           <label>Descrição
             <input
               value={value.defaultTitle.description}
               onChange={(e) => patch({ defaultTitle: { ...value.defaultTitle, description: e.target.value } })}
-              placeholder="Título padrão do perfil Crypto."
+              placeholder="Título padrão do perfil STUDIO K - CREATIVE LAB."
             />
           </label>
         </div>

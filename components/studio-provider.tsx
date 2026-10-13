@@ -18,12 +18,12 @@ function cryptoDisplayLabels<T>(value: T, field = ""): T {
     }
     if (field === "imageUrl") {
       const artwork: Record<string, string> = {
-        "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=20261011-2",
-        "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=20261011-2"
+        "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
+        "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013"
       };
       if (artwork[value]) return artwork[value] as T;
     }
-    return (cryptoLabelFields.has(field) ? value.replace(/studio\s*k/gi, "Crypto") : value) as T;
+    return (cryptoLabelFields.has(field) ? value.replace(/(?:studio\s*k(?:\s*-\s*creative\s*lab)?|crypto(?:\s*-\s*creative\s*lab)?)/gi, "STUDIO K - CREATIVE LAB") : value) as T;
   }
   if (Array.isArray(value)) return value.map((entry) => cryptoDisplayLabels(entry, field)) as T;
   if (value && typeof value === "object") {
@@ -36,7 +36,7 @@ function cryptoDisplayLabels<T>(value: T, field = ""): T {
 
 const fallback: StudioPublicState = {
   site: {
-    brandName: "Crypto",
+    brandName: "STUDIO K - CREATIVE LAB",
     brandTagline: "SUA IDENTIDADE. SUA CIDADE.",
     logoUrl: "/studio-assets/crypto-logo.png",
     homeBackgroundUrl: "",
@@ -53,7 +53,7 @@ const fallback: StudioPublicState = {
     adminRoleIds: [],
     memberDiscountPercent: 0,
     memberBenefitTitle: "Benefícios exclusivos para membros",
-    memberBenefitDescription: "Conecte sua conta do Discord para acessar vantagens, novidades e condições especiais do Crypto.",
+    memberBenefitDescription: "Conecte sua conta do Discord para acessar vantagens, novidades e condições especiais do STUDIO K - CREATIVE LAB.",
     assistant: {
       enabled: true,
       intervalSeconds: 5,
@@ -62,8 +62,8 @@ const fallback: StudioPublicState = {
         {
           id: "welcome",
           type: "cute",
-          title: "Oi, eu sou a Kiki 🤍",
-          text: "Vou ficar por aqui te mostrando coisinhas legais do Crypto.",
+          title: "Oi, eu sou a Kiki 💜",
+          text: "Vou ficar por aqui te mostrando coisinhas legais do STUDIO K - CREATIVE LAB.",
           ctaLabel: "",
           href: "",
           priceCents: 0,
@@ -119,7 +119,7 @@ export function StudioProvider({ children }: { children: React.ReactNode }) {
         setState(cryptoDisplayLabels(next));
         lastSuccessAt.current = Date.now();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do Crypto.");
+        setError(err instanceof Error ? err.message : "Não foi possível carregar os dados do STUDIO K - CREATIVE LAB.");
       } finally {
         setLoading(false);
       }

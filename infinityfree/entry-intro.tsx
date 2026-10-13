@@ -34,7 +34,7 @@ export default function EntryIntro() {
       className={`studio-entry studio-entry-${phase}`}
       role="button"
       tabIndex={0}
-      aria-label="Clique para entrar no Crypto"
+      aria-label="Clique para entrar no STUDIO K - CREATIVE LAB"
       onClick={enter}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {

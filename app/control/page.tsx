@@ -54,7 +54,7 @@ type ProductDraft = ItemDraft & {
 const emptyProject: ItemDraft = {
   name: "",
   description: "",
-  category: "Crypto",
+  category: "STUDIO K - CREATIVE LAB",
   tags: "",
   coverUrl: "",
   modelUrl: "",
@@ -127,7 +127,7 @@ function itemDraft(item: StudioItem): ItemDraft {
   return {
     name: item.name,
     description: item.description || "",
-    category: item.category || "Crypto",
+    category: item.category || "STUDIO K - CREATIVE LAB",
     tags: (item.tags || []).join(", "),
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
@@ -150,7 +150,7 @@ function itemPayload(item: StudioItem) {
   return {
     name: item.name,
     description: item.description || "",
-    category: item.category || "Crypto",
+    category: item.category || "STUDIO K - CREATIVE LAB",
     tags: item.tags || [],
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
@@ -173,7 +173,7 @@ function draftPayload(item: ItemDraft) {
   return {
     name: item.name,
     description: item.description || "",
-    category: item.category || "Crypto",
+    category: item.category || "STUDIO K - CREATIVE LAB",
     tags: list(item.tags),
     coverUrl: item.coverUrl || "",
     modelUrl: item.modelUrl || "",
@@ -217,7 +217,7 @@ function productPayload(item: StudioProduct) {
 const createHomeBannerSlide = (number: number) => ({
   id: `home-banner-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   imageUrl: "",
-  alt: `Banner Crypto ${number}`
+  alt: `Banner STUDIO K - CREATIVE LAB ${number}`
 });
 
 const bytes = (value: number) => {
@@ -315,10 +315,10 @@ export default function ControlPage() {
       setError("");
       const saved = await studioApi.saveStudioIdConfig(studioIdDraft);
       setStudioIdDraft(saved);
-      flash("Configurações do Crypto ID salvas.");
+      flash("Configurações do STUDIO K - CREATIVE LAB ID salvas.");
       await Promise.all([refresh(), refreshPublic()]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível salvar o Crypto ID.");
+      setError(err instanceof Error ? err.message : "Não foi possível salvar o STUDIO K - CREATIVE LAB ID.");
     }
   };
 
@@ -552,7 +552,7 @@ export default function ControlPage() {
 
   if (loading) {
     return (
-      <StudioShell eyebrow="CENTRAL" title="Controle Crypto" variant="control">
+      <StudioShell eyebrow="CENTRAL" title="Controle STUDIO K - CREATIVE LAB" variant="control">
         <div className="control-loading glass-panel">Sincronizando Central de Controle...</div>
       </StudioShell>
     );
@@ -567,7 +567,7 @@ export default function ControlPage() {
           <h1>{connected ? "Acesso não autorizado" : "Central de Controle"}</h1>
           <p>
             {connected
-              ? "Sua conta está conectada, mas não possui um dos cargos de Staff configurados no servidor do Discord do Crypto."
+              ? "Sua conta está conectada, mas não possui um dos cargos de Staff configurados no servidor do Discord do STUDIO K - CREATIVE LAB."
               : "Conecte sua conta do Discord. O acesso será liberado somente se você possuir um dos cargos de Staff configurados no servidor."}
           </p>
           <div className="hero-actions">
@@ -585,7 +585,7 @@ export default function ControlPage() {
   const sourceAsset = (asset: StudioAsset) => ["blend", "fbx", "psd"].includes(asset.ext.toLowerCase());
 
   return (
-    <StudioShell eyebrow="CENTRAL" title="Controle Crypto" variant="control">
+    <StudioShell eyebrow="CENTRAL" title="Controle STUDIO K - CREATIVE LAB" variant="control">
       <div className="control-hero">
         <div>
           <span className="section-eyebrow">ADMINISTRAÇÃO EM TEMPO REAL</span>
@@ -594,7 +594,7 @@ export default function ControlPage() {
         </div>
         <div className="control-user glass-panel">
           <span>Conectado como</span>
-          <strong>{state.user?.name || "Administrador Crypto"}</strong>
+          <strong>{state.user?.name || "Administrador STUDIO K - CREATIVE LAB"}</strong>
           <a
             className="control-panel-switch"
             href="https://studio-k-wmrj.netlify.app/"
@@ -617,7 +617,7 @@ export default function ControlPage() {
         {[
           ["overview", "Visão geral"],
           ["site", "Site"],
-          ["studioId", "Crypto ID"],
+          ["studioId", "STUDIO K - CREATIVE LAB ID"],
           ["assistant", "Assistente"],
           ["drops", "Drops"],
           ["feedbacks", "Feedbacks"],
@@ -656,7 +656,7 @@ export default function ControlPage() {
             <section className="glass-panel admin-card">
               <span className="section-eyebrow">STATUS</span>
               <h2>{state.discord?.botConnected ? "Bot conectado" : "Bot desconectado"}</h2>
-              <p>OAuth: {state.discord?.oauthConfigured ? "configurado" : "pendente"} · Conteúdo público sincronizado pela API Crypto.</p>
+              <p>OAuth: {state.discord?.oauthConfigured ? "configurado" : "pendente"} · Conteúdo público sincronizado pela API STUDIO K - CREATIVE LAB.</p>
             </section>
           </div>
           <AnalyticsDashboard data={state.analytics} />
@@ -1029,7 +1029,7 @@ export default function ControlPage() {
                 <small>Um hotspot por linha. A posição e normal usam as coordenadas do GLB.</small>
               </label>
               <label className="span-2">Cores / variantes 3D
-                <textarea rows={4} value={project.viewerVariants} onChange={(e) => setProject({ ...project, viewerVariants: e.target.value })} placeholder={"Nome | #RRGGBB | URL do GLB | URL da capa (opcional)\nEx.: Roxo | #787878 | /portfolio-assets/modelo-roxo.glb | /portfolio-assets/roxo.webp"} />
+                <textarea rows={4} value={project.viewerVariants} onChange={(e) => setProject({ ...project, viewerVariants: e.target.value })} placeholder={"Nome | #RRGGBB | URL do GLB | URL da capa (opcional)\nEx.: Roxo | #611DA5 | /portfolio-assets/modelo-roxo.glb | /portfolio-assets/roxo.webp"} />
                 <small>Uma variante por linha. Cada opção pode usar um GLB próprio, sem depender das variantes internas do arquivo.</small>
               </label>
               <MediaField label="Vídeo" kind="video" value={project.videoUrl} onChange={(value) => setProject({ ...project, videoUrl: value })} />
@@ -1330,7 +1330,7 @@ export default function ControlPage() {
             <p>Login do site e autorização da Central usam o mesmo Discord User ID reconhecido pelo bot.</p>
           </section>
           <section className="integration-card glass-panel">
-            <span className="section-eyebrow">BOT CRYPTO</span>
+            <span className="section-eyebrow">BOT STUDIO K - CREATIVE LAB</span>
             <h2>{state.discord?.botConnected ? "Online" : "Offline"}</h2>
             <p>Produtos podem ser sincronizados com a loja do bot e publicados em um canal do Discord diretamente pela Central.</p>
           </section>
@@ -1346,7 +1346,7 @@ export default function ControlPage() {
             <p>O PSD original permanece privado e uma imagem de preview é gerada para exibição pública.</p>
           </section>
           <section className="integration-card glass-panel">
-            <span className="section-eyebrow">CLOTH TOOL CRYPTO</span>
+            <span className="section-eyebrow">CLOTH TOOL STUDIO K - CREATIVE LAB</span>
             <h2>Aplicativo da equipe</h2>
             <p>Autorize o ClothTool Windows pela sua conta da Central e gerencie suas conexões.</p>
             <button type="button" className="btn btn-primary" onClick={() => setTab('clothtool')}>Conectar ClothTool</button>

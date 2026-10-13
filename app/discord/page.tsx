@@ -25,10 +25,10 @@ export default function DiscordPage() {
   const latestProject = state.items.find((item) => item.published);
   const discount = Math.max(0, Number(state.site.memberDiscountPercent || 0));
   const benefitTitle = state.site.memberBenefitTitle || "Benefícios exclusivos para membros";
-  const benefitDescription = state.site.memberBenefitDescription || "Conecte sua conta para liberar vantagens do Crypto.";
+  const benefitDescription = state.site.memberBenefitDescription || "Conecte sua conta para liberar vantagens do STUDIO K - CREATIVE LAB.";
   const role = me.member?.roles?.find((item) => item.name && item.name !== "@everyone");
   const promoValue = promotion?.priceCents ? money(promotion.priceCents) : "";
-  const newsTitle = news?.title || latestProduct?.name || latestProject?.name || "Novidades do Crypto";
+  const newsTitle = news?.title || latestProduct?.name || latestProject?.name || "Novidades do STUDIO K - CREATIVE LAB";
   const newsHref = news?.href || (latestProduct ? `/products/${latestProduct.id}` : latestProject ? `/portfolio/${latestProject.id}` : "/portfolio");
   const activeBenefits = [
     discount > 0,
@@ -41,10 +41,10 @@ export default function DiscordPage() {
     <StudioShell eyebrow="DISCORD" title="Vínculo de conta">
       <section className="discord-hero">
         <div className="discord-copy">
-          <span className="section-eyebrow">ECOSSISTEMA CRYPTO</span>
-          <h1>DISCORD<br/><span>CRYPTO</span></h1>
+          <span className="section-eyebrow">ECOSSISTEMA STUDIO K - CREATIVE LAB</span>
+          <h1>DISCORD<br/><span>STUDIO K - CREATIVE LAB</span></h1>
           <p>
-            Conecte seu Discord para acessar benefícios, promoções, novidades e vantagens de membro em todo o Crypto.
+            Conecte seu Discord para acessar benefícios, promoções, novidades e vantagens de membro em todo o STUDIO K - CREATIVE LAB.
           </p>
           <div className="hero-actions">
             {!me.authenticated ? (
@@ -66,9 +66,9 @@ export default function DiscordPage() {
           {!me.authenticated ? (
             <>
               <div className="access-card-brand">
-                <div className="oauth-icon"><img src="/studio-assets/crypto-logo.png" alt="Crypto" /></div>
+                <div className="oauth-icon"><img src="/studio-assets/crypto-logo.png" alt="STUDIO K - CREATIVE LAB" /></div>
                 <div>
-                  <span className="section-eyebrow">SEU ACESSO CRYPTO</span>
+                  <span className="section-eyebrow">SEU ACESSO STUDIO K - CREATIVE LAB</span>
                   <span className="access-status">Conta não conectada</span>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default function DiscordPage() {
                   <span className="access-benefit-icon">✦</span>
                   <div>
                     <small>Promoção atual</small>
-                    <strong>{promotion?.title || "Confira as ofertas do Crypto"}{promoValue ? ` · ${promoValue}` : ""}</strong>
+                    <strong>{promotion?.title || "Confira as ofertas do STUDIO K - CREATIVE LAB"}{promoValue ? ` · ${promoValue}` : ""}</strong>
                   </div>
                 </div>
 
@@ -109,7 +109,7 @@ export default function DiscordPage() {
               <a className="btn btn-primary access-connect" href="/api/oauth/start?next=/discord">
                 Conectar com Discord <Icon name="arrow" />
               </a>
-              <div className="access-security"><span>●</span> Conexão oficial pelo Discord. Sua senha nunca é compartilhada com o Crypto.</div>
+              <div className="access-security"><span>●</span> Conexão oficial pelo Discord. Sua senha nunca é compartilhada com o STUDIO K - CREATIVE LAB.</div>
             </>
           ) : (
             <>
@@ -120,14 +120,14 @@ export default function DiscordPage() {
                   <div className="access-profile-fallback">{(me.user?.name || me.user?.username || "K").slice(0, 1).toUpperCase()}</div>
                 )}
                 <div>
-                  <span className="section-eyebrow">SEU ACESSO CRYPTO</span>
+                  <span className="section-eyebrow">SEU ACESSO STUDIO K - CREATIVE LAB</span>
                   <h2>Olá, {me.user?.name || me.user?.username || "membro"} 👋</h2>
                   <span className="access-connected"><i /> Discord conectado</span>
                 </div>
               </div>
 
               <div className="access-member-badge">
-                <span>{me.member?.inGuild ? "MEMBRO CRYPTO" : "CONTA CRYPTO"}</span>
+                <span>{me.member?.inGuild ? "MEMBRO STUDIO K - CREATIVE LAB" : "CONTA STUDIO K - CREATIVE LAB"}</span>
                 <strong>{role?.name || (me.member?.inGuild ? "Membro do servidor" : "Entre no servidor para liberar cargos")}</strong>
               </div>
 
@@ -149,7 +149,7 @@ export default function DiscordPage() {
               {promotion && (
                 <div className="access-highlight">
                   <span>PROMOÇÃO PARA VOCÊ</span>
-                  <strong>{promotion.title || "Oferta Crypto"}{promoValue ? ` · ${promoValue}` : ""}</strong>
+                  <strong>{promotion.title || "Oferta STUDIO K - CREATIVE LAB"}{promoValue ? ` · ${promoValue}` : ""}</strong>
                   {promotion.text && <p>{promotion.text}</p>}
                   {promotion.href && promotion.ctaLabel && <a href={promotion.href}>{promotion.ctaLabel} →</a>}
                 </div>

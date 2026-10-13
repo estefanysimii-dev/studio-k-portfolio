@@ -9,29 +9,29 @@ import { RadioPlayerProvider } from "@/components/radio-player-provider";
 export const metadata: Metadata = {
   metadataBase: new URL("https://studiokatelier.infinityfreeapp.com"),
   title: {
-    default: "Crypto",
-    template: "%s · Crypto"
+    default: "STUDIO K - CREATIVE LAB",
+    template: "%s · STUDIO K - CREATIVE LAB"
   },
-  description: "Portfólio, produtos e experiências 3D do Crypto para GTA V / FiveM.",
+  description: "Portfólio, produtos e experiências 3D do STUDIO K - CREATIVE LAB para GTA V / FiveM.",
   icons: {
-    icon: "/studio-assets/crypto-favicon.svg?v=20261011-2",
-    shortcut: "/studio-assets/crypto-favicon.svg?v=20261011-2",
-    apple: "/studio-assets/crypto-favicon.svg?v=20261011-2"
+    icon: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013",
+    shortcut: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013",
+    apple: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013"
   },
   openGraph: {
-    title: "Crypto",
+    title: "STUDIO K - CREATIVE LAB",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
     url: "https://studiokatelier.infinityfreeapp.com",
-    siteName: "Crypto",
+    siteName: "STUDIO K - CREATIVE LAB",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/studio-assets/crypto-banner.svg?v=20261011-2", width: 1600, height: 900, alt: "Crypto" }]
+    images: [{ url: "/studio-assets/crypto-banner.svg?v=studio-k-20261013", width: 1600, height: 900, alt: "STUDIO K - CREATIVE LAB" }]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Crypto",
+    title: "STUDIO K - CREATIVE LAB",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
-    images: ["/studio-assets/crypto-banner.svg?v=20261011-2"]
+    images: ["/studio-assets/crypto-banner.svg?v=studio-k-20261013"]
   }
 };
 

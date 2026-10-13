@@ -39,10 +39,10 @@ export default function AccountTickets(){
       <strong>{openCount ? `${openCount} aberto${openCount>1?"s":""}` : "Abrir ticket"}</strong>
     </button>
 
-    {open&&<aside className="ticket-floating-panel glass-panel" aria-label="Atendimento Crypto">
+    {open&&<aside className="ticket-floating-panel glass-panel" aria-label="Atendimento STUDIO K - CREATIVE LAB">
       <div className="ticket-floating-head">
         <div>
-          <span className="section-eyebrow">SUPORTE CRYPTO</span>
+          <span className="section-eyebrow">SUPORTE STUDIO K - CREATIVE LAB</span>
           <h2>Central de tickets</h2>
         </div>
         <button type="button" aria-label="Minimizar atendimento" onClick={()=>setOpen(false)}>—</button>

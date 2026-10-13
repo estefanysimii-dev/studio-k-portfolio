@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import type { RadioConfig } from '@/lib/studio-types';
 
-export const radioDefaults: RadioConfig = { enabled: false, name: 'Rádio Crypto', source: 'schedule', shuffle: true, spotifyUrl: '', streamUrl: '', tracks: [], epochMs: 0, position: 'right', compact: true, showInControl: false, autoplay: false, defaultVolume: 0.5, analyze: false };
+export const radioDefaults: RadioConfig = { enabled: false, name: 'Rádio STUDIO K - CREATIVE LAB', source: 'schedule', shuffle: true, spotifyUrl: '', streamUrl: '', tracks: [], epochMs: 0, position: 'right', compact: true, showInControl: false, autoplay: false, defaultVolume: 0.5, analyze: false };
 
 export default function RadioSettings({ value, onChange }: { value?: RadioConfig; onChange: (value: RadioConfig) => void }) {
   const radio = { ...radioDefaults, ...value };
@@ -13,7 +13,7 @@ export default function RadioSettings({ value, onChange }: { value?: RadioConfig
   useEffect(() => { setTracks(JSON.stringify(JSON.parse(serialized), null, 2)); setError(''); }, [serialized]);
   const change = (patch: Partial<RadioConfig>) => onChange({ ...radio, ...patch });
   return <fieldset className="radio-settings">
-    <legend>Rádio Crypto</legend>
+    <legend>Rádio STUDIO K - CREATIVE LAB</legend>
     <div className="form-grid two">
       <label className="check-row"><input type="checkbox" checked={radio.enabled} onChange={e => change({ enabled: e.target.checked })} />Ativar rádio</label>
       <label>Nome exibido<input required maxLength={80} value={radio.name} onChange={e => change({ name: e.target.value })} /></label>

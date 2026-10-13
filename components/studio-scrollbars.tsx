@@ -290,7 +290,7 @@ export default function StudioScrollbars() {
   if (!leftMetrics.visible && !rightMetrics.visible) return null;
 
   return (
-    <div className="studio-scrollbars" aria-label="Barras de rolagem Crypto">
+    <div className="studio-scrollbars" aria-label="Barras de rolagem STUDIO K - CREATIVE LAB">
       {bar("left", leftMetrics)}
       {bar("right", rightMetrics)}
     </div>

@@ -11,18 +11,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const state = await fetchStudioPublicState();
   const item = state.products.find((entry) => entry.id === id);
-  if (!item) return { title: "Produto não encontrado · Crypto" };
+  if (!item) return { title: "Produto não encontrado · STUDIO K - CREATIVE LAB" };
   const image = absoluteStudioUrl(item.coverUrl || item.gifUrl || state.site.logoUrl);
   const url = `${STUDIO_PUBLIC_URL}/products/${encodeURIComponent(item.id)}`;
   return {
-    title: `${item.name} · Crypto Store`,
-    description: item.description || "Produto Crypto.",
+    title: `${item.name} · STUDIO K - CREATIVE LAB Store`,
+    description: item.description || "Produto STUDIO K - CREATIVE LAB.",
     alternates: { canonical: url },
     openGraph: {
       title: item.name,
-      description: item.description || "Produto Crypto.",
+      description: item.description || "Produto STUDIO K - CREATIVE LAB.",
       url,
-      siteName: "Crypto",
+      siteName: "STUDIO K - CREATIVE LAB",
       type: "website",
       images: image ? [{ url: image }] : undefined
     }

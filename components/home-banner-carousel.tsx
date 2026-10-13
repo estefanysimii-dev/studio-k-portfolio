@@ -7,13 +7,13 @@ type Props = {
   site: StudioSite;
 };
 
-const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg?v=20261011-2";
-const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg?v=20261011-2";
+const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg?v=studio-k-20261013";
+const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg?v=studio-k-20261013";
 const ROTATION_MS = 5000;
 // Replace the two legacy brand artworks while retaining carousel slots and timing.
 const cryptoBannerArtwork = (url: string) => ({
-  "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=20261011-2",
-  "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=20261011-2"
+  "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
+  "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013"
 } as Record<string, string>)[url] || url;
 
 export default function HomeBannerCarousel({ site }: Props) {
@@ -26,7 +26,7 @@ export default function HomeBannerCarousel({ site }: Props) {
       .map((slide) => ({
         id: slide.id,
         imageUrl: cryptoBannerArtwork(slide.imageUrl.trim()),
-        alt: slide.alt?.trim() || "Crypto · estúdio de criação 3D",
+        alt: slide.alt?.trim() || "STUDIO K - CREATIVE LAB · estúdio de criação 3D",
         builtin: false
       }));
 
@@ -39,7 +39,7 @@ export default function HomeBannerCarousel({ site }: Props) {
     return [{
       id: "studio-default",
       imageUrl: customBanner || DEFAULT_BANNER,
-      alt: "Crypto · estúdio de criação 3D",
+      alt: "STUDIO K - CREATIVE LAB · estúdio de criação 3D",
       builtin: !customBanner
     }];
   }, [site.homeBackgroundUrl, site.homeBannerSlides]);
@@ -71,7 +71,7 @@ export default function HomeBannerCarousel({ site }: Props) {
   return (
     <section
       className="home-banner home-banner-carousel glass-panel"
-      aria-label="Crypto"
+      aria-label="STUDIO K - CREATIVE LAB"
       aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -115,7 +115,7 @@ export default function HomeBannerCarousel({ site }: Props) {
 
       <div className="home-banner-shade" />
       <div className="home-banner-copy">
-        <span>CRYPTO · FIVEM DESIGN</span>
+        <span>STUDIO K - CREATIVE LAB · FIVEM DESIGN</span>
         <strong>{site.brandTagline || "Sua identidade. Sua cidade."}</strong>
       </div>
 

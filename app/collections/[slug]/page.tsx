@@ -11,7 +11,7 @@ export default function CollectionDetailPage() {
   const params = useParams<{ slug: string }>();
   const collection = (state.commerce?.collections || []).find((entry) => entry.slug === params.slug);
   if (!collection) {
-    return <StudioShell eyebrow="COLEÇÕES" title="Crypto"><div className="empty-state glass-panel"><strong>Coleção não encontrada.</strong><a href="/collections">Ver coleções</a></div></StudioShell>;
+    return <StudioShell eyebrow="COLEÇÕES" title="STUDIO K - CREATIVE LAB"><div className="empty-state glass-panel"><strong>Coleção não encontrada.</strong><a href="/collections">Ver coleções</a></div></StudioShell>;
   }
   const products = state.products.filter((product) => collection.productIds.includes(product.id));
   const items = state.items.filter((item) => collection.itemIds.includes(item.id));
@@ -20,7 +20,7 @@ export default function CollectionDetailPage() {
       <section className="collection-hero glass-panel">
         {collection.coverUrl && <img src={collection.coverUrl} alt="" />}
         <div>
-          <span className="section-eyebrow">CRYPTO COLLECTION</span>
+          <span className="section-eyebrow">STUDIO K - CREATIVE LAB COLLECTION</span>
           <h1>{collection.name}</h1>
           <p>{collection.description}</p>
           <small>{products.length} produtos · {items.length} projetos</small>

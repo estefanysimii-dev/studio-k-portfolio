@@ -111,7 +111,7 @@ export default function ShowcaseDetail(props: Props) {
 
       <section className="detail-hero">
         <div className="detail-copy">
-          <span className="section-eyebrow">{item.category || "CRYPTO"}</span>
+          <span className="section-eyebrow">{item.category || "STUDIO K - CREATIVE LAB"}</span>
           <div className="detail-title-row">
             <h1>{item.name}</h1>
             <FavoriteButton kind={isProduct ? "products" : "items"} itemId={item.id} label />
@@ -124,7 +124,7 @@ export default function ShowcaseDetail(props: Props) {
 
           {isProduct && product && (
             <div className="detail-commerce glass-panel">
-              <span className="section-eyebrow">CRYPTO STORE</span>
+              <span className="section-eyebrow">STUDIO K - CREATIVE LAB STORE</span>
               <div className="detail-price-stack">
                 {product.stockMode && product.stockMode !== "unlimited" && (
                   <span className={`product-availability ${product.available === false ? "sold-out" : ""}`}>
@@ -143,7 +143,7 @@ export default function ShowcaseDetail(props: Props) {
                     <strong className="detail-price">{money.format(memberPrice / 100)}</strong>
                     <div className="detail-discount-tags">
                       {dropDiscount > 0 && <span className="detail-drop-discount">DROP · {dropDiscount}% OFF</span>}
-                      {state.me.authenticated && memberDiscount > 0 && <span className="detail-member-discount">Crypto ID · +{memberDiscount}% OFF</span>}
+                      {state.me.authenticated && memberDiscount > 0 && <span className="detail-member-discount">STUDIO K - CREATIVE LAB ID · +{memberDiscount}% OFF</span>}
                     </div>
                   </>
                 ) : (
@@ -212,7 +212,7 @@ export default function ShowcaseDetail(props: Props) {
                       {checkout.payment.instructions && <p>{checkout.payment.instructions}</p>}
                     </>
                   ) : (
-                    <p>O pagamento ainda precisa ser configurado pela equipe Crypto.</p>
+                    <p>O pagamento ainda precisa ser configurado pela equipe STUDIO K - CREATIVE LAB.</p>
                   )}
                 </div>
               )}
@@ -248,7 +248,7 @@ export default function ShowcaseDetail(props: Props) {
       {!isProduct && (
         <section className="cta-banner glass-panel detail-cta">
           <div>
-            <span className="section-eyebrow">CRYPTO · SHOWROOM</span>
+            <span className="section-eyebrow">STUDIO K - CREATIVE LAB · SHOWROOM</span>
             <h2>Este projeto faz parte do portfólio e não possui valor de venda.</h2>
           </div>
           <a className="btn btn-outline" href={state.site.discordInviteUrl || "/discord"} {...externalLinkProps(state.site.discordInviteUrl || "/discord")}>Conhecer o Discord</a>

@@ -82,10 +82,10 @@ export default function ProductsPage() {
   }, [search, visibleProducts.length]);
 
   return (
-    <StudioShell eyebrow="PRODUTOS" title="Crypto Store">
+    <StudioShell eyebrow="PRODUTOS" title="STUDIO K - CREATIVE LAB Store">
       <div className="section-heading">
         <div>
-          <span className="section-eyebrow">CATÁLOGO CRYPTO</span>
+          <span className="section-eyebrow">CATÁLOGO STUDIO K - CREATIVE LAB</span>
           <h1 className="page-title">Produtos</h1>
           <p className="page-subtitle">Produtos com preço, galeria multimídia, vídeo, GIF e visualização 3D quando disponível.</p>
         </div>
@@ -93,7 +93,7 @@ export default function ProductsPage() {
 
       <div className="catalog-search glass-panel">
         <label>
-          <span>Buscar no Crypto</span>
+          <span>Buscar no STUDIO K - CREATIVE LAB</span>
           <input
             type="search"
             value={search}
@@ -158,7 +158,7 @@ export default function ProductsPage() {
               </div>
             </a>
             <FavoriteButton kind="products" itemId={product.id} className="favorite-card-button" />
-            <span className="meta-line">{product.category || "CRYPTO"}</span>
+            <span className="meta-line">{product.category || "STUDIO K - CREATIVE LAB"}</span>
             <h3><a href={`/products/${product.id}`}>{product.name}</a></h3>
             <p className="product-description">{product.description}</p>
             {(() => {

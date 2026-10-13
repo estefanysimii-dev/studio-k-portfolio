@@ -75,7 +75,7 @@ if (str_starts_with($path, '/api/studio/')) {
     $input = in_array($method, ['GET', 'HEAD'], true) ? null : file_get_contents('php://input', false, null, 0, 2 * 1024 * 1024 + 1);
     if ($input !== null && strlen($input) > 2 * 1024 * 1024) fail(413, 'Solicitação muito grande.');
     [$status, $body, $type] = upstream('/api/portfolio/' . $endpoint . ($query ? '?' . $query : ''), $method, $input, $headers);
-    if ($status === 0) fail(502, 'Não foi possível conectar ao Crypto. Tente novamente.');
+    if ($status === 0) fail(502, 'Não foi possível conectar ao STUDIO K - CREATIVE LAB. Tente novamente.');
     http_response_code($status); header('Cache-Control: no-store');
     header('Content-Type: ' . (str_starts_with($type, 'application/json') ? $type : 'application/json; charset=utf-8'));
     if ($method !== 'HEAD') echo $body;
@@ -102,9 +102,9 @@ if (str_starts_with($path, '/portfolio-assets/')) {
 }
 if (str_starts_with($path, '/api/')) fail(404, 'Rota não encontrada.');
 if (!in_array($method, ['GET', 'HEAD'], true)) fail(405, 'Método não permitido.');
-$title = 'Crypto';
-$description = 'Portfólio, produtos e experiências 3D do Crypto para GTA V / FiveM.';
-$image = STUDIO_ORIGIN . '/studio-assets/crypto-banner.svg?v=20261011-2';
+$title = 'STUDIO K - CREATIVE LAB';
+$description = 'Portfólio, produtos e experiências 3D do STUDIO K - CREATIVE LAB para GTA V / FiveM.';
+$image = STUDIO_ORIGIN . '/studio-assets/crypto-banner.svg?v=studio-k-20261013';
 if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
     [$status, $body] = upstream('/api/portfolio/public-state', 'GET', null, [], 5);
     $state = json_decode($body, true);
@@ -113,7 +113,7 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
         foreach (($state[$match[1] === 'products' ? 'products' : 'items'] ?? []) as $item) {
             if (($item['id'] ?? '') !== $match[2]) continue;
             $found = true;
-            $title = ($item['name'] ?? 'Projeto') . ' · Crypto';
+            $title = ($item['name'] ?? 'Projeto') . ' · STUDIO K - CREATIVE LAB';
             $description = $item['description'] ?? $description;
             $cover = $item['coverUrl'] ?? '';
             if (preg_match('~^https://~', $cover)) $image = $cover;
@@ -123,17 +123,17 @@ if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
         if (!$found) http_response_code(404);
     }
 } elseif (preg_match('~^/collections/[A-Za-z0-9-]+/?$~', $path)) {
-    // Dynamic collection pages are rendered by the Crypto frontend.
+    // Dynamic collection pages are rendered by the STUDIO K - CREATIVE LAB frontend.
 } elseif (!in_array(rtrim($path, '/') ?: '/', ['/', '/portfolio', '/products', '/collections', '/community', '/compare', '/cart', '/account', '/control', '/discord'], true)) http_response_code(404);
-$title = str_ireplace('Studio K', 'Crypto', $title);
-$description = str_ireplace('Studio K', 'Crypto', $description);
+$title = preg_replace('/(?:studio\s*k(?:\s*-\s*creative\s*lab)?|crypto)/i', 'STUDIO K - CREATIVE LAB', $title);
+$description = preg_replace('/(?:studio\s*k(?:\s*-\s*creative\s*lab)?|crypto)/i', 'STUDIO K - CREATIVE LAB', $description);
 $escape = fn(string $text): string => htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 $url = STUDIO_ORIGIN . $path;
 $privatePage = in_array(rtrim($path, '/') ?: '/', ['/account', '/control', '/cart'], true);
 $tags = '<title>' . $escape($title) . '</title><meta name="description" content="' . $escape($description) . '">';
 $tags .= '<meta name="robots" content="' . ($privatePage ? 'noindex,nofollow' : 'index,follow') . '">';
 $tags .= '<link rel="canonical" href="' . $escape($url) . '">';
-foreach (['og:title' => $title, 'og:description' => $description, 'og:url' => $url, 'og:image' => $image, 'og:site_name' => 'Crypto', 'og:type' => 'website', 'og:locale' => 'pt_BR'] as $key => $value) $tags .= '<meta property="' . $key . '" content="' . $escape((string) $value) . '">';
+foreach (['og:title' => $title, 'og:description' => $description, 'og:url' => $url, 'og:image' => $image, 'og:site_name' => 'STUDIO K - CREATIVE LAB', 'og:type' => 'website', 'og:locale' => 'pt_BR'] as $key => $value) $tags .= '<meta property="' . $key . '" content="' . $escape((string) $value) . '">';
 foreach (['twitter:card' => 'summary_large_image', 'twitter:title' => $title, 'twitter:description' => $description, 'twitter:image' => $image] as $key => $value) $tags .= '<meta name="' . $key . '" content="' . $escape((string) $value) . '">';
 header('Content-Type: text/html; charset=utf-8'); header('Cache-Control: no-store');
 if ($method !== 'HEAD') echo str_replace('<!--STUDIO_METADATA-->', $tags, file_get_contents(__DIR__ . '/template.html'));

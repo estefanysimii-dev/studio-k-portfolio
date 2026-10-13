@@ -12,11 +12,11 @@ export default function CommunityPage() {
   const ranking = Array.isArray(commerce?.leaderboard) ? commerce?.leaderboard : [];
 
   return (
-    <StudioShell eyebrow="COMUNIDADE" title="Crypto Community">
-      <div className="section-heading"><div><span className="section-eyebrow">COMUNIDADE CRYPTO</span><h1 className="page-title">Inspiração, looks e atividade.</h1></div></div>
+    <StudioShell eyebrow="COMUNIDADE" title="STUDIO K - CREATIVE LAB Community">
+      <div className="section-heading"><div><span className="section-eyebrow">COMUNIDADE STUDIO K - CREATIVE LAB</span><h1 className="page-title">Inspiração, looks e atividade.</h1></div></div>
 
       {!!lookbooks.length && <section className="section-block">
-        <div className="section-heading compact-heading"><div><span className="section-eyebrow">LOOKBOOK</span><h2>Combinações Crypto</h2></div></div>
+        <div className="section-heading compact-heading"><div><span className="section-eyebrow">LOOKBOOK</span><h2>Combinações STUDIO K - CREATIVE LAB</h2></div></div>
         <div className="lookbook-grid">
           {lookbooks.map((lookbook) => (
             <article className="lookbook-card glass-panel" key={lookbook.id}>
@@ -47,8 +47,8 @@ export default function CommunityPage() {
       </section>
 
       {!!ranking.length && <section className="glass-panel community-ranking">
-        <div className="section-heading compact-heading"><div><span className="section-eyebrow">RANKING OPCIONAL</span><h2>Crypto Community</h2></div></div>
-        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "Crypto Member"}</span><strong>{entry.score} pontos</strong></div>)}
+        <div className="section-heading compact-heading"><div><span className="section-eyebrow">RANKING OPCIONAL</span><h2>STUDIO K - CREATIVE LAB Community</h2></div></div>
+        {ranking.map((entry, index) => <div key={entry.userId}><b>{index + 1}</b><span>{entry.studioId || "STUDIO K - CREATIVE LAB Member"}</span><strong>{entry.score} pontos</strong></div>)}
         <p className="muted">Somente membros que optaram por aparecer entram neste ranking.</p>
       </section>}
     </StudioShell>

@@ -7,12 +7,12 @@ export default function CollectionsPage() {
   const { state } = useStudio();
   const collections = state.commerce?.collections || [];
   return (
-    <StudioShell eyebrow="COLEÇÕES" title="Crypto Collections">
+    <StudioShell eyebrow="COLEÇÕES" title="STUDIO K - CREATIVE LAB Collections">
       <div className="section-heading">
         <div>
-          <span className="section-eyebrow">CURADORIA CRYPTO</span>
+          <span className="section-eyebrow">CURADORIA STUDIO K - CREATIVE LAB</span>
           <h1 className="page-title">Coleções</h1>
-          <p className="page-subtitle">Universos visuais que agrupam produtos e projetos do Crypto.</p>
+          <p className="page-subtitle">Universos visuais que agrupam produtos e projetos do STUDIO K - CREATIVE LAB.</p>
         </div>
       </div>
       <div className="collection-grid">

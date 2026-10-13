@@ -78,7 +78,7 @@ export default function HomePage() {
 
 
   return (
-    <StudioShell eyebrow="CRYPTO" title="Showroom">
+    <StudioShell eyebrow="STUDIO K - CREATIVE LAB" title="Showroom">
       <HomeBannerCarousel site={site} />
 
       {featuredDrop && featuredDropProduct && (
@@ -136,7 +136,7 @@ export default function HomePage() {
           outfitPosterUrl={featured?.outfitPosterUrl}
           viewerPieces={featured?.viewerPieces}
           posterUrl={featured?.coverUrl || featured?.gifUrl}
-          title={featured?.name || "Crypto"}
+          title={featured?.name || "STUDIO K - CREATIVE LAB"}
           hideControls
         />
       </section>
@@ -145,7 +145,7 @@ export default function HomePage() {
         <div className="section-heading">
           <div>
             <span className="section-eyebrow">TRABALHOS SELECIONADOS</span>
-            <h2>Peças que definem o Crypto.</h2>
+            <h2>Peças que definem o STUDIO K - CREATIVE LAB.</h2>
           </div>
           <a className="text-action" href="/portfolio">Ver todos <Icon name="arrow" /></a>
         </div>
@@ -154,7 +154,7 @@ export default function HomePage() {
           {selected.length ? selected.map((item) => (
             <ShowcaseCard
               key={item.id}
-              eyebrow={item.category || "CRYPTO"}
+              eyebrow={item.category || "STUDIO K - CREATIVE LAB"}
               title={item.name}
               copy={item.description}
               meta={(item.tags || []).join(" · ")}
@@ -179,14 +179,14 @@ export default function HomePage() {
 
       <section className="cta-banner glass-panel">
         <div>
-          <span className="section-eyebrow">COMUNIDADE CRYPTO</span>
+          <span className="section-eyebrow">COMUNIDADE STUDIO K - CREATIVE LAB</span>
           <h2>Entre no Discord e acompanhe drops, projetos e novidades.</h2>
         </div>
         <a className="btn btn-primary" href={appInvite}>Entrar no Discord <Icon name="arrow" /></a>
       </section>
 
       <section className="ticket-home-cta">
-        <span className="section-eyebrow">ATENDIMENTO CRYPTO</span>
+        <span className="section-eyebrow">ATENDIMENTO STUDIO K - CREATIVE LAB</span>
         <h2>Se interessou? Abra um ticket!</h2>
         <a
           className="btn btn-primary ticket-home-button"
@@ -201,12 +201,12 @@ export default function HomePage() {
           <div>
             <span className="section-eyebrow">AVALIAÇÕES DA COMUNIDADE</span>
             <h2 id="feedback-title">
-              Feedbacks do Crypto
+              Feedbacks do STUDIO K - CREATIVE LAB
               <span className="feedback-average">
                 <b>★</b> {feedbackAverage.toFixed(1)}/5
               </span>
             </h2>
-            <p>{validFeedbacks.length} {validFeedbacks.length === 1 ? "avaliação publicada" : "avaliações publicadas"} pelo bot do Crypto.</p>
+            <p>{validFeedbacks.length} {validFeedbacks.length === 1 ? "avaliação publicada" : "avaliações publicadas"} pelo bot do STUDIO K - CREATIVE LAB.</p>
           </div>
 
           <div className="feedback-filters" role="group" aria-label="Filtrar feedbacks por estrelas">
@@ -243,7 +243,7 @@ export default function HomePage() {
                       <div className="feedback-avatar feedback-avatar-fallback" aria-hidden="true">C</div>
                     )}
                     <div className="feedback-person">
-                      <strong>{feedback.name || "Cliente Crypto"}</strong>
+                      <strong>{feedback.name || "Cliente STUDIO K - CREATIVE LAB"}</strong>
                       <span>{feedback.source || "Feedback"}{feedback.reference ? ` · ${feedback.reference}` : ""}</span>
                     </div>
                     <span className="feedback-stars" aria-label={`${score} de 5 estrelas`}>

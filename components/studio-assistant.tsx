@@ -9,7 +9,7 @@ const BUILT_IN_TIPS = [
   {
     id: "built-in-cute-1",
     type: "cute" as const,
-    title: "Kiki passando rapidinho 🤍",
+    title: "Kiki passando rapidinho 💜",
     text: "Já deu uma olhadinha nas novidades? Sempre tem algum detalhe novo aparecendo por aqui.",
     ctaLabel: "Ver novidades",
     href: "/portfolio",
@@ -125,7 +125,7 @@ export default function StudioAssistant() {
         title: endingSoon ? `${activeDrop.title} termina logo 👀` : `${activeDrop.title} está AO VIVO ✨`,
         text: endingSoon
           ? `Faltam cerca de ${remainingMinutes} min para esse drop acabar. ${activeDrop.description || ""}`.trim()
-          : activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do Crypto.` : "Tem promoção rolando agora no Crypto."),
+          : activeDrop.description || (dropProduct ? `${dropProduct.name} entrou no drop do STUDIO K - CREATIVE LAB.` : "Tem promoção rolando agora no STUDIO K - CREATIVE LAB."),
         ctaLabel: dropProduct ? "Ver o drop" : "Ver produtos",
         href: dropProduct ? `/products/${dropProduct.id}` : "/products",
         priceCents: dropProduct
@@ -152,7 +152,7 @@ export default function StudioAssistant() {
             id: `context-trending-${product.id}`,
             type: "bestseller" as const,
             title: "Esse está entre os mais vistos hoje 👀",
-            text: `${product.name} entrou no Top 3 de atenção do Crypto nas últimas 24 horas.`,
+            text: `${product.name} entrou no Top 3 de atenção do STUDIO K - CREATIVE LAB nas últimas 24 horas.`,
             ctaLabel: "",
             href: "",
             priceCents: 0,
@@ -165,7 +165,7 @@ export default function StudioAssistant() {
             id: `context-revisit-${product.id}`,
             type: "cute" as const,
             title: `Você voltou para ${product.name} 👀`,
-            text: `Essa já é pelo menos a sua ${revisitCount}ª visita a este produto. Acho que ele realmente entrou no seu radar. 🤍`,
+            text: `Essa já é pelo menos a sua ${revisitCount}ª visita a este produto. Acho que ele realmente entrou no seu radar. 💜`,
             ctaLabel: alreadyFavorite ? "Ver meus favoritos" : "",
             href: alreadyFavorite ? "/account" : "",
             priceCents: 0,
@@ -176,8 +176,8 @@ export default function StudioAssistant() {
           contextual.push({
             id: `context-favorite-${product.id}`,
             type: "cute" as const,
-            title: "Esse já está salvo 🤍",
-            text: `${product.name} está nos seus favoritos. Seu Crypto ID guardou ele para você voltar quando quiser.`,
+            title: "Esse já está salvo 💜",
+            text: `${product.name} está nos seus favoritos. Seu STUDIO K - CREATIVE LAB ID guardou ele para você voltar quando quiser.`,
             ctaLabel: "Ver favoritos",
             href: "/account",
             priceCents: 0,
@@ -190,7 +190,7 @@ export default function StudioAssistant() {
             id: `context-look-${product.id}`,
             type: "cute" as const,
             title: `${product.name} chamou sua atenção? 👀`,
-            text: "Hmmm... você está olhando bastante esse. Dá uma olhadinha nos detalhes, materiais e visualização 3D antes de decidir. 🤍",
+            text: "Hmmm... você está olhando bastante esse. Dá uma olhadinha nos detalhes, materiais e visualização 3D antes de decidir. 💜",
             ctaLabel: "",
             href: "",
             priceCents: 0,
@@ -219,7 +219,7 @@ export default function StudioAssistant() {
             id: `context-related-${product.id}`,
             type: "cute" as const,
             title: "Eu reconheci seu estilo ✨",
-            text: `Esse combina MUITO com ${related.name}, que já faz parte da sua biblioteca Crypto.`,
+            text: `Esse combina MUITO com ${related.name}, que já faz parte da sua biblioteca STUDIO K - CREATIVE LAB.`,
             ctaLabel: "Ver minha conta",
             href: "/account",
             priceCents: 0,
@@ -235,7 +235,7 @@ export default function StudioAssistant() {
             id: `context-recommendation-${product.id}-${recommended.item.id}`,
             type: "bestseller" as const,
             title: "Separei outra peça pra você 👀",
-            text: `${recommended.item.name} apareceu nas suas recomendações porque combina com o que você anda explorando no Crypto.`,
+            text: `${recommended.item.name} apareceu nas suas recomendações porque combina com o que você anda explorando no STUDIO K - CREATIVE LAB.`,
             ctaLabel: "Ver recomendação",
             href: `/products/${recommended.item.id}`,
             priceCents: recommended.item.priceCents || 0,
@@ -262,7 +262,7 @@ export default function StudioAssistant() {
         id: "context-products",
         type: "bestseller" as const,
         title: "Procurando alguma coisa específica?",
-        text: "Vai explorando com calma. Eu apareço quando encontrar promoção, novidade ou algum queridinho do Crypto. 👀",
+        text: "Vai explorando com calma. Eu apareço quando encontrar promoção, novidade ou algum queridinho do STUDIO K - CREATIVE LAB. 👀",
         ctaLabel: "",
         href: "",
         priceCents: 0,
@@ -273,8 +273,8 @@ export default function StudioAssistant() {
       contextual.push({
         id: "context-account",
         type: "cute" as const,
-        title: `${state.me.profile?.studioId || "Seu Crypto ID"} 🤍`,
-        text: `Seu Crypto ID está conectado com o título “${state.me.profile?.equippedTitle?.label || "Crypto Member"}”. Favoritos, compras, feedbacks e tickets ficam reunidos no seu perfil.`,
+        title: `${state.me.profile?.studioId || "Seu STUDIO K - CREATIVE LAB ID"} 💜`,
+        text: `Seu STUDIO K - CREATIVE LAB ID está conectado com o título “${state.me.profile?.equippedTitle?.label || "STUDIO K - CREATIVE LAB Member"}”. Favoritos, compras, feedbacks e tickets ficam reunidos no seu perfil.`,
         ctaLabel: "",
         href: "",
         priceCents: 0,
@@ -318,10 +318,10 @@ export default function StudioAssistant() {
   const external = /^https?:\/\//i.test(current.href);
 
   return (
-    <aside className="studio-assistant" aria-label="Assistente do Crypto">
+    <aside className="studio-assistant" aria-label="Assistente do STUDIO K - CREATIVE LAB">
       <div className={`assistant-bubble ${visible ? "is-visible" : "is-hidden"}`}>
         <div className="assistant-bubble-head">
-          <span className={`assistant-type assistant-type-${current.type}`}>Kiki · Crypto</span>
+          <span className={`assistant-type assistant-type-${current.type}`}>Kiki · STUDIO K - CREATIVE LAB</span>
           <button type="button" aria-label="Fechar dica" onClick={() => setVisible(false)}>×</button>
         </div>
         <strong>{current.title}</strong>
@@ -345,7 +345,7 @@ export default function StudioAssistant() {
         onClick={() => setVisible((value) => !value)}
       >
         <span className="assistant-character-glow" aria-hidden="true" />
-        <img src={config.imageUrl || "/studio-assets/studio-k-mascot.webp"} alt="Kiki, assistente do Crypto" />
+        <img src={config.imageUrl || "/studio-assets/studio-k-mascot.webp"} alt="Kiki, assistente do STUDIO K - CREATIVE LAB" />
       </button>
     </aside>
   );

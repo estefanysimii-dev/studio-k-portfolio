@@ -86,7 +86,7 @@ export default function CommerceActions() {
             <div className="global-search-results">
               {grouped.map(([kind, entries]) => (
                 <section key={kind}>
-                  <span>{kind === "product" ? "PRODUTOS" : kind === "portfolio" ? "PORTFÓLIO" : kind === "collection" ? "COLEÇÕES" : kind === "category" ? "CATEGORIAS" : kind === "tag" ? "TAGS" : "CRYPTO"}</span>
+                  <span>{kind === "product" ? "PRODUTOS" : kind === "portfolio" ? "PORTFÓLIO" : kind === "collection" ? "COLEÇÕES" : kind === "category" ? "CATEGORIAS" : kind === "tag" ? "TAGS" : "STUDIO K - CREATIVE LAB"}</span>
                   {entries.map((entry) => (
                     <Link key={`${entry.kind}-${entry.id}`} href={entry.href} onClick={() => setSearchOpen(false)}>
                       <strong>{entry.title}</strong>

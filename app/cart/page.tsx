@@ -78,11 +78,11 @@ export default function CartPage() {
 
   if (!state.me.authenticated) {
     return (
-      <StudioShell eyebrow="CARRINHO" title="Crypto Store">
+      <StudioShell eyebrow="CARRINHO" title="STUDIO K - CREATIVE LAB Store">
         <section className="account-login glass-panel">
-          <span className="section-eyebrow">CRYPTO ID</span>
+          <span className="section-eyebrow">STUDIO K - CREATIVE LAB ID</span>
           <h1>Conecte sua conta para usar o carrinho.</h1>
-          <p>O carrinho, combos e benefícios ficam ligados ao seu Crypto ID.</p>
+          <p>O carrinho, combos e benefícios ficam ligados ao seu STUDIO K - CREATIVE LAB ID.</p>
           <a className="btn btn-primary" href="/api/oauth/start?next=/cart">Conectar Discord</a>
         </section>
       </StudioShell>
@@ -93,7 +93,7 @@ export default function CartPage() {
     <StudioShell eyebrow="CARRINHO" title="Minha sacola">
       <div className="section-heading">
         <div>
-          <span className="section-eyebrow">CRYPTO STORE</span>
+          <span className="section-eyebrow">STUDIO K - CREATIVE LAB STORE</span>
           <h1 className="page-title">Carrinho</h1>
           <p className="page-subtitle">Combos, benefícios do Discord e cupons são recalculados automaticamente.</p>
         </div>
@@ -107,7 +107,7 @@ export default function CartPage() {
                 {product.coverUrl || product.gifUrl ? <img src={product.coverUrl || product.gifUrl} alt="" /> : <span>C</span>}
               </a>
               <div className="cart-copy">
-                <span>{product.category || "Crypto"}</span>
+                <span>{product.category || "STUDIO K - CREATIVE LAB"}</span>
                 <strong>{product.name}</strong>
                 <small>{money.format(product.priceCents / 100)} por unidade</small>
               </div>

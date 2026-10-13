@@ -5,7 +5,7 @@ export const STUDIO_PUBLIC_URL = process.env.STUDIO_PUBLIC_URL || "https://studi
 
 export async function fetchStudioPublicState(): Promise<StudioPublicState> {
   const response = await fetch(`${STUDIO_BACKEND_URL}/api/portfolio/public-state`, { cache: "no-store" });
-  if (!response.ok) throw new Error("Não foi possível carregar o Crypto.");
+  if (!response.ok) throw new Error("Não foi possível carregar o STUDIO K - CREATIVE LAB.");
   return response.json() as Promise<StudioPublicState>;
 }
 

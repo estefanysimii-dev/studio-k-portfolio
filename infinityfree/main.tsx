@@ -25,7 +25,7 @@ const Compare = lazy(() => import('@/app/compare/page'));
 
 function RouteFallback() {
   return (
-    <StudioShell eyebrow="CRYPTO" title="Carregando">
+    <StudioShell eyebrow="STUDIO K - CREATIVE LAB" title="Carregando">
       <div className="glass-panel" role="status" aria-live="polite" style={{ padding: 24 }}>
         Carregando conteúdo…
       </div>

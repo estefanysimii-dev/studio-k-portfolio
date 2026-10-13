@@ -10,7 +10,7 @@ export default function AccountMissions() {
   const missions=state.personal?.missions||[];
   if(!state.me.authenticated||!missions.length)return null;
   return <section className="account-missions glass-panel">
-    <div className="section-heading compact-heading"><div><span className="section-eyebrow">MISSÕES</span><h2>Atividades do Crypto</h2></div></div>
+    <div className="section-heading compact-heading"><div><span className="section-eyebrow">MISSÕES</span><h2>Atividades do STUDIO K - CREATIVE LAB</h2></div></div>
     <div className="mission-grid">{missions.map(m=>{
       const pct=Math.max(0,Math.min(100,Math.round(((m.progress||0)/Math.max(1,m.target))*100)));
       return <article className={`mission-card ${m.claimed?"claimed":m.complete?"complete":""}`} key={m.id}>
