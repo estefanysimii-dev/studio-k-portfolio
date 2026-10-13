@@ -96,6 +96,32 @@ html.studio-entry-locked body {
   place-items:center;
 }
 
+.studio-entry-content {
+  position:relative;
+  width:clamp(120px,15vw,210px);
+  aspect-ratio:1;
+}
+
+.crypto-entry-logo {
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+.studio-entry-caption {
+  position:absolute;
+  top:calc(100% + 22px);
+  left:50%;
+  transform:translateX(-50%);
+  width:max-content;
+  max-width:calc(100vw - 32px);
+  color:#ffffff;
+  font:500 12px/1.5 "Manrope",Arial,sans-serif;
+  letter-spacing:.16em;
+  text-align:center;
+}
+
 .studio-entry-infinity {
   position:relative;
   width:clamp(82px,8vw,122px);
@@ -264,4 +290,11 @@ html.studio-entry-locked body {
   .studio-entry-inf-runner-soft {
     stroke-dasharray:none;
   }
+}
+
+/* Size the PNG explicitly; intrinsic image dimensions must not shift its center. */
+.studio-entry-content .studio-entry-infinity {
+  width:100%;
+  height:100%;
+  aspect-ratio:1;
 }

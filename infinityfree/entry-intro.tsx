@@ -47,9 +47,12 @@ export default function EntryIntro() {
       <div className="studio-entry-stars" aria-hidden="true" />
 
       <div className="studio-entry-stage" aria-hidden="true">
-        <div className="studio-entry-infinity">
-          <span className="studio-entry-infinity-halo" />
-          <img className="crypto-entry-logo" src="/studio-assets/crypto-logo.png" alt="" />
+        <div className="studio-entry-content">
+          <div className="studio-entry-infinity">
+            <span className="studio-entry-infinity-halo" />
+            <img className="crypto-entry-logo" src="/studio-assets/crypto-logo.png" alt="" />
+          </div>
+          <span className="studio-entry-caption">click to open</span>
         </div>
       </div>
     </div>
