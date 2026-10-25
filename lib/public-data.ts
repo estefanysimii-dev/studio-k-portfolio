@@ -1,6 +1,6 @@
 import type { StudioPublicState } from "@/lib/studio-types";
 
-export const STUDIO_BACKEND_URL = process.env.STUDIO_BACKEND_URL || "https://studiokbot.up.railway.app";
+export const STUDIO_BACKEND_URL = process.env.STUDIO_BACKEND_URL || "https://studiok-api.wisp.uno";
 export const STUDIO_PUBLIC_URL = process.env.STUDIO_PUBLIC_URL || "https://studiokoficial.netlify.app";
 
 export async function fetchStudioPublicState(): Promise<StudioPublicState> {

@@ -1,5 +1,10 @@
 # Studio K Portfolio UI
 
+O código prepara o cutover do backend para `https://studiok-api.wisp.uno`, mantendo
+o portfólio em `https://studiokatelier.infinityfreeapp.com`. A configuração padrão
+e os dois builds da CI usam essa origem; este PR ainda não publica o site.
+Consulte [o guia do InfinityFree](infinityfree/README.md) para validação, OAuth e Pix.
+
 Starter visual em Next.js para reproduzir a linguagem aprovada do Studio K:
 
 - dark premium

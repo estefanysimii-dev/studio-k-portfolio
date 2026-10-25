@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import ModelStage from "@/components/model-stage";
 import MediaGallery from "@/components/media-gallery";
@@ -11,6 +11,7 @@ import { externalLinkProps } from "@/lib/links";
 import type { StudioCheckout, StudioItem, StudioProduct } from "@/lib/studio-types";
 import FavoriteButton from "@/components/favorite-button";
 import ProductRecommendations from "@/components/product-recommendations";
+import PixPayment from "@/components/pix-payment";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -43,6 +44,7 @@ export default function ShowcaseDetail(props: Props) {
   const [checkout, setCheckout] = useState<StudioCheckout | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const paymentAttempt = useRef({ fingerprint: "", key: "" });
   const [cartAdded, setCartAdded] = useState(false);
   const [restockBusy, setRestockBusy] = useState(false);
 
@@ -87,7 +89,9 @@ export default function ShowcaseDetail(props: Props) {
         path: `/products/${product.id}`,
         meta: { hasCoupon: Boolean(coupon.trim()), drop: Boolean(activeDrop) }
       });
-      setCheckout(await studioApi.createOrder(product.id, coupon));
+      const fingerprint = JSON.stringify({ productId: product.id, coupon: coupon.trim() });
+      if (paymentAttempt.current.fingerprint !== fingerprint) paymentAttempt.current = { fingerprint, key: crypto.randomUUID() };
+      setCheckout(await studioApi.createOrder(product.id, coupon, paymentAttempt.current.key));
     } catch (err) {
       let sessionId = `member-${state.me.user?.id || "studio-k"}`;
       try { sessionId = localStorage.getItem("studio-k-visitor-id") || sessionId; } catch {}
@@ -204,16 +208,7 @@ export default function ShowcaseDetail(props: Props) {
                   <span>Pedido criado</span>
                   <strong>#{checkout.id.slice(0, 8)}</strong>
                   <p>Valor: {money.format(checkout.price / 100)}</p>
-                  {checkout.payment.pixKey ? (
-                    <>
-                      <label>Chave Pix</label>
-                      <code>{checkout.payment.pixKey}</code>
-                      {checkout.payment.recipient && <p>Recebedor: {checkout.payment.recipient}</p>}
-                      {checkout.payment.instructions && <p>{checkout.payment.instructions}</p>}
-                    </>
-                  ) : (
-                    <p>O pagamento ainda precisa ser configurado pela equipe STUDIO K - CREATIVE LAB.</p>
-                  )}
+                  <PixPayment payment={checkout.payment} />
                 </div>
               )}
             </div>

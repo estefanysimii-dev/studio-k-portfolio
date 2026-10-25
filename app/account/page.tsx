@@ -9,7 +9,8 @@ import AccountActivity from "@/components/account-activity";
 import Icon from "@/components/icons";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "@/components/studio-provider";
-import type { StudioOrder } from "@/lib/studio-types";
+import type { StudioCheckout, StudioOrder } from "@/lib/studio-types";
+import PixPayment from "@/components/pix-payment";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 const statusLabel: Record<string, string> = {
@@ -28,6 +29,8 @@ export default function AccountPage() {
   const [delivery, setDelivery] = useState<{ id: string; value: string; instructions: string } | null>(null);
   const [titleBusy, setTitleBusy] = useState("");
   const [error, setError] = useState("");
+  const [paymentBusy, setPaymentBusy] = useState("");
+  const [payment, setPayment] = useState<{ id: string; value: StudioCheckout["payment"] } | null>(null);
   const me = state.me;
   const profile = me.profile;
   const favoriteIds = me.favorites || profile?.favorites || { items: [], products: [] };
@@ -59,6 +62,18 @@ export default function AccountPage() {
   };
 
   useEffect(() => { void loadOrders(); }, [me.authenticated, me.user?.id]);
+  useEffect(() => { setPayment(null); }, [me.user?.id]);
+
+  const recoverPayment = async (order: StudioOrder) => {
+    setPaymentBusy(order.id);
+    setError("");
+    try {
+      const result = await studioApi.orderPayment(order.id);
+      setPayment({ id: order.id, value: result.payment });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível consultar o Pix deste pedido.");
+    } finally { setPaymentBusy(""); }
+  };
 
   const logout = async () => {
     setBusy(true);
@@ -315,6 +330,7 @@ export default function AccountPage() {
                 {order.deliveryType === "digital" && ["paid", "delivered"].includes(order.status) && (
                   <button className="btn btn-outline compact" type="button" onClick={() => void recoverDelivery(order)}>Ver entrega</button>
                 )}
+                {order.status === "pending" && <button className="btn btn-outline compact" type="button" disabled={!!paymentBusy} onClick={() => void recoverPayment(order)}>{paymentBusy === order.id ? "Consultando..." : "Ver Pix"}</button>}
               </article>
             ))}
           </div>
@@ -322,6 +338,7 @@ export default function AccountPage() {
           <p className="muted">{ordersLoading ? "Carregando pedidos..." : "Nenhum pedido vinculado a esta conta."}</p>
         )}
 
+        {payment && <div className="checkout-result"><span>Pix do pedido #{payment.id.slice(0, 8)}</span><PixPayment payment={payment.value} /><button className="btn btn-outline compact" type="button" onClick={() => setPayment(null)}>Fechar</button></div>}
         {delivery && (
           <div className="delivery-box">
             <span className="section-eyebrow">ENTREGA DIGITAL · #{delivery.id.slice(0, 8)}</span>

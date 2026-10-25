@@ -453,6 +453,15 @@ export type StudioCheckout = {
     pixKey: string;
     recipient: string;
     instructions: string;
+    provider?: "manual" | "purincash";
+    paymentId?: string;
+    brCode?: string;
+    qrCodeImage?: string;
+    expiresAt?: string;
+    sandbox?: boolean;
+    status?: string;
+    amountCents?: number;
+    orderCount?: number;
   };
 };
 

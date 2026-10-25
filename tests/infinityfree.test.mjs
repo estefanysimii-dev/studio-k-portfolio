@@ -20,7 +20,7 @@ test('PHP gateway protects writes, hides OAuth exchange and bounds return URLs',
     for (const next of ['//attacker.example', '/\\attacker.example', '/account\r\nLocation: https://attacker.example']) {
       const response = await fetch(base + '/api/oauth/start?next=' + encodeURIComponent(next), { redirect: 'manual' });
       const location = new URL(response.headers.get('location'));
-      assert.equal(location.origin, 'https://studiokbot.up.railway.app');
+      assert.equal(location.origin, process.env.STUDIO_BACKEND_URL ? new URL(process.env.STUDIO_BACKEND_URL).origin : 'https://studiok-api.wisp.uno');
       assert.equal(location.searchParams.get('next'), '/account');
     }
     const missing = await fetch(base + '/api/portfolio/oauth/complete', { redirect: 'manual' });

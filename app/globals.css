@@ -2322,6 +2322,9 @@ html.studio-scrollbar-dragging .studio-scrollbar-left {
   background: rgba(37,139,77,.08);
 }
 .checkout-result > span { color: #83eaaa; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; }
+.pix-payment { display: grid; gap: 12px; min-width: 0; }
+.pix-payment-qr { max-width: 100%; height: auto; background: white; border-radius: 12px; padding: 8px; }
+.pix-payment-code { width: 100%; min-width: 0; resize: vertical; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); color: inherit; overflow-wrap: anywhere; font: 12px monospace; }
 .checkout-result code,
 .delivery-box pre {
   white-space: pre-wrap;

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-const STUDIO_BACKEND = 'https://studiokbot.up.railway.app';
+const STUDIO_BACKEND = 'https://studiok-api.wisp.uno';
 const STUDIO_ORIGIN = 'https://studiokatelier.infinityfreeapp.com';
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: strict-origin-when-cross-origin');
@@ -62,7 +62,7 @@ if ($path === '/api/logout') {
 if (str_starts_with($path, '/api/studio/')) {
     $endpoint = substr($path, strlen('/api/studio/'));
     // Only the existing website API is available. OAuth exchange stays server-side.
-    if (!preg_match('~^(?:public-state|radio|feedbacks|logout|search|analytics/event|me/profile(?:/title)?|me/ecosystem|me/favorites/(?:items|products)/[A-Za-z0-9_-]+|me/orders(?:/[A-Za-z0-9_-]+/delivery)?|me/cart(?:/checkout)?|me/notifications(?:/read-all|/[A-Za-z0-9_-]+)?|me/missions/[A-Za-z0-9_-]+/claim|me/leaderboard|me/restock/[A-Za-z0-9_-]+|me/gallery|me/tickets(?:/[A-Za-z0-9_-]+/(?:messages|reply|transcript))?|products/[A-Za-z0-9_-]+/(?:order|recommendations)|control(?:/[A-Za-z0-9_/-]+)?)$~', $endpoint)
+    if (!preg_match('~^(?:public-state|radio|feedbacks|logout|search|analytics/event|me/profile(?:/title)?|me/ecosystem|me/favorites/(?:items|products)/[A-Za-z0-9_-]+|me/orders(?:/[A-Za-z0-9_-]+/(?:delivery|payment))?|me/cart(?:/checkout)?|me/notifications(?:/read-all|/[A-Za-z0-9_-]+)?|me/missions/[A-Za-z0-9_-]+/claim|me/leaderboard|me/restock/[A-Za-z0-9_-]+|me/gallery|me/tickets(?:/[A-Za-z0-9_-]+/(?:messages|reply|transcript))?|products/[A-Za-z0-9_-]+/(?:order|recommendations)|control(?:/[A-Za-z0-9_/-]+)?)$~', $endpoint)
         || str_contains($endpoint, '..')) fail(404, 'Rota não encontrada.');
     $headers = ['Accept: application/json'];
     $token = $_COOKIE['studio_web_token'] ?? '';
