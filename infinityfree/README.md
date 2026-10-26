@@ -56,6 +56,13 @@ hospedagem. Nenhuma cobrança real faz parte da validação local deste pacote.
 
 ## Limitação da hospedagem
 
+Conversões POST da Central podem aguardar até 50 segundos pelo backend; as demais
+chamadas JSON mantêm 25 segundos. O prazo deixa margem abaixo do limite fixo de
+60 segundos do PHP gratuito, sem alterar as proteções da hospedagem. A amostra
+OBJ→GLB na Wispbyte levou cerca de 28 segundos com a meta de 15% de CPU e usou
+cerca de 294 MiB de memória de trabalho. Arquivos maiores continuam sujeitos aos
+limites de recursos; o teste pequeno não garante conversão de qualquer arquivo.
+
 O filtro JavaScript/cookies do InfinityFree pode impedir robôs externos de ler os
 metadados OpenGraph. Previews do Discord nesse domínio precisam ser verificados
 e não são garantidos pela hospedagem. O ClothTool não é alterado por este corte.

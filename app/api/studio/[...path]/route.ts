@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = process.env.STUDIO_BACKEND_URL || "https://studiokbot.up.railway.app";
-const PUBLIC_ORIGIN = process.env.STUDIO_PUBLIC_URL || "https://studiokoficial.netlify.app";
+const BACKEND = process.env.STUDIO_BACKEND_URL || "https://studiok-api.wisp.uno";
+const PUBLIC_ORIGIN = process.env.STUDIO_PUBLIC_URL || "https://studiokatelier.infinityfreeapp.com";
 
 async function proxy(req: NextRequest, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;

@@ -74,7 +74,10 @@ if (str_starts_with($path, '/api/studio/')) {
     $query = $_SERVER['QUERY_STRING'] ?? '';
     $input = in_array($method, ['GET', 'HEAD'], true) ? null : file_get_contents('php://input', false, null, 0, 2 * 1024 * 1024 + 1);
     if ($input !== null && strlen($input) > 2 * 1024 * 1024) fail(413, 'Solicitação muito grande.');
-    [$status, $body, $type] = upstream('/api/portfolio/' . $endpoint . ($query ? '?' . $query : ''), $method, $input, $headers);
+    // Free-host CPU pacing can make even a small 3D conversion exceed 25s.
+    // Keep conversion requests below InfinityFree's fixed 60s PHP limit.
+    $timeout = $method === 'POST' && preg_match('~^control/(?:assets/[A-Za-z0-9_-]+/process|fivem-preview)$~', $endpoint) ? 50 : 25;
+    [$status, $body, $type] = upstream('/api/portfolio/' . $endpoint . ($query ? '?' . $query : ''), $method, $input, $headers, $timeout);
     if ($status === 0) fail(502, 'Não foi possível conectar ao STUDIO K - CREATIVE LAB. Tente novamente.');
     http_response_code($status); header('Cache-Control: no-store');
     header('Content-Type: ' . (str_starts_with($type, 'application/json') ? $type : 'application/json; charset=utf-8'));

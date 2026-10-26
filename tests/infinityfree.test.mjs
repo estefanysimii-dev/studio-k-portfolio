@@ -5,6 +5,36 @@ import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
 const php = process.env.PHP_BINARY || 'php';
 const available = spawnSync(php, ['-v'], { windowsHide: true }).status === 0;
+test('gateway gives conversions time to finish while keeping ordinary requests bounded', { skip: !available }, () => {
+  // Run the real PHP router without extensions; these cURL doubles record the
+  // effective request options and never contact a network or use credentials.
+  const mock = [
+    "foreach (['CURLOPT_RETURNTRANSFER','CURLOPT_FOLLOWLOCATION','CURLOPT_CONNECTTIMEOUT','CURLOPT_TIMEOUT','CURLOPT_CUSTOMREQUEST','CURLOPT_HTTPHEADER','CURLOPT_SSL_VERIFYPEER','CURLOPT_SSL_VERIFYHOST','CURLOPT_POSTFIELDS','CURLINFO_HTTP_CODE','CURLINFO_CONTENT_TYPE'] as $i => $name) define($name, 100 + $i);",
+    'function curl_init($url) { return $url; }',
+    "function curl_setopt_array($curl, $options) { $GLOBALS['effective_timeout'] = $options[CURLOPT_TIMEOUT]; return true; }",
+    "function curl_setopt($curl, $option, $value) { return true; }",
+    "function curl_exec($curl) { return json_encode(['timeout' => $GLOBALS['effective_timeout']]); }",
+    "function curl_getinfo($curl, $field) { return $field === CURLINFO_HTTP_CODE ? 200 : 'application/json'; }",
+    'function curl_close($curl) {}',
+    "$_SERVER['HTTP_ORIGIN'] = 'https://studiokatelier.infinityfreeapp.com';"
+  ];
+  for (const [endpoint, method, expected] of [
+    ['control/assets/demo/process', 'POST', 50],
+    ['control/fivem-preview', 'POST', 50],
+    ['control/assets/demo/process', 'GET', 25],
+    ['control/site', 'POST', 25],
+    ['public-state', 'GET', 25]
+  ]) {
+    const code = [...mock,
+      '$_SERVER["REQUEST_URI"] = ' + JSON.stringify('/api/studio/' + endpoint) + ';',
+      '$_SERVER["REQUEST_METHOD"] = ' + JSON.stringify(method) + ';',
+      'require ' + JSON.stringify(resolve('dist-infinityfree/index.php').replaceAll('\\', '/')) + ';'
+    ].join('\n');
+    const result = spawnSync(php, ['-n', '-r', code], { windowsHide: true, encoding: 'utf8' });
+    assert.equal(result.status, 0, result.stderr);
+    assert.equal(JSON.parse(result.stdout).timeout, expected, endpoint + ' ' + method);
+  }
+});
 test('PHP gateway protects writes, hides OAuth exchange and bounds return URLs', { skip: !available }, async () => {
   const port = 19643;
   const server = spawn(php, ['-S', `127.0.0.1:${port}`, '-t', resolve('dist-infinityfree'), resolve('dist-infinityfree/index.php')], { windowsHide: true, stdio: 'ignore' });

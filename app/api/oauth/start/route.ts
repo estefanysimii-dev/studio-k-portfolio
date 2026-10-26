@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND = process.env.STUDIO_BACKEND_URL || "https://studiokbot.up.railway.app";
+const BACKEND = process.env.STUDIO_BACKEND_URL || "https://studiok-api.wisp.uno";
 
 export function GET(req: NextRequest) {
   const next = req.nextUrl.searchParams.get("next") || "/account";
