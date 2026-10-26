@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   const token = request.cookies.get('studio_web_token')?.value;
   if (token) {
     try {
-      const upstream = await fetch(new URL('/api/portfolio/logout', process.env.STUDIO_BACKEND_URL || 'https://studiokbot.up.railway.app'), {
+      const upstream = await fetch(new URL('/api/portfolio/logout', process.env.STUDIO_BACKEND_URL || 'https://studiok-api.wisp.uno'), {
         method: 'POST', headers: { Authorization: `Bearer ${token}`, Origin: origin }, cache: 'no-store', signal: AbortSignal.timeout(12000)
       });
       if (!upstream.ok) throw new Error('logout failed');

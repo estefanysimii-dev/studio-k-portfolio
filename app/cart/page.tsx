@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StudioShell from "@/components/studio-shell";
 import { useStudio } from "@/components/studio-provider";
 import { studioApi } from "@/lib/studio-api";
-import type { StudioCartItem, StudioCartQuote } from "@/lib/studio-types";
+import type { StudioCartItem, StudioCartQuote, StudioCheckout } from "@/lib/studio-types";
+import PixPayment from "@/components/pix-payment";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -15,7 +16,8 @@ export default function CartPage() {
   const [coupon, setCoupon] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [checkout, setCheckout] = useState<{ groupId: string; orderIds: string[]; total: number; payment: { pixKey: string; recipient: string; instructions: string } } | null>(null);
+  const paymentAttempt = useRef({ fingerprint: "", key: "" });
+  const [checkout, setCheckout] = useState<{ groupId: string; orderIds: string[]; total: number; payment: StudioCheckout["payment"] } | null>(null);
 
   useEffect(() => setItems(state.personal?.cart || []), [state.personal?.cart]);
 
@@ -64,7 +66,9 @@ export default function CartPage() {
     setBusy(true);
     setError("");
     try {
-      const result = await studioApi.checkoutCart(coupon);
+      const fingerprint = JSON.stringify({ coupon: coupon.trim(), items });
+      if (paymentAttempt.current.fingerprint !== fingerprint) paymentAttempt.current = { fingerprint, key: crypto.randomUUID() };
+      const result = await studioApi.checkoutCart(coupon, paymentAttempt.current.key);
       setCheckout({ groupId: result.groupId, orderIds: result.orderIds, total: result.total, payment: result.payment });
       setItems([]);
       setQuote(result.quote);
@@ -179,9 +183,7 @@ export default function CartPage() {
               <span>Pedido em grupo criado</span>
               <strong>#{checkout.groupId.slice(0, 8)}</strong>
               <p>{checkout.orderIds.length} item(ns) · {money.format(checkout.total / 100)}</p>
-              {checkout.payment.pixKey && <><label>Chave Pix</label><code>{checkout.payment.pixKey}</code></>}
-              {checkout.payment.recipient && <p>Recebedor: {checkout.payment.recipient}</p>}
-              {checkout.payment.instructions && <p>{checkout.payment.instructions}</p>}
+              <PixPayment payment={checkout.payment} />
             </div>
           )}
         </aside>

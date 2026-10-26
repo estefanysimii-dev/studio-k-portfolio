@@ -1,27 +1,68 @@
-# Studio K no InfinityFree
+# Studio K no InfinityFree — cutover Wisp preparado
 
-`npm ci` e `npm run build:infinityfree` geram `dist-infinityfree/`.
-Envie somente o conteúdo dessa pasta para `/htdocs`, incluindo `.htaccess`.
-Nenhuma credencial é incluída no pacote. Node.js é necessário apenas para gerar os arquivos.
+O portfólio continua em `https://studiokatelier.infinityfreeapp.com`. Este código
+prepara o gateway PHP e o Next.js para o backend `https://studiok-api.wisp.uno`.
+**O pacote e o PR não alteram o site publicado.** A publicação deve acontecer
+somente depois de validar o backend restaurado, os callbacks e os fluxos abaixo.
 
-A interface reutiliza os componentes React existentes. A entrada PHP substitui as rotas
-do Next.js para APIs, cookie HttpOnly, conclusão do OAuth, mídia com Range e metadados.
-O servidor, SQLite, Discord, Pix e conversão de arquivos continuam no Railway.
+## Build e configuração
 
-Configure `PORTFOLIO_PUBLIC_URL=https://studiokatelier.infinityfreeapp.com` e
-`PORTFOLIO_BACKEND_URL=https://studiokbot.up.railway.app` no backend depois de validar
-o HTTPS. Registre `https://studiokbot.up.railway.app/api/oauth/discord/callback` no Discord.
-Preserve o `PUBLIC_URL` e as URIs existentes para os fluxos legados de verificação e Google
-do bot. Nunca coloque tokens Discord ou FTP em arquivos públicos.
+`npm ci` e `npm run build:infinityfree` geram `dist-infinityfree/`. O destino padrão
+é Wisp. O job de CI define `STUDIO_BACKEND_URL=https://studiok-api.wisp.uno` para
+os builds InfinityFree e Next.js, além de `STUDIO_PUBLIC_URL` com a origem acima.
+Para gerar explicitamente o mesmo pacote no PowerShell:
 
-Publicação validada em 03/10/2026: HTTPS, dados reais, conta autenticada, acesso Staff à
-Central, gravação das configurações, navegação e persistência do tema. A rádio está
-desativada, aguardando uma fonte configurada. A hospedagem antiga `studiokoficial` na
-Netlify foi desativada de forma reversível.
+```powershell
+$env:STUDIO_BACKEND_URL = 'https://studiok-api.wisp.uno'
+npm run build:infinityfree
+```
 
-O InfinityFree usa um filtro JavaScript/cookies que pode impedir robôs externos de
-ler os metadados OpenGraph. Os metadados são gerados, mas previews do Discord nesse
-domínio precisam ser verificados e não são garantidos pela hospedagem.
+`STUDIO_BACKEND_URL` aceita somente uma origem HTTPS sem caminho, credenciais,
+query string ou fragmento. O build valida o valor antes de escrevê-lo no gateway.
+Não há chave de API, segredo de webhook, token Discord ou credencial FTP no pacote.
 
-`npm run build` continua gerando o Next.js existente para o Railway. O fluxo atual
-permanece disponível como alternativa durante a migração. O ClothTool não foi alterado.
+A entrada PHP mantém os componentes React, cookies HttpOnly, conclusão do OAuth,
+mídia com Range e metadados. O servidor, SQLite, bot, Pix e conversores pertencem
+ao backend. `npm run build` continua gerando a aplicação Next.js como alternativa.
+
+## Validação antes do corte
+
+1. No backend restaurado, configure `PUBLIC_URL` e `PORTFOLIO_BACKEND_URL` como
+   `https://studiok-api.wisp.uno`; mantenha `PORTFOLIO_PUBLIC_URL` como a origem
+   InfinityFree. Preserve banco, `encryption.key`, mídias e credenciais originais.
+2. Adicione `https://studiok-api.wisp.uno/api/oauth/discord/callback` no Discord e
+   `https://studiok-api.wisp.uno/api/oauth/google/callback` no Google. Mantenha os
+   callbacks antigos durante os testes; não rotacione chaves nem apague sessões.
+3. Valide HTTPS/health, conta Discord, Staff/Central, dados reais, gravação de
+   configurações, mídia/preview, tickets e entrega. Não execute dois bots com o
+   mesmo token. A troca do domínio do painel exige novo login nesse domínio.
+4. Confirme os testes e builds. Somente então publique o conteúdo de
+   `dist-infinityfree/` em `/htdocs`, incluindo `.htaccess`, e valide novamente pelo
+   endereço público. A CI existente publica por FTP apenas em push para `main`;
+   um PR gera artefatos de revisão e não executa essa etapa.
+
+O domínio antigo `*.up.railway.app` pertence ao Railway e não acompanha o backend.
+A orientação histórica de preservá-lo não se aplica ao corte para Wisp.
+
+## Pix PurinCash
+
+O checkout exibe QR, Copia e Cola, validade e aviso de sandbox recebidos do backend;
+Minha Conta permite recuperar a cobrança existente sem criar outro pedido. O total
+do Pix do carrinho corresponde ao grupo inteiro e deve ser pago uma única vez.
+Chaves PurinCash e segredo do webhook ficam exclusivamente no backend. Sem ativação
+ou configuração completa, permanece o Pix manual. A confirmação vem do servidor,
+e uma simulação não libera itens reais. Tarifas de pagamento são separadas da
+hospedagem. Nenhuma cobrança real faz parte da validação local deste pacote.
+
+## Limitação da hospedagem
+
+Conversões POST da Central podem aguardar até 50 segundos pelo backend; as demais
+chamadas JSON mantêm 25 segundos. O prazo deixa margem abaixo do limite fixo de
+60 segundos do PHP gratuito, sem alterar as proteções da hospedagem. A amostra
+OBJ→GLB na Wispbyte levou cerca de 28 segundos com a meta de 15% de CPU e usou
+cerca de 294 MiB de memória de trabalho. Arquivos maiores continuam sujeitos aos
+limites de recursos; o teste pequeno não garante conversão de qualquer arquivo.
+
+O filtro JavaScript/cookies do InfinityFree pode impedir robôs externos de ler os
+metadados OpenGraph. Previews do Discord nesse domínio precisam ser verificados
+e não são garantidos pela hospedagem. O ClothTool não é alterado por este corte.

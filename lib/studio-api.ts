@@ -134,10 +134,10 @@ export const studioApi = {
       method: "POST",
       body: JSON.stringify({ yddAssetId, ytdAssetId })
     }),
-  createOrder: (productId: string, couponCode = "") =>
+  createOrder: (productId: string, couponCode = "", idempotencyKey?: string) =>
     request<StudioCheckout>(`products/${encodeURIComponent(productId)}/order`, {
       method: "POST",
-      body: JSON.stringify({ couponCode })
+      body: JSON.stringify({ couponCode, idempotencyKey })
     }),
   search: (q: string) =>
     request<{ results: { kind: string; id: string; title: string; subtitle: string; href: string; score: number }[] }>(`search?q=${encodeURIComponent(q)}`),
@@ -147,8 +147,9 @@ export const studioApi = {
     request<{ cart: StudioCartItem[]; quote: StudioCartQuote }>(`me/cart${couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : ""}`),
   saveCart: (items: StudioCartItem[], couponCode = "") =>
     request<{ cart: StudioCartItem[]; quote: StudioCartQuote }>("me/cart", { method: "PUT", body: JSON.stringify({ items, couponCode }) }),
-  checkoutCart: (couponCode = "") =>
-    request<{ groupId: string; orderIds: string[]; total: number; quote: StudioCartQuote; payment: StudioCheckout["payment"] }>("me/cart/checkout", { method: "POST", body: JSON.stringify({ couponCode }) }),
+  checkoutCart: (couponCode = "", idempotencyKey?: string) =>
+    request<{ groupId: string; orderIds: string[]; total: number; quote: StudioCartQuote; payment: StudioCheckout["payment"] }>("me/cart/checkout", { method: "POST", body: JSON.stringify({ couponCode, idempotencyKey }) }),
+  orderPayment: (id: string) => request<{ payment: StudioCheckout["payment"] }>(`me/orders/${encodeURIComponent(id)}/payment`, { method: "POST", body: "{}" }),
   myNotifications: () => request<{ notifications: import("./studio-types").StudioNotification[] }>("me/notifications"),
   markNotification: (id: string, read = true) =>
     request<{ notifications: import("./studio-types").StudioNotification[] }>(`me/notifications/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify({ read }) }),

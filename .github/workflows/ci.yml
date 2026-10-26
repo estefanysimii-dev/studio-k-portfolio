@@ -13,6 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      STUDIO_BACKEND_URL: https://studiok-api.wisp.uno
+      STUDIO_PUBLIC_URL: https://studiokatelier.infinityfreeapp.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,9 +34,6 @@ jobs:
           include-hidden-files: true
           retention-days: 7
       - run: npm run build
-        env:
-          STUDIO_BACKEND_URL: https://studiokbot.up.railway.app
-          STUDIO_PUBLIC_URL: https://studiokatelier.infinityfreeapp.com
 
       - name: Package deploy source
         uses: actions/upload-artifact@v4
