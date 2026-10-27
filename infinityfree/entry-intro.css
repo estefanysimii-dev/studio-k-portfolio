@@ -74,7 +74,7 @@ html.studio-entry-locked body {
   background-image:
     radial-gradient(circle at 7% 14%,#fff 0 1px,transparent 1.8px),
     radial-gradient(circle at 13% 42%,#F345FE 0 1px,transparent 2px),
-    radial-gradient(circle at 21% 25%,#EFE2FF 0 1.1px,transparent 2px),
+    radial-gradient(circle at 21% 25%,#FDE2FF 0 1.1px,transparent 2px),
     radial-gradient(circle at 29% 10%,#F99BFF 0 1.2px,transparent 2px),
     radial-gradient(circle at 34% 72%,#F345FE 0 1.1px,transparent 2px),
     radial-gradient(circle at 41% 32%,#fff 0 .9px,transparent 1.8px),
@@ -129,7 +129,7 @@ html.studio-entry-locked body {
   transform:translateZ(0);
   will-change:transform,filter;
   filter:
-    drop-shadow(0 0 5px rgba(245, 230, 255,.36))
+    drop-shadow(0 0 5px rgba(254, 230, 255,.36))
     drop-shadow(0 0 12px rgba(243, 69, 254,.52))
     drop-shadow(0 0 25px rgba(243, 69, 254,.48));
   animation:studio-entry-float 2.8s ease-in-out infinite;
@@ -178,7 +178,7 @@ html.studio-entry-locked body {
 }
 
 .studio-entry-inf-line {
-  stroke:rgba(240, 220, 255,.88);
+  stroke:rgba(253, 220, 255,.88);
   stroke-width:1.55;
   filter:
     drop-shadow(0 0 3px rgba(255, 255, 255,.76))
@@ -249,7 +249,7 @@ html.studio-entry-locked body {
   0%,100% {
     transform:translateY(0) scale(1);
     filter:
-      drop-shadow(0 0 5px rgba(245, 230, 255,.34))
+      drop-shadow(0 0 5px rgba(254, 230, 255,.34))
       drop-shadow(0 0 12px rgba(243, 69, 254,.5))
       drop-shadow(0 0 24px rgba(243, 69, 254,.44));
   }

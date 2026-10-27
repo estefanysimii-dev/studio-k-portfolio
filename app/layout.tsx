@@ -14,9 +14,9 @@ export const metadata: Metadata = {
   },
   description: "Portfólio, produtos e experiências 3D do STUDIO K - CREATIVE LAB para GTA V / FiveM.",
   icons: {
-    icon: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013",
-    shortcut: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013",
-    apple: "/studio-assets/crypto-favicon.svg?v=studio-k-20261013"
+    icon: "/studio-assets/crypto-logo.png?v=studio-k-png-20261027",
+    shortcut: "/studio-assets/crypto-logo.png?v=studio-k-png-20261027",
+    apple: "/studio-assets/crypto-logo.png?v=studio-k-png-20261027"
   },
   openGraph: {
     title: "STUDIO K - CREATIVE LAB",
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     siteName: "STUDIO K - CREATIVE LAB",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/studio-assets/crypto-banner.svg?v=studio-k-20261013", width: 1600, height: 900, alt: "STUDIO K - CREATIVE LAB" }]
+    images: [{ url: "/studio-assets/studio-k-neon-background.png", width: 1983, height: 793, alt: "STUDIO K - CREATIVE LAB" }]
   },
   twitter: {
     card: "summary_large_image",
     title: "STUDIO K - CREATIVE LAB",
     description: "Design 3D, roupas e experiências visuais para GTA V / FiveM.",
-    images: ["/studio-assets/crypto-banner.svg?v=studio-k-20261013"]
+    images: ["/studio-assets/studio-k-neon-background.png"]
   }
 };
 
