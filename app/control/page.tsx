@@ -595,7 +595,7 @@ export default function ControlPage() {
           <strong>{state.user?.name || "Administrador STUDIO K - CREATIVE LAB"}</strong>
           <a
             className="control-panel-switch"
-            href="https://studio-k-wmrj.netlify.app/"
+            href="https://studiok-api.wisp.uno/"
             target="_blank"
             rel="noopener noreferrer"
           >
