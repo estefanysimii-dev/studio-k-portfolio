@@ -421,6 +421,7 @@ export type StudioTicketMessage = {
   avatar: string;
   customer: boolean;
   bot: boolean;
+  viaSite?: boolean;
   content: string;
   attachments: { name: string; url: string }[];
   created: string;

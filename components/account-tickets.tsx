@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect,useRef,useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "./studio-provider";
 import type { StudioTicket, StudioTicketMessage } from "@/lib/studio-types";
+import UserAvatar from "./user-avatar";
 
 const statusLabel:Record<string,string>={open:"Aberto",closed:"Finalizado"};
 const stateLabel:Record<string,string>={waiting_staff:"Aguardando equipe",in_progress:"Em atendimento",waiting_customer:"Aguardando você",escalated:"Escalado",closed:"Finalizado"};
@@ -20,14 +21,28 @@ export default function AccountTickets(){
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [open,setOpen]=useState(false);
+  const selectedId=useRef("");
+  const messageRequest=useRef(0);
 
   useEffect(() => {
     if (categories.length && !categories.includes(newCategory)) setNewCategory(categories[0]);
   }, [categories, newCategory]);
 
   const load=async()=>{try{const r=await studioApi.myTickets();setTickets(r.tickets);return r.tickets;}catch{return [];}};
-  const loadMessages=async(id:string)=>{setSelected(id);setTranscript("");setError("");try{const r=await studioApi.ticketMessages(id);setMessages(r.messages);}catch(err){setMessages([]);setError(err instanceof Error?err.message:"Não foi possível carregar as mensagens.");}};
+  const loadMessages=async(id:string)=>{const request=++messageRequest.current;selectedId.current=id;setSelected(id);setTranscript("");setMessages([]);setError("");try{const r=await studioApi.ticketMessages(id);if(selectedId.current===id&&messageRequest.current===request)setMessages(r.messages);}catch(err){if(selectedId.current===id&&messageRequest.current===request){setMessages([]);setError(err instanceof Error?err.message:"Não foi possível carregar as mensagens.");}}};
   useEffect(()=>{void load();},[]);
+  useEffect(()=>{
+    if(!open||!selected)return;
+    let cancelled=false,inFlight=false;
+    const poll=async()=>{
+      if(inFlight||document.visibilityState!=="visible")return;
+      inFlight=true;
+      const request=++messageRequest.current;
+      try{const result=await studioApi.ticketMessages(selected);if(!cancelled&&selectedId.current===selected&&messageRequest.current===request)setMessages(result.messages);}catch{}finally{inFlight=false;}
+    };
+    const timer=window.setInterval(()=>void poll(),8000);
+    return()=>{cancelled=true;window.clearInterval(timer);};
+  },[open,selected]);
 
   if(!state.me.authenticated)return null;
   const current=tickets.find(t=>t.id===selected);
@@ -83,7 +98,7 @@ export default function AccountTickets(){
 
             <div className="ticket-message-list">
               {messages.length?messages.map(message=><article className={message.customer?"mine":""} key={message.id}>
-                {message.avatar&&<img src={message.avatar} alt=""/>}
+                <UserAvatar src={message.avatar} name={message.author} imageClassName="ticket-message-avatar" fallbackClassName="ticket-message-avatar ticket-avatar-fallback" />
                 <div><strong>{message.author}</strong><p>{message.content}</p>{message.attachments.map(a=><a href={a.url} target="_blank" rel="noreferrer" key={a.url}>{a.name}</a>)}<small>{new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(message.created))}</small></div>
               </article>):<p className="muted">{current.status==="open"?"Nenhuma mensagem carregada.":"Ticket finalizado."}</p>}
             </div>

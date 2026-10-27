@@ -4,7 +4,7 @@ import UserAvatar from "@/components/user-avatar";
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
-import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
+import { discordAppInviteHref, discordInviteHref, TICKET_DISCORD_INVITE } from "@/lib/links";
 
 function money(cents: number) {
   if (!cents) return "";
@@ -154,7 +154,7 @@ export default function DiscordPage() {
 
               <div className="access-actions">
                 <a className="btn btn-primary" href="/account">Ver meus benefícios</a>
-                <a className="btn btn-outline" href={appInvite}>Abrir ticket</a>
+                <a className="btn btn-outline" href={TICKET_DISCORD_INVITE}>Abrir ticket</a>
               </div>
             </>
           )}

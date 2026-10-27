@@ -68,7 +68,7 @@ export default function CommerceActions() {
     <div className="commerce-actions" ref={wrap}>
       <div className="global-search">
         <button type="button" className="top-icon-button search-trigger" onClick={() => setSearchOpen((value) => !value)} aria-label="Buscar">
-          ⌕
+          <Icon name="search" />
         </button>
         <div className={`global-search-panel ${searchOpen ? "open" : ""}`}>
           <div className="global-search-input">
