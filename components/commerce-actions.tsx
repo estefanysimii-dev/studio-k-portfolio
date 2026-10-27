@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "./studio-provider";
+import Icon from "./icons";
 
 export default function CommerceActions() {
   const { state, refresh } = useStudio();
@@ -108,8 +109,9 @@ export default function CommerceActions() {
               className="top-icon-button"
               onClick={() => setNotificationsOpen((value) => !value)}
               aria-label="Notificações"
+              title="Notificações"
             >
-              ♢
+              <Icon name="message" />
               {unread > 0 && <b>{unread > 9 ? "9+" : unread}</b>}
             </button>
             <div className={`notification-panel ${notificationsOpen ? "open" : ""}`}>
@@ -133,8 +135,8 @@ export default function CommerceActions() {
             </div>
           </div>
 
-          <Link href="/cart" className="top-icon-button cart-trigger" aria-label="Carrinho">
-            ◇
+          <Link href="/cart" className="top-icon-button cart-trigger" aria-label="Carrinho" title="Carrinho">
+            <Icon name="cart" />
             {cartCount > 0 && <b>{cartCount > 9 ? "9+" : cartCount}</b>}
           </Link>
         </>
