@@ -11,6 +11,7 @@ import StudioRadio from "./studio-radio";
 import BehaviorTracker from "./behavior-tracker";
 import CommerceActions from "./commerce-actions";
 import CommerceBanners from "./commerce-banners";
+import UserAvatar from "./user-avatar";
 
 const StudioAssistant = lazy(() => import("./studio-assistant"));
 const AccountTickets = lazy(() => import("./account-tickets"));
@@ -74,12 +75,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
   const tagline = !site.brandTagline || site.brandTagline === "KINETIC LOOM"
     ? "SUA IDENTIDADE. SUA CIDADE."
     : site.brandTagline;
-  const configuredBg = variant === "control" ? site.controlBackgroundUrl : site.homeBackgroundUrl;
-  const backgroundUrl = configuredBg &&
-    !configuredBg.startsWith("/media/") &&
-    configuredBg !== "/studio-assets/crypto-banner.svg?v=studio-k-20261013"
-    ? configuredBg
-    : "/studio-assets/crypto-banner.svg?v=studio-k-20261013";
+  const backgroundUrl = "/studio-assets/studio-k-neon-background.png";
   const shellStyle = { "--studio-bg-image": `url("${backgroundUrl.replaceAll('"', "%22")}")` } as CSSProperties;
   const profileName = me.authenticated ? (me.user?.name || me.user?.username || "Conta conectada") : "Visitante";
   const profileSub = me.authenticated
@@ -146,11 +142,7 @@ export default function StudioShell({ eyebrow, title, children, variant = "defau
 
         <div className="sidebar-foot">
           <Link href="/account" className="mini-profile">
-            {me.user?.avatar ? (
-              <img className="profile-avatar" src={me.user.avatar} alt="" loading="lazy" decoding="async" />
-            ) : (
-              <div className="avatar-placeholder">SK</div>
-            )}
+            <UserAvatar src={me.user?.avatar} name={profileName} imageClassName="profile-avatar" fallbackClassName="avatar-placeholder" />
             <div>
               <strong>{profileName}</strong>
               <span>{loading ? "Sincronizando..." : profileSub}</span>

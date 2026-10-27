@@ -1,4 +1,5 @@
 "use client";
+import UserAvatar from "@/components/user-avatar";
 
 import StudioShell from "@/components/studio-shell";
 import Icon from "@/components/icons";
@@ -114,11 +115,7 @@ export default function DiscordPage() {
           ) : (
             <>
               <div className="access-profile">
-                {me.user?.avatar ? (
-                  <img src={me.user.avatar} alt="" />
-                ) : (
-                  <div className="access-profile-fallback">{(me.user?.name || me.user?.username || "K").slice(0, 1).toUpperCase()}</div>
-                )}
+                <UserAvatar src={me.user?.avatar} name={me.user?.name || me.user?.username} fallbackClassName="access-profile-fallback" />
                 <div>
                   <span className="section-eyebrow">SEU ACESSO STUDIO K - CREATIVE LAB</span>
                   <h2>Olá, {me.user?.name || me.user?.username || "membro"} 👋</h2>
