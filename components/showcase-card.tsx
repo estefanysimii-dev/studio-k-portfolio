@@ -49,7 +49,7 @@ export default function ShowcaseCard({ eyebrow, title, copy, meta, coverUrl, mod
         <h3>{title}</h3>
         <p>{copy}</p>
         {meta && <span className="meta-line">{meta}</span>}
-        <a className="text-action" href={href} {...externalLinkProps(href)}>
+        <a className="text-action" href={href} aria-label={`Ver projeto: ${title}`} {...externalLinkProps(href)}>
           Ver projeto <Icon name="arrow" />
         </a>
       </div>

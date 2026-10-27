@@ -1,4 +1,5 @@
 "use client";
+import UserAvatar from "@/components/user-avatar";
 
 import { useEffect, useMemo, useState } from "react";
 import StudioShell from "@/components/studio-shell";
@@ -151,9 +152,7 @@ export default function AccountPage() {
           </div>
 
           <div className="studio-id-person">
-            {me.user?.avatar
-              ? <img src={me.user.avatar} alt="" />
-              : <div className="studio-id-avatar-fallback">{(me.user?.name || me.user?.username || "K").slice(0, 1).toUpperCase()}</div>}
+            <UserAvatar src={me.user?.avatar} name={me.user?.name || me.user?.username} fallbackClassName="studio-id-avatar-fallback" />
             <div>
               <h1>{me.user?.name || me.user?.username || "Membro STUDIO K - CREATIVE LAB"}</h1>
               <span>@{me.user?.username || "studio-k"}</span>
