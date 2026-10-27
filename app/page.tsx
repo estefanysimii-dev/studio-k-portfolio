@@ -7,7 +7,7 @@ import ShowcaseCard from "@/components/showcase-card";
 import HomeBannerCarousel from "@/components/home-banner-carousel";
 import Icon from "@/components/icons";
 import { useStudio } from "@/components/studio-provider";
-import { discordAppInviteHref, discordInviteHref } from "@/lib/links";
+import { discordAppInviteHref, discordInviteHref, TICKET_DISCORD_INVITE } from "@/lib/links";
 
 export default function HomePage() {
   const { state } = useStudio();
@@ -190,7 +190,7 @@ export default function HomePage() {
         <h2>Se interessou? Abra um ticket!</h2>
         <a
           className="btn btn-primary ticket-home-button"
-          href={appInvite}
+          href={TICKET_DISCORD_INVITE}
         >
           Abrir Ticket <Icon name="arrow" />
         </a>

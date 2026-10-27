@@ -5923,6 +5923,8 @@ html.studio-scrollbar-dragging .studio-scrollbar-left {
 .top-icon-button{position:relative;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(243, 69, 254,.16);border-radius:11px;color:var(--text-2);background:rgba(var(--surface-rgb),.52);text-decoration:none;cursor:pointer;font:800 15px/1 "Sora",Arial,sans-serif;transition:.18s ease}
 .top-icon-button:hover{color:var(--white);border-color:rgba(243, 69, 254,.4);background:rgba(243, 69, 254,.1);transform:translateY(-1px)}
 .top-icon-button > svg { width:20px; height:20px; }
+.ticket-message-avatar { width:28px; height:28px; border-radius:8px; object-fit:cover; }
+.ticket-message-list .ticket-avatar-fallback { display:grid; place-items:center; background:rgba(243,69,254,.12); color:var(--purple-light); font-weight:800; }
 .top-icon-button>b{position:absolute;right:-5px;top:-6px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;border-radius:999px;color:#fff;background:#F345FE;border:2px solid rgba(var(--surface-rgb),1);font:800 6px/1 "Sora",Arial,sans-serif}
 .global-search,.notification-menu{position:relative}
 .global-search-panel,.notification-panel{position:absolute;z-index:90;top:46px;right:0;width:min(460px,calc(100vw - 32px));padding:10px;border:1px solid rgba(243, 69, 254,.2);border-radius:14px;background:rgba(19, 7, 20,.97);box-shadow:0 26px 70px rgba(0, 0, 0,.38);backdrop-filter:blur(22px);opacity:0;visibility:hidden;transform:translateY(-5px);transition:.16s ease}

@@ -1,4 +1,5 @@
 export const DEFAULT_DISCORD_INVITE = "https://discord.gg/YPShX4FQCE";
+export const TICKET_DISCORD_INVITE = "https://discord.gg/s3qrQqSgcy";
 
 export function discordInviteHref(configured?: string) {
   const value = String(configured || "").trim();
