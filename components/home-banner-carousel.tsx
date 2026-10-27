@@ -7,15 +7,15 @@ type Props = {
   site: StudioSite;
 };
 
-const DEFAULT_BANNER = "/studio-assets/crypto-banner.svg?v=studio-k-20261013";
-const DEFAULT_BANNER_MOBILE = "/studio-assets/crypto-banner.svg?v=studio-k-20261013";
+const DEFAULT_BANNER = "/studio-assets/studio-k-neon-background.png";
+const DEFAULT_BANNER_MOBILE = "/studio-assets/studio-k-neon-background.png";
 const ROTATION_MS = 5000;
 // Replace the two legacy brand artworks while retaining carousel slots and timing.
 const cryptoBannerArtwork = (url: string) => ({
-  "/portfolio-assets/a54f2488-5872-4487-8403-07f6fe8350c0.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
-  "/portfolio-assets/90d9b5f4-1476-46dc-befd-e98c21669c40.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013",
-  "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/crypto-banner.svg?v=studio-k-20261013",
-  "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/crypto-banner-secondary.svg?v=studio-k-20261013"
+  "/portfolio-assets/a54f2488-5872-4487-8403-07f6fe8350c0.png": "/studio-assets/studio-k-neon-background.png",
+  "/portfolio-assets/90d9b5f4-1476-46dc-befd-e98c21669c40.png": "/studio-assets/studio-k-neon-background.png",
+  "/portfolio-assets/adafc2fc-bae9-4637-b5c5-6070dee17479.png": "/studio-assets/studio-k-neon-background.png",
+  "/portfolio-assets/99c32eeb-f2c3-47c7-b076-c3b57ea7b001.png": "/studio-assets/studio-k-neon-background.png"
 } as Record<string, string>)[url] || url;
 
 export default function HomeBannerCarousel({ site }: Props) {

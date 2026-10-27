@@ -107,7 +107,7 @@ if (str_starts_with($path, '/api/')) fail(404, 'Rota não encontrada.');
 if (!in_array($method, ['GET', 'HEAD'], true)) fail(405, 'Método não permitido.');
 $title = 'STUDIO K - CREATIVE LAB';
 $description = 'Portfólio, produtos e experiências 3D do STUDIO K - CREATIVE LAB para GTA V / FiveM.';
-$image = STUDIO_ORIGIN . '/studio-assets/crypto-banner.svg?v=studio-k-20261013';
+$image = STUDIO_ORIGIN . '/studio-assets/studio-k-neon-background.png';
 if (preg_match('~^/(portfolio|products)/([A-Za-z0-9_-]+)/?$~', $path, $match)) {
     [$status, $body] = upstream('/api/portfolio/public-state', 'GET', null, [], 5);
     $state = json_decode($body, true);
