@@ -1,4 +1,4 @@
-import type { StudioCartItem, StudioCartQuote, StudioCheckout, StudioControlState, StudioOrder, StudioProduct, StudioPublicState, StudioTicket, StudioTicketMessage } from "./studio-types";
+import type { StudioCartItem, StudioCartQuote, StudioCheckout, StudioControlState, StudioOrder, StudioProduct, StudioPublicState, StudioTicket, StudioTicketMessage, StudioTranscriptMessage } from "./studio-types";
 
 export type StudioProductMutation = StudioProduct & {
   _announcement?: {
@@ -167,7 +167,7 @@ export const studioApi = {
   createTicket: (category: string) =>
     request<{ ok: boolean; ticket: { id: string; channel_id?: string } }>("me/tickets", { method: "POST", body: JSON.stringify({ category }) }),
   ticketMessages: (id: string) => request<{ messages: StudioTicketMessage[] }>(`me/tickets/${encodeURIComponent(id)}/messages`),
-  ticketTranscript: (id: string) => request<{ id: string; transcript: string }>(`me/tickets/${encodeURIComponent(id)}/transcript`),
+  ticketTranscript: (id: string) => request<{ id: string; transcript: string; messages?: StudioTranscriptMessage[] }>(`me/tickets/${encodeURIComponent(id)}/transcript`),
   replyTicket: (id: string, text: string) =>
     request<{ ok: boolean; id: string; created: string }>(`me/tickets/${encodeURIComponent(id)}/reply`, { method: "POST", body: JSON.stringify({ text }) }),
   myProfile: () => request<{ profile: import("./studio-types").StudioMemberProfile; favorites: { items: string[]; products: string[] } }>("me/profile"),
