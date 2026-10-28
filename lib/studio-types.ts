@@ -427,6 +427,23 @@ export type StudioTicketMessage = {
   created: string;
 };
 
+export type StudioTranscriptMessage = {
+  id?: string;
+  authorId?: string;
+  name: string;
+  username?: string;
+  avatar?: string;
+  role?: { id?: string; name: string } | null;
+  customer?: boolean;
+  bot?: boolean;
+  viaSite?: boolean;
+  legacy?: boolean;
+  content: string;
+  created?: string;
+  embeds?: { title: string; description: string; fields: { name: string; value: string }[] }[];
+  attachments?: { name: string; url: string }[];
+};
+
 export type StudioOrder = {
   id: string;
   productId: string;

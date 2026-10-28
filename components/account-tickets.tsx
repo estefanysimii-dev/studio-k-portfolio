@@ -3,8 +3,9 @@
 import { useEffect,useRef,useState } from "react";
 import { studioApi } from "@/lib/studio-api";
 import { useStudio } from "./studio-provider";
-import type { StudioTicket, StudioTicketMessage } from "@/lib/studio-types";
+import type { StudioTicket, StudioTicketMessage, StudioTranscriptMessage } from "@/lib/studio-types";
 import UserAvatar from "./user-avatar";
+import TicketTranscript from "./ticket-transcript";
 
 const statusLabel:Record<string,string>={open:"Aberto",closed:"Finalizado"};
 const stateLabel:Record<string,string>={waiting_staff:"Aguardando equipe",in_progress:"Em atendimento",waiting_customer:"Aguardando você",escalated:"Escalado",closed:"Finalizado"};
@@ -17,7 +18,7 @@ export default function AccountTickets(){
   const [selected,setSelected]=useState("");
   const [messages,setMessages]=useState<StudioTicketMessage[]>([]);
   const [reply,setReply]=useState("");
-  const [transcript,setTranscript]=useState("");
+  const [transcript,setTranscript]=useState<StudioTranscriptMessage[]|null>(null);
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [open,setOpen]=useState(false);
@@ -29,7 +30,7 @@ export default function AccountTickets(){
   }, [categories, newCategory]);
 
   const load=async()=>{try{const r=await studioApi.myTickets();setTickets(r.tickets);return r.tickets;}catch{return [];}};
-  const loadMessages=async(id:string)=>{const request=++messageRequest.current;selectedId.current=id;setSelected(id);setTranscript("");setMessages([]);setError("");try{const r=await studioApi.ticketMessages(id);if(selectedId.current===id&&messageRequest.current===request)setMessages(r.messages);}catch(err){if(selectedId.current===id&&messageRequest.current===request){setMessages([]);setError(err instanceof Error?err.message:"Não foi possível carregar as mensagens.");}}};
+  const loadMessages=async(id:string)=>{const request=++messageRequest.current;selectedId.current=id;setSelected(id);setTranscript(null);setMessages([]);setError("");try{const r=await studioApi.ticketMessages(id);if(selectedId.current===id&&messageRequest.current===request)setMessages(r.messages);}catch(err){if(selectedId.current===id&&messageRequest.current===request){setMessages([]);setError(err instanceof Error?err.message:"Não foi possível carregar as mensagens.");}}};
   useEffect(()=>{void load();},[]);
   useEffect(()=>{
     if(!open||!selected)return;
@@ -93,7 +94,7 @@ export default function AccountTickets(){
           {current?<>
             <div className="ticket-thread-head">
               <div><strong>{current.category}</strong><span>{stateLabel[current.state]||current.state} · prioridade {current.priority}{current.claimedName ? ` · responsável: ${current.claimedName}` : ""}</span></div>
-              {current.transcriptAvailable&&<button className="btn btn-outline compact" type="button" onClick={async()=>{try{const result=await studioApi.ticketTranscript(current.id);setTranscript(result.transcript);}catch(err){setError(err instanceof Error?err.message:"Não foi possível abrir o transcript.");}}}>Transcript</button>}
+              {current.transcriptAvailable&&<button className="btn btn-outline compact" type="button" onClick={async()=>{try{const result=await studioApi.ticketTranscript(current.id);if(selectedId.current===current.id)setTranscript(result.messages||[{name:"Histórico anterior",content:result.transcript,legacy:true}]);}catch(err){setError(err instanceof Error?err.message:"Não foi possível abrir o transcript.");}}}>Transcript</button>}
             </div>
 
             <div className="ticket-message-list">
@@ -103,7 +104,7 @@ export default function AccountTickets(){
               </article>):<p className="muted">{current.status==="open"?"Nenhuma mensagem carregada.":"Ticket finalizado."}</p>}
             </div>
 
-            {transcript&&<div className="ticket-transcript"><div><strong>Transcript completo</strong><button type="button" onClick={()=>setTranscript("")}>Fechar</button></div><pre>{transcript}</pre></div>}
+            {transcript&&<div className="ticket-transcript"><div><strong>Transcript completo</strong><button type="button" onClick={()=>setTranscript(null)}>Fechar</button></div><TicketTranscript messages={transcript}/></div>}
 
             {current.status==="open"&&<form className="ticket-reply" onSubmit={async e=>{
               e.preventDefault();if(!reply.trim())return;setBusy(true);setError("");
