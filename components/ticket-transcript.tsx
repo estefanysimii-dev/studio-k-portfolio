@@ -7,7 +7,7 @@ export default function TicketTranscript({messages}:{messages:StudioTranscriptMe
     {messages.map((message,index)=><article className={message.customer?"customer":"staff"} key={message.id||index}>
       <UserAvatar src={message.avatar} name={message.name} imageClassName="transcript-avatar" fallbackClassName="transcript-avatar ticket-avatar-fallback"/>
       <div className="transcript-bubble">
-        <header><strong>{message.name}</strong><span className="transcript-role">{message.role?.name||(message.legacy?"Cargo não registrado":message.bot?"Sistema":"Membro")}</span><span>{message.bot?"Bot":message.customer?"Cliente":"Equipe"}{message.viaSite?" · pelo site":""}</span></header>
+        <header><strong>{message.name}</strong><span className="transcript-role">{message.role?.name||(message.legacy?"Cargo não registrado":message.bot?"Sistema":"Membro")}</span><span>{message.bot?"Bot":message.customer?"Cliente":message.legacy?"Registro antigo":"Equipe"}{message.viaSite?" · pelo site":""}</span></header>
         <div className="transcript-identity">{message.username&&<span>@{message.username}</span>}{message.authorId&&<span>ID Discord: {message.authorId}</span>}{message.created&&!Number.isNaN(Date.parse(message.created))&&<time dateTime={message.created}>{new Intl.DateTimeFormat("pt-BR",{dateStyle:"short",timeStyle:"short"}).format(new Date(message.created))}</time>}</div>
         <p>{message.content}</p>
         {message.embeds?.map((embed,i)=><blockquote key={i}><strong>{embed.title}</strong><p>{embed.description}</p>{embed.fields.map((field,j)=><div key={j}><b>{field.name}</b><p>{field.value}</p></div>)}</blockquote>)}
